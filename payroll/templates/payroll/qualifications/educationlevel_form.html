@@ -1,0 +1,68 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "New" as action %}{% endif %}     
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Qualification' %} &rang; {% blocktrans %}{{ action }} Education Level{% endblocktrans %}</h3>
+
+    {% include "payroll/form_error_display.html" with module=mod title=title %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Education' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_name">{% trans 'Level' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.level }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.level.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.level.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_qualification">{% trans 'Qualification' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.qualification }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.qualification.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.qualification.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_description">{% trans 'Remarks' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.description }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.description.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.description.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" /></td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+    <a href="{% url 'payroll:educ_level_list' %}"><button>{% trans 'Back' %}</button></a>
+
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="educ_level_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock main_content %}

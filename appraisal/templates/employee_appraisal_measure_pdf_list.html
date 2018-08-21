@@ -1,0 +1,93 @@
+{% extends "easy_pdf/base.html" %}
+{% load humanize %}
+
+{% block page_header %}
+<div style="text-align: right">
+    <i>Confidential</i>
+</div>
+{% endblock %}
+
+{% block extra_style %}
+<style type="text/css">
+    .label {font-weight: bold;}
+</style>
+{% endblock %}
+
+{% block content %}
+<h3 style="text-align: center">
+    APPRAISAL REPORT FOR {{ emp_appraisal.employee_profile.get_fullname|upper }} FOR THE PERIOD {{ emp_appraisal.appraisal }}
+</h3>
+<h4 style="border-bottom: solid black">Summary</h4>
+<table style="border: 1px solid white; padding: 1px;">
+    <tr>
+        <td class="label" width="30%">Description</td>
+        <td>{{ emp_appraisal.appraisal.description }}</td>
+    </tr>
+    <tr>
+        <td class="label">Self Appraisal Score</td>
+        <td>{{ self_score|intcomma:"1" }}%</td>
+    </tr>
+    <tr>
+        <td class="label">Supervisor Score</td>
+        <td>{{ supervisor_score|intcomma:"1" }}%</td>
+    </tr>
+    <tr>
+        <td class="label">Combined Score</td>
+        <td>{{ emp_appraisal.get_average_rating|intcomma:"1" }}%</td>
+    </tr>
+    <tr>
+        <td valign="top" class="label">Comments</td>
+        <td>
+            <table>
+                
+                <tr>
+                    <td>{{ remarks.open.initiator.get_fullname }} on {{ remarks.open.date|date }}: <i>{{ remarks.open.comment }}</i></td>
+                </tr>
+                {% for f in comments %}
+                <tr>
+                    <td style="label">{{ f.from_reviewer.get_fullname }} on {{ f.created_at|date }}: <i>{{ f.comment }}</i></td>
+                </tr>
+                {% endfor %}
+                {% if is_closed %}
+                <tr>
+                    <td>{{ remarks.close.closed_by.get_fullname }} on {{ remarks.close.date|date }}: <i>{{ remarks.close.comment }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </td>
+    </tr>
+</td>
+</tr>
+</table>
+
+<h4 style="border-bottom: solid black">Questions</h4>
+{% for m in employee_appraisal_measure_list %}
+<table width="100%">
+    <tr>
+        <td valign="top" width="10%">{{ forloop.counter }}.</td>
+        <td>
+            <table>
+                <tr>
+                    <td width="25%">{{ m.measure.parameter }}</td>
+                    <td>{{ m.measure.definition }}</td>
+                </tr>
+                {% with s_appraisal=m.get_self_appraisal %}
+                <tr>
+                    <td>Self Appraisal</td>
+                    <td> {{ s_appraisal.rating }}/{{ s_appraisal.measure.max_rating }} <i>{{ s_appraisal.comment }}</i></td>
+                </tr>
+                {% endwith %}
+                {% with sup_appraisal=m.get_supervisor_appraisal %}
+                <tr>
+                    <td>Supervisor Appraisal</td>
+                    <td> {{ sup_appraisal.rating }}/{{ sup_appraisal.measure.max_rating }} <i>{{ sup_appraisal.comment }}</i></td>
+                </tr>
+                {% endwith %}
+            </table>
+        </td>
+    </tr>
+</table>
+<br/>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,115 @@
+{% load i18n %}
+{% load humanize %}
+<table>
+    <thead>
+        <tr>
+            <th>{% trans "NAME" %}</th>
+            <th>{% trans "Emp. TIN" %}</th>
+            <th>{% trans "C.PAY" %}</th>
+
+            {% for allowance_type in allowance_types %}
+            <th>{{ allowance_type }}</th>
+            {% endfor %}
+
+            <th>{% trans "DAYS" %}</th>
+            <th>{% trans "B. PAY" %}</th>
+            <th>{% trans "TAXABLE PAY" %}</th>
+
+            <th>{% trans "PAYE" %}</th>
+            <th>{% trans "NSSF 5%" %}</th>
+            {% for deduction_type in deduction_types %}
+
+            <th>{{ deduction_type.name }}</th>
+            {% endfor %}
+
+            <th>{% trans "NET PAY" %}</th>
+
+        </tr>
+    </thead>
+
+
+{% for dept in departments %}
+<tr>
+    <td><strong>{{ dept.name|upper }}</strong></td>
+</tr>
+{% for payslip in dept.payslips %}
+<tr>
+
+    <td>{{ payslip.employee.get_profile.get_fullname }}</td>
+    <td>{{ payslip.employee.get_profile.tin_number }}</td>
+    <td>
+        {{ payslip.contractual_pay_amount|floatformat:"2"|intcomma }}
+    </td>
+
+    {% for allowance_type in allowance_types %}
+            <td>
+        {% for allowance in payslip.allowances.all %}
+            {% if allowance.allowance_type == allowance_type %}
+                {{ allowance.amount }}
+            {% endif %}
+        {% endfor %}
+            </td align="right">
+    {% endfor %}
+
+    <td>{{ payslip.total_days_worked|floatformat:"2" }}</td>
+    <td>{{ payslip.basic_pay|floatformat:"2"|intcomma  }}</td>
+    <td>{{ payslip.gross_pay|floatformat:"2"|intcomma }}</td>
+
+    <td>{{ payslip.paye|floatformat:"2"|intcomma }}</td>
+    <td>{{ payslip.nssf|floatformat:"2"|intcomma }}</td>
+
+    {% for deduction_type in deduction_types %}
+    <td>
+        {% for deduction in payslip.deductions.all %}
+            {% if deduction.deduction_type == deduction_type %}
+                {{ deduction.amount }}
+            {% endif %}
+        {% endfor %}
+    </td>
+    {% endfor %}
+
+    <td>
+        {{ payslip.net_pay|floatformat:"2"|intcomma }}
+    </td>
+</tr>
+{% endfor %}
+
+<tr>
+    <td><strong>Sub Total</strong></td>
+    <td></td>
+    <td><strong>{{ dept.totals.contractual_pay_amount__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+    <td></td>
+    {% for allowance_type in allowance_types %}
+            <td></td>
+    {% endfor %}
+    <td><strong>{{ dept.totals.basic_pay__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+    <td><strong>{{ dept.totals.gross_pay__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+    <td><strong>{{ dept.totals.paye__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+    <td><strong>{{ dept.totals.nssf__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+    {% for deduction_type in deduction_types %}
+            <td><strong></strong></td>
+    {% endfor %}
+    <td><strong>{{ dept.totals.net_pay__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+</tr>
+
+{% endfor %}
+
+    <tr>
+        <td><strong>Total</strong></td>
+        <td></td>
+        <td><strong>{{ totals.contractual_pay_amount__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+        <td></td>
+        {% for allowance_type in allowance_types %}
+                <td><strong></strong></td>
+        {% endfor %}
+        <td><strong>{{ totals.basic_pay__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+        <td><strong>{{ totals.gross_pay__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+        <td><strong>{{ totals.paye__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+        <td><strong>{{ totals.nssf__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+    {% for deduction_type in deduction_types %}
+            <td><strong></strong></td>
+    {% endfor %}
+        <td><strong>{{ totals.net_pay__sum|floatformat:"2"|intcomma|default:"0.00" }}</strong></td>
+
+    </tr>
+</table>

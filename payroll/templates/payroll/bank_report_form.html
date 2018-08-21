@@ -1,0 +1,92 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+<div id="main_panel_container" class="section">
+    <h3 class="ico_mug">Reports &rang; Payroll &rang; Bank Report</h3>
+
+    {% if form.errors and not form.non_field_errors %}
+    <div id="warning" class="info_div">
+        <span class="ico_error">
+                {% trans 'Please correct the errors below' %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div id="fail" class="info_div">
+        <span class="ico_cancel">
+            {% for error in form.non_field_errors %}
+                    <font style="font-size: 6px">{{ error }}</font>
+            {% endfor %}
+    </span>
+    </div>
+    {% endif %}
+
+    <form action="{{ action_url }}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>Search Criteria </span></legend>
+
+            <table width="50%">
+                <tr valign="top">
+                    <td style="vertical-align: top">Pay-period</td>
+                    <td>
+                        {{ form.payroll }}
+                    </td>
+                    <td>
+                        {% if form.payroll.errors %}
+                        <div id="fail" class="quickview left">
+                            <span class="ico_cancel">{{ form.payroll.errors }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="vertical-align: top">Department</td>
+                    <td>
+                        {{ form.department }}
+                    </td>
+                    <td>
+                        {% if form.department.errors %}
+                        <div id="fail" class="quickview left">
+                            <span class="ico_cancel">{{ form.department.errors }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="vertical-align: top">Bank</td>
+                    <td>
+                        {{ form.bank }}
+                    </td>
+                    <td>
+                        {% if form.bank.errors %}
+                        <div id="fail" class="quickview left">
+                            <span class="ico_cancel">{{ form.bank.errors }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <td style="vertical-align: top"></td>
+                    <td>
+                        {{ form.categorize }}&nbsp;&nbsp;Categorize by Service Line
+                    </td>
+                    <td>
+                        {% if form.categorize.errors %}
+                        <div id="fail" class="quickview left">
+                            <span class="ico_cancel">{{ form.categorize.errors }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Generate Report" /></td>
+                    <td></td>
+                </tr>
+        </table>
+        </fieldset>
+    </form>
+
+</div>
+
+{% endblock main_content %}
+

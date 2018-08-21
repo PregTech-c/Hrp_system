@@ -1,0 +1,204 @@
+{% load i18n %}
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modal Header</h4>
+      </div>
+      <div class="modal-body">
+        <p>Some text in the modal.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<table width="100%">
+    <tr>
+        <td style="vertical-align: top" width="25%"><label for="id_title">Title</label></td>
+        <td>{{ pform.title }}&nbsp;<a class="btn btn-sm" data-toggle="modal" data-target="#myModal">add</a></td>
+    </tr>
+    <tr>
+        <td  style="vertical-align: top" width="15%"><label for="id_last_name">Surname</label></td>
+        <td>
+            <div style="margin-left: -3px;" class="left">{{ uform.last_name }}&nbsp;&nbsp;</div>
+           {% if uform.last_name.errors %}
+            <div id="fail" class="quickview left"><span class="ico_cancel">{{ uform.last_name.errors }}</span></div>
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+       <td style="vertical-align: top">
+           <label  for="id_first_name">First Name</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;" class="left">{{ uform.first_name }}&nbsp;&nbsp;</div>
+           {% if uform.first_name.errors %}
+            <div id="fail" class="quickview left"><span class="ico_cancel">{{ uform.first_name.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_other_names">Other Names</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ pform.other_names }}</div>
+           {% if pform.other_names.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ pform.other_names.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_number_of_children">No. of Children</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ pform.number_of_children }}</div>
+           {% if pform.other_names.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ pform.other_names.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_nin">NIN</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ pform.nin }}</div>
+           {% if pform.other_names.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ pform.nin.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_national_id_expiry">{% trans 'National-ID Expiry' %}</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ pform.national_id_expiry }}</div>
+           {% if pform.national_id_expiry.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ pform.national_id_expiry.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_other_names">Passport No.</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ pform.passport_number }}</div>
+           {% if pform.passport_number.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ pform.passport_number.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_other_names">Passport Expiry</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ pform.passport_expiry_date }}</div>
+           {% if pform.passport_expiry_date.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ pform.passport_expiry_date.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_other_names">Driving License</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ pform.driving_license }}</div>
+           {% if pform.driving_license.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ pform.driving_license.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_license_expiry_date">License Expiry Date</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ pform.license_expiry_date }}</div>
+           {% if pform.license_expiry_date.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ pform.license_expiry_date.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_date_of_birth">{% trans "Date of Birth" %}</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;" class="left">{{ pform.date_of_birth }}&nbsp;&nbsp;</div>
+           {% if pform.date_of_birth.errors %}
+            <div id="fail" class="quickview left"><span class="ico_cancel">{{ pform.date_of_birth.errors }}</span></div>
+           {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top"><label for="id_gender">Gender</label></td>
+       <td>{{ pform.gender }}&nbsp;&nbsp;{{ pform.gender.errors }}</td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top"><label for="id_marital_status">{% trans 'Marital Status' %}</label></td>
+       <td>{{ pform.marital_status }}&nbsp;&nbsp;{{ pform.marital_status.errors }}</td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top"><label for="id_nationality">{% trans 'Nationality' %}</label></td>
+       <td>
+           {{ pform.nationality }}&nbsp;&nbsp;{{ pform.nationality.errors }}
+       </td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top"><label for="id_next_of_kin">{% trans 'Next Of Kin' %}</label></td>
+        <td>
+            <table width="100%">
+                <tr>
+                    <td style="vertical-align: top" width="20%">{% trans 'Name' %}</td>
+                    <td>
+                        <div style="margin-left: -3px;" class="left">{{ nkinform.name }}&nbsp;</div>
+                        {% if nkinform.name.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ nkinform.name.errors }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top">{% trans 'Relationship' %}</td>
+                    <td>
+                        <div class="left">{{ nkinform.relationship }}&nbsp;</div>
+                        {% if nkinform.relationship.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ nkinform.relationship.errors }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top">{% trans 'Contact' %}</td>
+                    <td>
+                        <div style="margin-left: -3px;" class="left">{{ nkinform.contact }}&nbsp;</div>
+                        {% if nkinform.contact.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ nkinform.contact.errors }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,8 @@
+*.pyc
+*~
+nbproject
+*.swp
+*.orig
+hrp/settings/dev.py
+hrp/db.sqlite3
+hrp/payroll/static/

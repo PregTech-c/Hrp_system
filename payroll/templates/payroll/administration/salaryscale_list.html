@@ -1,0 +1,53 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h3 class="ico_mug">{% trans 'Administration' %} :: {% trans 'Payroll' %} :: {% trans 'Salary Scales' %}</h3>
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+
+    <table id="table">
+        {% if salary_scale_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="20%">Code</th>
+            <th width="25%">From</th>
+            <th width="25%">To</th>
+            <th>Action</th>
+        </tr>
+        {% endif %}
+        
+        {% for scale in salary_scale_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ scale.code }}</td>
+            <td>{{ scale.range_from|default:"-" }}</td>
+            <td>{{ scale.range_to|default:"-" }}</td>
+            <td>
+                <a href="{% url 'payroll:salary_scale_edit' pk=scale.id %}">{% trans "Edit" %}</a>
+                &nbsp;&nbsp;
+                <a href="{% url 'payroll:salary_scale_delete' pk=scale.id %}" >{% trans "Delete" %}</a>
+                &nbsp;&nbsp;
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "There are no scales defined. Click the ADD SCALE button below to create one, e.g. U1 (optional)" %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'payroll:salary_scale_list' as my_url %}
+        {% include "payroll/pagination.html" with page=page_obj url=my_url %}
+    {% endif %}
+
+    <br/>
+
+    <div><a href="{% url 'payroll:salary_scale_add' %}"><button>{% trans 'Add Scale' %}</button></a></div>
+</div>
+{% endblock %}

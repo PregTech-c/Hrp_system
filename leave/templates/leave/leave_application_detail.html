@@ -1,0 +1,100 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+<div id="dashboard" class="left">
+<h2 class="ico_mug">{{ profile.get_fullname }}</h2>
+
+    <table id="table">
+        <tr><th colspan="2">Application Details</th></tr>
+        <tr>
+            <td>{% trans 'Employee' %}</td>
+            <td>{{ application.request.profile.get_fullname }}</td>
+        </tr>
+        <tr>
+            <td>Position</td>
+            <td>{{ application.request.profile.position }}</td>
+        </tr>
+        <tr>
+            <td>Service Line</td>
+            <td>{{ application.request.profile.service_line }}</td>
+        </tr>
+        <tr>
+            <td>Days Requested</td>
+            <td>{{ application.request.get_no_of_days }}</td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td>{{ application.get_leave_status_display }}</td>
+        </tr>
+        {% if application.leave_status in "D,A" %}
+        <tr>
+            <td>Reviewed By</td>
+            <td>{{ application.reviewer.get_fullname }}</td>
+        </tr>        <tr>
+            <td>Reviewed on</td>
+            <td>{{ application.reviewed_at }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>Period</td>
+            <td>{{ application.request.start_date }} to {{ application.request.end_date }}</td>
+        </tr>
+        <tr>
+            <td>Applicant's Comment</td>
+            <td><i>{{ application.request.comment }}</i></td>
+        </tr>
+    </table>
+    {% if application.leave_status == "P" %}
+    <div class="blankline"/></div>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        <fieldset>
+            <legend><span>{% trans 'Review Application' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_leave_status">{% trans 'Choose Action' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.leave_status }} &nbsp;&nbsp;
+                    </div>
+                    {% if form.leave_status.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.leave_status.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_leave_type">{% trans 'Comment' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.comment }} &nbsp;&nbsp;
+                    </div>
+                    {% if form.comment.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.comment.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" /></td>
+            </tr>
+        </table>
+        </fieldset>
+    </form>
+    {% endif %}
+    <a href="{% url 'leave:leave_application_list' %}"><button>Back to Application List</button></a>
+    {% if user.is_approver %}
+      <a href="{% url 'leave:leave_request_form' %}"><button>Edit Application</button></a>
+    {% endif %}
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="leave_application_list" menu="requests" %}
+{% endblock sidebar %}
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h2 class="ico_mug">Confirm Delete</h2>
+
+    
+<form action="{% url 'payroll:center_delete_p' pk=object.id %}" method="post">
+    {% csrf_token %}
+    <div align="center">{% trans 'Are you sure you want to delete' %} <strong>{{ object }}</strong>?<br/>
+<input type="submit" value="Delete" />
+&nbsp;&nbsp;<a href="{% url 'payroll:center_list' %}">Cancel</a>
+
+</div>
+</form>
+
+
+</div>
+{% endblock main_content %}

@@ -1,0 +1,12 @@
+-   model: appraisal.appraisalparameter
+    pk: 1
+    fields:
+        name: KPI
+        description: Key Performance Indicator
+        is_core: 1
+-   model: appraisal.appraisalparameter
+    pk: 2
+    fields:
+        name: KRA
+        description: Key Result Area
+        is_core: 1

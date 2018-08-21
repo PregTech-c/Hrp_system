@@ -1,0 +1,56 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Personnel' %} &rang; {% trans 'Nationality' %}</h3>
+    
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    
+    <table id="table">
+        {% if nationality_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="20%">{% trans 'Country Code' %}</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for nationality in nationality_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ nationality.country_code }}</td>
+            <td>{{ nationality.name }}</td>
+            <td align="center">
+                <a href="{% url 'payroll:nat_edit' pk=nationality.id %}">{% trans "edit" %}</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="{% url 'payroll:nat_delete' pk=nationality.id %}">{% trans 'Delete' %}</a>
+            </td>
+        </tr>
+        {% empty %}
+        
+                <div id="warning">
+                    <span class="ico_error">{% trans "There are no memberships setup. Click the ADD NATIONALITY button below to add one." %}</span>
+                </div>
+        
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'payroll:nationality_list' as nat_url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=nat_url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <div>
+        <a href="{% url 'payroll:nat_add' %}"><button>{% trans 'Add Nationality' %}</button></a>
+    </div>
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="nat_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock %}

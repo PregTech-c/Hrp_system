@@ -1,0 +1,21 @@
+{% load i18n %}
+<table width="100%">
+    <tr>
+        <td style="vertical-align: top" width="25%"><label for="id_education_level">{% trans 'Education Level' %}</label></td>
+        <td>{{ pform.education_level }}</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top" width="25%"><label for="id_certifications">{% trans 'Certifications' %}</label></td>
+        <td>{{ pform.certifications }}</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top" width="25%"><label for="id_memberships">{% trans 'Memberships' %}</label></td>
+        <td>{{ pform.memberships }}</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top" width="25%"><label for="id_skills">{% trans 'Skills' %}</label></td>
+        <td>{{ pform.skills }}</td>
+    </tr>
+
+</table>
+

@@ -1,0 +1,164 @@
+{% extends 'payroll_base_site.html' %}
+{% load widget_tweaks %}
+{% load i18n %}
+
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_start_date").datepicker({
+                   dateFormat: 'yy-mm-dd'
+               });
+               jQuery("#id_end_date").datepicker({
+                   dateFormat: 'yy-mm-dd'
+               });
+            })
+
+            function toggle(source,name) {
+                checkboxes = document.getElementsByName(name);
+                for (var i = 0,
+                    n = checkboxes.length; i < n; i++) {
+                    checkboxes[i].checked = source.checked;
+                }
+            }
+        </script>
+
+{% endblock %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Add" as action %}{% endif %}
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Leave' %} &rang; {% blocktrans %}{{ action }} Leave Type{% endblocktrans %}</h3>
+
+    {% include "payroll/form_error_display.html" %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Leave Type' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_name">{% trans 'Name' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.name }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.name.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.name.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_no_of_days">{% trans 'Days' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.no_of_days }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.no_of_days.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.no_of_days.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+               <td style="vertical-align: top" width="20%"><label for="id_pay_percentage">{% trans 'Pay Percentage' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.pay_percentage }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.pay_percentage.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.pay_percentage.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_days_carried_forward">{% trans 'Days C/f' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.days_carried_forward }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.days_carried_forward.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.days_carried_forward.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_active">{% trans 'Active' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.active }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.active.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.active.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_service_lines">{% trans 'Service Line' %}</label></td>
+               <td>
+                   <div style="width: 70%" class="left" id="ms" multiple="multiple" type="checkbox">
+                       {{ form.service_lines }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.service_lines.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.service_lines.errors|striptags }}</span></div>
+                   {% endif %}
+                </td>
+            </tr>
+            <!--<tr>
+               <td style="vertical-align: top" width="20%"><label for="id_positions">{% trans 'Positions' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.positions }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.positions.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.positions.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>-->
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_gender">{% trans 'Gender' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.gender }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.gender.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.gender.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_description">{% trans 'Description' %}</label></td>
+               <td>
+                   <div style="margin-left: 4px;" class="left">
+                       {{ form.description }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.description.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.description.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" /></td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+    <a href="{% url 'leave:leave_type_list' %}"><button>{% trans 'Back' %}</button></a>
+
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="leave_type_list" menu="setup" %}
+{% endblock sidebar %}
+<script>
+    $('select').multipleSelect();
+</script>
+<script>
+$("select").multipleSelect({
+            single: true
+        });
+</script>
+{% endblock main_content %}

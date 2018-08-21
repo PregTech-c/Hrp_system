@@ -1,0 +1,104 @@
+{% load humanize %}
+
+<div  style="text-align: center"><h2 >EMPLOYEE REPORT - {% now "d/m/Y" %}</h2></div>
+<table id="table">
+
+        <tr>
+            <th width="3%">#</th>
+            <th width="15%">Name</th>
+            {% if get.designation_field %}
+            <th width="10%">Designation</th>
+            {% endif %}
+            {% if get.category_field %}
+            <th>Category</th>
+            {% endif %}
+            {% if get.branch_field %}
+            <th>Branch</th>
+            {% endif %}
+            {% if get.nssf_number_field %}
+            <th>NSSF No.</th>
+            {% endif %}
+            {% if get.tin_field %}
+            <th>TIN</th>
+            {% endif %}
+            {% if get.bank_field %}
+            <th width="10%">Bank</th>
+            {% endif %}
+            {% if get.acct_no_field %}
+            <th>Acct. No.</th>
+            {% endif %}
+            {% if get.salary_field %}
+            {% if get.status_field %}
+            <th>Status</th>
+            {% endif %}
+            {% if get.employee_number_field %}
+            <th>Empl. No.</th>
+            {% endif %}
+            {% if get.email_field %}
+            <th>Email</th>
+            {% endif %}
+            {% if get.phone_number_field %}
+            <th>Phone</th>
+            {% endif %}
+            {% if get.sort_code_field %}
+            <th>Sort Code</th>
+            {% endif %}
+            <th>Salary</th>
+            {% endif %}
+        </tr>
+    <tr>
+        <td colspan="{{ num_columns }}" style="border-top: 1px solid black"></td>
+    </tr>
+        {% for profile in profile_list %}
+        <tr>
+            <td>{{ forloop.counter }}.</td>
+            <td>{{ profile.get_fullname }}</td>
+            {% if get.designation_field %}
+            <td>{{ profile.designation }}</td>
+            {% endif %}
+            {% if get.category_field %}
+            <td>{{ profile.category }}</td>
+            {% endif %}
+            {% if get.branch_field %}
+            <td>{{ profile.branch }}</td>
+            {% endif %}
+            {% if get.nssf_number_field %}
+            <td>{{ profile.nssf_number}}</td>
+            {% endif %}
+            {% if get.tin_field %}
+            <td>{{ profile.tin_number }}</td>
+            {% endif %}
+            {% if get.bank_field %}
+            <td>{{ profile.bank }}</td>
+            {% endif %}
+            {% if get.acct_no_field %}
+            <td>{{ profile.bank_account_number }}</td>
+            {% endif %}
+            {% if get.status_field %}
+            <td>{{ profile.get_status_display }}</td>
+            <!--<td>
+                {% ifequal "0" profile.status %}Active{% endifequal %}
+                {% ifequal "1" profile.status %}Resigned{% endifequal %}
+                {% ifequal "2" profile.status %}Terminated{% endifequal %}
+            </td>-->
+            {% endif %}
+            {% if get.employee_number_field %}
+            <td>{{ profile.employee_number }}</td>
+            {% endif %}
+            {% if get.email_field %}
+            <td>{{ profile.user.email }}</td>
+            {% endif %}
+            {% if get.phone_number_field %}
+            <td>{{ profile.phone_number }}</td>
+            {% endif %}
+            {% if get.sort_code_field %}
+            <td>{{ profile.bank.sort_code }}</td>
+            {% endif %}
+            {% if get.salary_field %}
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+
+</html>

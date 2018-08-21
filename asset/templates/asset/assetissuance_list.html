@@ -1,0 +1,65 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    
+    <h3 class="ico_mug">{% trans 'Assets' %} &rang; {% trans 'Allocation' %}</h3>
+    {% if appraisal_list %}
+    <p class="info">List of allocated company assets.</p>
+    <div class="blankline"></div>
+    {% endif %}
+    {% include 'payroll/databox_notifications.html' with messages=messages %}
+    
+    {% include 'asset/assetissuance_search_form.html' %}
+    <table id="table">
+
+        {% if asset_list %}
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Category' %}</th>
+            <th width="">{% trans 'Model' %}</th>
+            <th width="">{% trans 'ID Number' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+            <th width="">{% trans 'Issued to' %}</th>
+            <th width="">{% trans 'Issued on' %}</th>            
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for asset in asset_list %}
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ asset.category }}</td>
+            <td>{{ asset.model }}</td>
+            <td>{{ asset.get_id }}</td>
+            <td>{{ asset.description }}</td>
+            <td>{{ asset.get_current_issue.employee.profile.get_fullname|default:"-" }}</td>
+            <td>{{ asset.get_current_issue.assignment_date|date|default:"-" }}</td>
+            <td>
+                {% if not asset.get_current_issue %}
+                    <a href="{% url 'asset:asset_allocation_add' asset_id=asset.id %}">{% trans 'issue' %}</a>&nbsp;
+                {% else %}
+                    <a href="{% url 'asset:asset_return' pk=asset.get_current_issue.id %}">{% trans 'return' %}</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "No assets found." %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% include "recruitment/pagination_digg.html" with paginator=paginator url=pg_url %}
+    {% endif %}
+    
+    <div class="blankline"></div>
+
+</div>
+
+{% endblock %}

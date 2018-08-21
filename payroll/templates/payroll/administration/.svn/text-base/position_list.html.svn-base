@@ -1,0 +1,46 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h2 class="ico_mug">Categories</h2>
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+    </div><br/>
+    {% endif %}
+
+    <table id="table">
+
+        <tr>
+            <th width="10%">#</th>
+            <th width="70%">Name</th>
+            <th>Action</th>
+        </tr>
+
+        {% for category in category_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ category.name }}</td>
+            <td>
+            <a href="/category/edit/{{ category.id }}/"><img src="{{ STATIC_URL }}img/edit.jpg" alt="delete" title="Edit"/></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/category/delete/{{ category.id }}/">
+                <img src="{{ STATIC_URL }}img/cancel.jpg" alt="delete" title="Delete" /></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% include "payroll/pagination.html" with page=page_obj url="/category" %}
+    {% endif %}
+
+    <br/>
+
+    <div><a href="/category/new"><button>Add Category</button></a></div>
+</div>
+{% endblock %}

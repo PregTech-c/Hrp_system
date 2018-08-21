@@ -1,0 +1,61 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; Company Info &rang; {% trans 'Positions' %}</h3>
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+    </div><br/>
+    {% endif %}
+
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+
+    <table id="table">
+        
+        {% if position_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        
+        {% for position in position_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ position.name }}</td>
+            <td>{{ position.description }}</td>
+            <td align="center">
+                <!--<a href="{% url 'payroll:position_edit' pk=position.id %}"><img src="{% static 'img/edit.jpg' %}" alt="delete" title="Edit"/></a>-->
+                <a href="{% url 'payroll:position_edit' pk=position.id %}">edit</a>
+                &nbsp;|&nbsp;
+                <!--<a href="{% url 'payroll:position_delete_p' pk=position.id %}"><img src="{% static 'img/cancel.jpg' %}" alt="delete" title="Delete" /></a>-->
+                <a href="{% url 'payroll:position_delete_p' pk=position.id %}">delete</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning"><span class="ico_error">{% trans "There are no positions setup yet. Click the ADD POSITION button below to create one, e.g. I.T. Manager" %}</span></div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'payroll:position_list' as c_url %}
+        {% include "payroll/pagination.html" with page=page_obj url=c_url %}
+    {% endif %}
+
+    <br/>
+
+    <div><a href="{% url 'payroll:position_add' %}"><button>{% trans 'Add Position' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="position_list" menu="company" %}
+{% endblock sidebar %}
+
+{% endblock %}

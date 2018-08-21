@@ -1,0 +1,120 @@
+{% load i18n %}
+<table width="100%">
+        <tr>
+           <td style="vertical-align: top" width="25%">
+               <label for="id_position">Position</label></td>
+           <td>
+               <div class="left">
+                   {{ pform.position }}&nbsp;&nbsp;
+               </div>
+               {% if pform.position.errors %}
+                <div id="fail" class="quickview left"><span class="ico_cancel">{{ pform.position.errors }}</span></div>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+           <td style="vertical-align: top" width="25%">
+               <label for="id_branch">Branch</label></td>
+           <td>
+               <div class="left">
+                   {{ pform.branch }}&nbsp;&nbsp;
+               </div>
+               {% if pform.branch.errors %}
+                <div id="fail" class="quickview left"><span class="ico_cancel">{{ pform.branch.errors }}</span></div>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+           <td style="vertical-align: top" width="25%">
+               <label for="id_branch">Contract Type</label></td>
+           <td>
+               <div class="left">
+                   {{ pform.contract_type }}&nbsp;&nbsp;
+               </div>
+               {% if pform.contract_type.errors %}
+                <div id="fail" class="quickview left"><span class="ico_cancel">{{ pform.contract_type.errors }}</span></div>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+           <td style="vertical-align: top"><label for="id_reports_to">{% trans 'Reports To' %}</label></td>
+           <td>
+               <div class="left">
+                   {{ pform.reports_to }}&nbsp;&nbsp;
+               </div>
+               {% if pform.reports_to.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ pform.reports_to.errors }}</span></div>
+               {% endif %}
+           </td>
+        </tr>
+        <tr>
+           <td style="vertical-align: top"><label for="id_designation">Service Line</label></td>
+           <td>
+               <div class="left">
+                   {{ pform.service_line }}&nbsp;&nbsp;
+               </div>
+               {% if pform.service_line.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ pform.service_line.errors }}</span></div>
+               {% endif %}
+           </td>
+        </tr>
+        <tr>
+           <td style="vertical-align: top"><label for="id_employed_on">Employed On</label></td>
+           <td>
+               <div style="margin-left: -3px;" class="left">
+                   {{ pform.employed_on }}&nbsp;&nbsp;
+               </div>
+               {% if pform.employed_on.errors %}
+                <div id="fail" class="quickview left"><span class="ico_cancel">{{ pform.employed_on.errors }}</span></div>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+           <td style="vertical-align: top"><label for="id_status">Status</label></td>
+           <td>
+               <div class="left">
+                   {{ pform.status }}&nbsp;&nbsp;
+               </div>
+               {% if pform.status.errors %}
+                <div id="fail" class="quickview left"><span class="ico_cancel">{{ pform.status.errors }}</span></div>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+           <td style="vertical-align: top">
+               <label for="id_first_name">Employee Number</label>
+           </td>
+           <td>
+               <div style="margin-left: -3px;">{{ pform.employee_number }}</div>
+               {% if pform.employee_number.errors %}
+                &nbsp;&nbsp;<div id="fail" class="info_div">
+                    <span class="ico_cancel">{{ pform.employee_number.errors }}</span></div>
+                {% endif %}
+           </td>
+        </tr>
+        <tr>
+           <td style="vertical-align: top"><label for="id_email">Email</label></td>
+           <td>
+               <div style="margin-left: -3px;" class="left">
+                   {{ uform.email }}&nbsp;&nbsp;
+               </div>
+               {% if uform.email.errors %}
+                <div id="fail" class="quickview left">
+                    <span class="ico_cancel">{{ uform.email.errors }}</span></div>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+           <td style="vertical-align: top"><label for="id_phone_number">Phone Number</label></td>
+           <td>
+               <div style="margin-left: -3px;" class="left">
+                   {{ pform.phone_number }}&nbsp;&nbsp;
+               </div>
+               {% if pform.phone_number.errors %}
+                <div id="fail" class="quickview left">
+                    <span class="ico_cancel">{{ pform.email.errors }}</span></div>
+                {% endif %}
+            </td>
+        </tr>
+
+    </table>

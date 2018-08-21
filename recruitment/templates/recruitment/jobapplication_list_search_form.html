@@ -1,0 +1,59 @@
+{% load i18n %}
+<form action="{% url 'recruitment:application_list' vac_id=vacancy.id page=1 %}" method="post" enctype="multipart/form-data">
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    {% csrf_token %}
+    <fieldset>
+        <legend><span>{% trans 'Search' %}</span></legend>
+        <table width="100%">
+            <tr>
+                <td style="vertical-align: top; padding-bottom: 10px;" width="20%">Evaluation Stage</td>
+                <td>{{ form.stage }}</td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top; padding-bottom: 10px;" width="20%">Experience Over (Yrs)</td>
+                <td>
+                    <div>{{ form.experience_years_threshold }}</div>
+                    {% if form.experience_years_threshold.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.experience_years_threshold.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top; padding-bottom: 10px;" width="20%">Age Lower Limit (Yrs)</td>
+                <td>
+                    <div>{{ form.age_lower_limit }}</div>
+                    {% if form.age_lower_limit.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.age_lower_limit.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top; padding-bottom: 10px;" width="20%">Age Upper Limit (Yrs)</td>
+                <td>
+                    <div>{{ form.age_upper_limit }}</div>
+                    {% if form.age_upper_limit.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.age_upper_limit.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top; padding-bottom: 10px;" width="20%">Gender</td>
+                <td>
+                    <div>{{ form.gender }}</div>
+                    {% if form.gender.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.gender.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <input type="submit" value="Search" />&nbsp;
+                    <a href="{% url 'recruitment:application_list_r' vac_id=vacancy.id page=1 search='off' show_form='on'%}">Reset</a>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+</form>

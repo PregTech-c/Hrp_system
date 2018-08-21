@@ -1,0 +1,59 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "New" as action %}{% endif %}     
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Qualifications' %} &rang; {% blocktrans %}{{ action }} Nationality{% endblocktrans %}</h3>
+
+    {% include "payroll/form_error_display.html" %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Nationality' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_name">{% trans 'Country Code' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.country_code }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.country_code.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.country_code.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_name">{% trans 'Nationality' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.name }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.name.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.name.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>    
+                    <input type="submit" value="Save" />
+                </td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+    <a href="{% url 'payroll:nat_list' %}"><button>{% trans 'Back' %}</button></a>
+
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="nat_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock main_content %}

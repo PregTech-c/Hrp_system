@@ -1,0 +1,69 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    
+    <h3 class="ico_mug">{% trans 'Appraisal' %} &rang; {% trans 'Received Appraisals' %}</h3>
+    {% if employee_appraisal_list %}
+    <p class="info">
+        Review these appraisals that have been submitted to you.
+    </p>
+    <div class="blankline"></div>
+    {% endif %}
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    <table id="table">
+
+        {% if employee_appraisal_list %}
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Employee' %}</th>
+            <th width="">{% trans 'End Date' %}</th>
+            <th width="">{% trans 'Due Date' %}</th>
+            <th width="">{% trans 'Status' %}</th>
+            <th width="30%">{% trans 'Description' %}</th>
+            <th width="">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for emp_appraisal in employee_appraisal_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ emp_appraisal.employee_profile.get_fullname }}</td>
+            <td>{{ emp_appraisal.appraisal.end_date|date:HRP_SHORT_DATE_FORMAT }}</td>
+            <td>{{ emp_appraisal.appraisal.due_date|date:HRP_SHORT_DATE_FORMAT }}</td>
+            <td>
+                <div style="{% if not emp_appraisal.is_complete %}color: green; font-style: italic{% endif %}">{{ emp_appraisal.get_status_display }}</div>
+            </td>
+            <td>{{ emp_appraisal.appraisal.description }}</td>
+            <td align="center">
+                {% if emp_appraisal.is_complete %}
+                <a href="{% url 'appraisal:received_employee_appraisal_measure_list' emp_app_id=emp_appraisal.id %}">View</a>
+                {% else %}
+                <a href="{% url 'appraisal:received_employee_appraisal_measure_list' emp_app_id=emp_appraisal.id %}">{% trans 'review' %}</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "There are currently no appraisals that have been submitted to you." %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'appraisal:received_employee_appraisal_list' as url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=url %}
+    {% endif %}
+    <div class="blankline"></div>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="holiday_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

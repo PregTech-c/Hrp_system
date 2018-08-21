@@ -1,0 +1,29 @@
+<table width="100%">
+    <tr>
+       <td style="vertical-align: top" width="20%">
+           <label for="id_name">Username</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;" class="left">
+               {{ uform.username }}
+           </div>
+           {% if uform.username.errors %}
+            <div id="fail" class="quickview left"><span class="ico_cancel">{{ uform.username.errors }}</span></div>
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+       <td  style="vertical-align: top">
+           <label for="id_roles">Roles</label>
+       </td>
+       <td><br/>
+           {{ uform.groups }}
+           {% if uform.groups.errors %}
+            <div id="fail" class="quickview left"><span class="ico_cancel">{{ uform.groups.errors }}</span></div>
+           {% endif %}
+       </td>
+    </tr>
+
+
+</table>

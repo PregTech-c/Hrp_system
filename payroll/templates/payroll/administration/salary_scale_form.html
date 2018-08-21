@@ -1,0 +1,61 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Add" as action %}{% endif %}     
+    <h3 class="ico_mug">{% trans 'Administration' %} :: {% trans 'Payroll' %} :: {% blocktrans %}{{ action }} Salary Scale{% endblocktrans %}</h3>
+
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>Scale Info</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_name">Code</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.code }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.code.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.code.errors }}</span></div>
+                    {% endif %}
+                </td>
+
+            </tr>
+            <tr>
+                <td style="vertical-align: top" width="20%"><label for="id_range_from">From</label></td>
+                <td>
+                   <div class="left">
+                       {{ form.range_from }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.range_from.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.range_from.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top" width="20%"><label for="id_range_to">To</label></td>
+                <td>
+                   <div class="left">
+                       {{ form.range_to }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.range_to.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.range_to.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" />&nbsp;&nbsp;
+                    <a href="{% url 'payroll:salary_scale_list' %}">{% trans 'Back to list' %}</a></td>
+            </tr>
+        </table>
+        </fieldset>
+    </form>
+
+</div>
+{% endblock main_content %}

@@ -1,0 +1,11 @@
+{% load pdf_filters %}
+<div id="headerContent">
+    <table width="100%">
+        <tr>
+            <td width="50%" valign="bottom"><img src="{{ logo_path|get64 }}" alt="Logo" /></td>
+            <td align="right" valign="bottom">
+                <h2>{{ title }}</h2>{{ now_date|date }}
+            </td>
+        </tr>
+    </table>
+</div>

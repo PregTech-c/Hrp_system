@@ -1,0 +1,75 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}{{ form.errors }}
+<div class="section">
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Update" as action %}{% endif %}     
+    <h3 class="ico_mug">{% trans 'Appraisal' %} &rang; 
+        <a href="{% url 'appraisal:employee_appraisal_list' %}">{% trans 'My Appraisals' %}</a> 
+        &nbsp;&rang;&nbsp; {% blocktrans %}{{ action }} Appraisal{% endblocktrans %}
+    </h3>
+
+    {% include "payroll/form_error_display.html" %}
+    <table style="width: 100%" id="table">
+        <tr>
+            <th colspan="2">{{ emp_appraisal_measure.measure.parameter }} Info</th>
+        </tr>
+        <tr>
+            <td width="20%" class="label">{% trans 'Appraisal' %}</td>
+            <td>
+                {{ emp_appraisal_measure.employee_appraisal.appraisal }}
+            </td>
+        </tr>
+        <tr>
+            <td width="20%" class="label">{% trans 'Definition' %}</td>
+            <td>{{ emp_appraisal_measure.measure }}</td>
+        </tr>
+        <tr>
+            <td class="label">{% trans 'Description' %}</td>
+            <td>{{ emp_appraisal_measure.measure.description }}</td>
+        </tr>
+    </table>
+    <div class="blankline"></div>
+    <p class="info">Enter your score and your comment below.</p>
+    <form action="" method="post">
+        
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        <fieldset>
+            <legend><span>{% trans 'Info' %}</span></legend>
+            <table width="100%">
+                <tr>
+                    <td style="vertical-align: top; padding-bottom: 40px;" width="20%">{{ form.rating.label}} </td>
+                    <td>
+                        <div class="left">
+                            {{ form.rating }}
+                            <br/><i>Scale {{ emp_appraisal_measure.measure.min_rating }} - {{ emp_appraisal_measure.measure.max_rating }}</i>
+                        </div>
+                        {% if form.rating.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.rating.errors|striptags }}</span></div>
+                        {% endif %}
+                        
+                    </td>
+                </tr>
+                <tr style="">
+                    <td style="vertical-align: top;" width="20%">{{ form.comment.label}} </td>
+                    <td>
+                        <div class="left">{{ form.comment }}&nbsp;&nbsp;</div>
+                        {% if form.comment.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.comment.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Save" /></td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>&nbsp;&nbsp;<a href="{% url 'appraisal:employee_appraisal_measure_list' emp_app_id=emp_appraisal_measure.employee_appraisal.id %}"><button>Back to Appraisal List</button></a>
+</div>
+
+        
+{% endblock %}

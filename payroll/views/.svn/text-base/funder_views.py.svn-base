@@ -1,0 +1,174 @@
+from django.views.generic import ListView, UpdateView, DeleteView, CreateView
+from payroll.models import *
+from payroll.forms import FunderForm, FunderProjectForm, DonorLineForm
+
+class FunderListView(ListView):
+
+    queryset = Funder.objects.all().order_by('name')
+    context_object_name = 'funder_list'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        self.context = super(FunderListView, self).get_context_data(**kwargs)
+        try: # self.request.session['page_message']:
+            self.context['page_message'] = self.request.session['page_message']
+            self.request.session['page_message'] = ''
+        except KeyError:
+            pass
+        
+        return self.context
+
+class FunderUpdateView(UpdateView):
+    model = Funder
+    form_class = FunderForm
+    template_name = 'funder_form.html'
+    success_url = '/funder/'
+
+    def get_context_data(self, **kwargs):
+        context = super(FunderUpdateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/funder/edit/%s/' % self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = '%s has been successfully modified.' % \
+            str(self.get_object().name)
+        return super(FunderUpdateView, self).form_valid(form)
+
+class FunderCreateView(CreateView):
+    form_class = FunderForm
+
+    template_name = 'funder_form.html'
+    success_url = '/funder/'
+
+    def get_context_data(self, **kwargs):
+        context = super(FunderCreateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/funder/new/'
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = \
+            '%s has been successfully created.' % form.data['name']
+        return super(FunderCreateView, self).form_valid(form)
+
+class FunderDeleteView(DeleteView):
+    model = Funder
+    success_url = '/funder/'
+
+    def delete(self, request, *args, **kwargs):
+        request.session['page_message'] = '%s has been successfully deleted' % \
+            str(self.get_object().name)
+        return super(FunderDeleteView, self).delete(request, *args, **kwargs)
+
+class FunderProjectListView(ListView):
+
+    queryset = FunderProject.objects.all().order_by('name')
+    context_object_name = 'funder_project_list'
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        self.context = super(FunderProjectListView, self).get_context_data(**kwargs)
+        try:
+            self.context['page_message'] = self.request.session['page_message']
+            self.request.session['page_message'] = ''
+        except KeyError:
+            pass
+        return self.context
+
+class FunderProjectUpdateView(UpdateView):
+    model = FunderProject
+    form_class = FunderProjectForm
+    template_name = 'funder_project_form.html'
+    success_url = '/project/'
+
+    def get_context_data(self, **kwargs):
+        context = super(FunderProjectUpdateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/project/edit/%s/' % self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = '%s has been successfully modified.' % \
+            str(self.get_object().name)
+        return super(FunderProjectUpdateView, self).form_valid(form)
+
+class FunderProjectCreateView(CreateView):
+    form_class = FunderProjectForm
+
+    template_name = 'funder_project_form.html'
+    success_url = '/project/'
+
+    def get_context_data(self, **kwargs):
+        context = super(FunderProjectCreateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/project/new/'
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = \
+            '%s has been successfully created.' % form.data['name']
+        return super(FunderProjectCreateView, self).form_valid(form)
+
+class FunderProjectDeleteView(DeleteView):
+    model = FunderProject
+    success_url = '/project/'
+
+    def delete(self, request, *args, **kwargs):
+        request.session['page_message'] = '%s has been successfully deleted' % \
+            str(self.get_object().name)
+        return super(FunderProjectDeleteView, self).delete(request, *args, **kwargs)
+
+class DonorLineListView(ListView):
+
+    queryset = DonorLine.objects.all().order_by('name')
+    context_object_name = 'donorline_list'
+    paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        self.context = super(DonorLineListView, self).get_context_data(**kwargs)
+        try: #if self.request.session['page_message']:
+            self.context['page_message'] = self.request.session['page_message']
+            self.request.session['page_message'] = ''
+        except KeyError:
+            pass
+        return self.context
+    
+class DonorLineUpdateView(UpdateView):
+    model = DonorLine
+    form_class = DonorLineForm
+    template_name = 'donorline_form.html'
+    success_url = '/donorline/'
+
+    def get_context_data(self, **kwargs):
+        context = super(DonorLineUpdateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/donorline/edit/%s/' % self.kwargs['pk']
+
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = '%s has been successfully modified.' % \
+            str(self.get_object().name)
+        return super(DonorLineUpdateView, self).form_valid(form)
+
+class DonorLineCreateView(CreateView):
+    form_class = DonorLineForm
+
+    template_name = 'donorline_form.html'
+    success_url = '/donorline/'
+
+    def get_context_data(self, **kwargs):
+        context = super(DonorLineCreateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/donorline/new/'
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = \
+            '%s has been successfully created.' % form.data['name']
+        return super(DonorLineCreateView, self).form_valid(form)
+
+class DonorLineDeleteView(DeleteView):
+    model = DonorLine
+    success_url = '/donorline/'
+
+    def delete(self, request, *args, **kwargs):
+        request.session['page_message'] = '%s has been successfully deleted' % \
+            str(self.get_object().name)
+        return super(DonorLineDeleteView, self).delete(request, *args, **kwargs)
+

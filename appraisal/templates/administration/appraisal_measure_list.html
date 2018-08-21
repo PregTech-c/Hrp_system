@@ -1,0 +1,62 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Appraisal' %} &rang; {% trans 'Measures' %}</h3>
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    
+    <table id="table">
+
+        {% if appraisal_measure_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="">{% trans 'Type' %}</th>
+            <th width="">{% trans 'Position' %}</th>
+            <th width="">{% trans 'Rating' %}</th>
+            <th width="50%">{% trans 'Definition' %}</th>
+            <!--<th width="" valign="top">{% trans 'Description' %}</th>-->
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for measure in appraisal_measure_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ measure.parameter }}</td>
+            <td>{{ measure.position }}</td>
+            <td>{{ measure.min_rating }} - {{ measure.max_rating }}</td>
+            <td>{{ measure.definition }}</td>
+            <td align="center">
+                <a href="#">{% trans 'details' %}</a>
+                &nbsp;&nbsp;
+                <a href="{% url 'appraisal:appraisal_measure_edit' pk=measure.id %}">{% trans 'edit' %}</a>
+                &nbsp;&nbsp;
+                <a href="{% url 'appraisal:appraisal_measure_delete' pk=measure.id %}">{% trans 'delete' %}</a>
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "Create a new measure by clicking the NEW MEASURE button below." %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'appraisal:appraisal_measure_list' as url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <div><a href="{% url 'appraisal:appraisal_measure_create' %}"><button>{% trans 'NEW MEASURE' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="holiday_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

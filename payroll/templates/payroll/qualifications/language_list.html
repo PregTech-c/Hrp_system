@@ -1,0 +1,56 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Qualifications' %} &rang; {% trans 'Languages' %}</h3>
+    
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    
+    <table id="table">
+        {% if language_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for lang in language_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ lang.name }}</td>
+            <td>{{ lang.description }}</td>
+            <td>
+                <a href="{% url 'payroll:lang_edit' pk=lang.id %}">{% trans 'edit' %}</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="{% url 'payroll:lang_delete' pk=lang.id %}">{% trans 'delete' %}</a>
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "There are no languages defined. Click the ADD LANGUAGE button below to create one, e.g. English" %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'payroll:lang_list' as lang_url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=lang_url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <div><a href="{% url 'payroll:lang_add' %}"><button>{% trans 'Add Language' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="lang_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock %}

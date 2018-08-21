@@ -1,0 +1,75 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Company Info' %} &rang; {% blocktrans %}{{ action }} Service Line Type{% endblocktrans %}</h3>
+
+    {% if form.errors and not form.non_field_errors %}
+    <div id="warning" class="info_div">
+        <span class="ico_error">
+                {% trans 'Please correct the errors below' %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div id="fail" class="info_div">
+        <span class="ico_cancel">
+            {% for error in form.non_field_errors %}
+                    <font style="font-size: 6px">{{ error }}</font>
+            {% endfor %}
+    </span>
+    </div>
+    {% endif %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Service Line Type Info' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_name">{% trans 'Name' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.name }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.name.errors %}
+                    <div id="fail" class="quickview left">
+                        <span class="ico_cancel">{% for e in form.name.errors %}{{ e }}{% endfor %}</span>
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top" width="20%"><label for="id_description">{% trans 'Type' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.description }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.description.errors %}
+                    <div id="fail" class="quickview left">
+                        <span class="ico_cancel">{% for e in form.description.errors %}{{ e }}{% endfor %}</span>
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" />
+                </td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+    &nbsp;<a href="{% url 'payroll:sl_type_list' %}"><button>{% trans 'Back to List' %}</button></a>
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="sl_type_list" menu="company" %}
+{% endblock sidebar %}
+
+{% endblock main_content %}

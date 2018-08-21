@@ -1,0 +1,79 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">Administration &rang; {% trans 'Leave' %} &rang; {% trans 'Leave Approvers' %}</h3>
+    
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+
+    <table id="table">
+        {% if approver_list %}
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="">{% trans 'Service Line' %}</th>
+            <th width="">{% trans 'Position' %}</th>
+            <th width="10%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        
+        {% for approver in approver_list %}
+
+        <tr>
+            <td>{{  forloop.counter }}.</td>
+            <td>{{ approver.profile.get_fullname }}</td>
+            <td>{{ approver.profile.service_line }}</td>
+            <td>{{ approver.profile.position }}</td>
+            <td align="center">
+                <a href="{% url 'leave:leave_approver_remove' rem_pk=approver.id %}" 
+                   onClick="return confirm('Are you sure you want to remove {{ approver.profile.get_fullname }}?')">
+                    {% trans 'remove' %}
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+            <div id="warning">
+                <span class="ico_error">
+                {% trans "Select personnel that will receive and approve leave requests. None have been registered yet." %}
+                </span>
+            </div>
+        {% endfor %}
+    </table>
+
+    <div class="blankline"></div>
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Approver' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_profile">{% trans 'Employee' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.profile }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.profile.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.profile.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" /></td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="approver_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

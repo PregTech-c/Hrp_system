@@ -1,0 +1,42 @@
+-   model: auth.group
+    pk: 1
+    fields: 
+        name: Admin
+        permissions: [
+            ['hrp_configure_company', 'payroll', 'employeeprofile'],
+            ['hrp_configure_pim', 'payroll', 'employeeprofile'],
+            ['hrp_manage_employee_info', 'payroll', 'employeeprofile'],            
+            ['hrp_configure_leave', 'payroll', 'employeeprofile'],
+            ['hrp_configure_payroll', 'payroll', 'employeeprofile'],
+            ['hrp_view_system_reports', 'payroll', 'employeeprofile'],
+            ['hrp_configure_appraisal', 'payroll', 'employeeprofile']
+        ]
+
+-   model: auth.group
+    pk: 2
+    fields: 
+        name: HR
+        permissions: [         
+            ['hrp_configure_company', 'payroll', 'employeeprofile'],
+            ['hrp_configure_appraisal', 'payroll', 'employeeprofile'],
+            ['hrp_manage_appraisals', 'payroll', 'employeeprofile'],
+            ['hrp_configure_pim', 'payroll', 'employeeprofile'],
+            ['hrp_manage_employee_info', 'payroll', 'employeeprofile'],
+            ['hrp_configure_leave', 'payroll', 'employeeprofile'],
+            ['hrp_handle_leave_requests', 'payroll', 'employeeprofile'],
+            ['hrp_manage_recruitment', 'payroll', 'employeeprofile'],
+            ['change_vacancy', 'recruitment', 'vacancy'],
+            ['change_jobapplication', 'recruitment', 'jobapplication'],
+            ['change_evaluationstage', 'recruitment', 'evaluationstage']
+        ]   
+-   model: auth.group
+    pk: 3
+    fields: 
+        name: Accounts
+        permissions: [         
+            ['hrp_configure_payroll', 'payroll', 'employeeprofile'],
+            ['hrp_manage_payroll', 'payroll', 'employeeprofile'],
+            ['hrp_authorize_payroll', 'payroll', 'employeeprofile'],
+            ['hrp_view_payroll_reports', 'payroll', 'employeeprofile']
+        ]
+    

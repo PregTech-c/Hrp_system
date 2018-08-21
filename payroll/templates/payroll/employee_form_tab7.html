@@ -1,0 +1,138 @@
+{% load i18n %}
+
+<style>
+ul {
+  padding: 0;
+  margin: 0;
+}
+
+ul li {
+  list-style: none;
+}
+</style>
+<form id="users" action="form_sent.php" method="post">
+<div class="user">
+<table width="100%">
+  <!--<ul id="fieldList">-->
+    <tr>
+        <td style="vertical-align: top" width="25%"><label for="id_name">Full Name</label></td>
+        <td><div style="margin-left: -3px;" class="left">{{ dform.full_name }}</div></td>
+    </tr>
+    <!--<tr>
+        <td style="vertical-align: top" width="25%"><label for="id_name">Last Name</label></td>
+        <td><div style="margin-left: -3px;" class="left">{{ dform.last_name }}</div></td>
+    </tr>-->
+    <tr>
+        <td  style="vertical-align: top" width="15%"><label for="id_date_of_birth">D.O.B</label></td>
+        <td>
+            <div style="margin-left: -3px;" class="left">{{ dform.date_of_birth }}&nbsp;&nbsp;</div>
+           {% if dform.date_of_birth.errors %}
+            <div id="fail" class="quickview left"><span class="ico_cancel">{{ dform.date_of_birth.errors }}</span></div>
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+       <td style="vertical-align: top">
+           <label  for="id_first_name">Gender</label>
+       </td>
+       <td>
+           <div class="left">{{ dform.gender }}&nbsp;&nbsp;</div>
+           {% if dform.gender.errors %}
+            <div id="fail" class="quickview left"><span class="ico_cancel">{{ dform.gender.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_nin">NIN</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ dform.nin }}</div>
+           {% if dform.nin.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ dform.nin.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_number_of_children">Relationship</label>
+       </td>
+       <td>
+           <div>{{ dform.relationship }}</div>
+           {% if dform.relationship.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ dform.relationship.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_nin">Contact</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ dform.contact }}</div>
+           {% if dform.other_names.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ dform.contact.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_address">{% trans 'Address' %}</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ dform.address }}</div>
+           {% if dform.address.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ dform.address.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+    <tr>
+       <td style="vertical-align: top">
+           <label for="id_other_names">Photograph</label>
+       </td>
+       <td>
+           <div style="margin-left: -3px;">{{ dform.photograph }}</div>
+           {% if dform.photograph.errors %}
+            &nbsp;&nbsp;<div id="fail" class="info_div">
+                <span class="ico_cancel">{{ dform.photograph.errors }}</span></div>
+            {% endif %}
+       </td>
+    </tr>
+  <!--</ul>-->
+</table>
+</div>
+<button id='add-user'>Add More</button>
+</form>
+<!--<script type="text/javascript">
+    $(function() {
+      $("#addMore").click(function(e) {
+        e.preventDefault();
+        $("#fieldList").append("<li>&nbsp;</li>");
+        $("#fieldList").append("
+                <td style="vertical-align: top" width="25%"><label for="id_name">Full Name</label></td>
+                <td><div style="margin-left: -3px;" class="left">{{ dform.full_name }}</div>
+            </tr>");
+        $("#fieldList").append("<li><input type='text' name='name[]' placeholder='Name' /></li>");
+        $("#fieldList").append("<li><input type='text' name='phone[]' placeholder='Phone' /></li>");
+        $("#fieldList").append("<li><input type='text' name='email[]' placeholder='E-Mail' /></li>");
+      });
+    });
+
+</script>-->
+<script type="text/javascript">
+    (function() {
+       var button=document.getElementById("add-user");
+       button.addEventListener('click', function(event) {
+          event.stopPropagation();
+          event.preventDefault();
+          var cln = document.getElementsByClassName("user")[0].cloneNode(true);
+          document.getElementById("users").insertBefore(cln,this);
+          return false;
+       });
+    })();
+</script>

@@ -1,0 +1,85 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+<!--<head>
+    <script type="text/javascript" src="/admin/jsi18n/"></script>
+    <script>function gettext(txt){ return txt}</script>
+            {{ form.media }}
+
+    </script>
+</head>-->
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_start_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd',
+                   minDate: "-365D", maxDate: "+365D"
+               });
+               jQuery("#id_end_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd',
+                   minDate: "-365D", maxDate: "+365D"
+               });
+               
+            });
+        </script>
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Add" as action %}{% endif %}     
+    <h3 class="ico_mug">{% trans 'Payroll' %} &rang; {% blocktrans %}{{ action }} Pay Period{% endblocktrans %}</h3>
+
+    {% if form.errors and not form.non_field_errors %}
+    <div id="warning" class="info_div">
+        <span class="ico_error">
+                {% trans 'Please correct the errors below' %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div id="fail" class="info_div">
+        <span class="ico_cancel">
+            {% for error in form.non_field_errors %}
+                    {{ error }}
+            {% endfor %}
+    </span>
+    </div>
+    {% endif %}
+
+    <form action="{{ action_url }}" method="post">
+
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'PayPeriod Info' %}</span></legend>
+            <table width="100%">
+                <tr>
+                    <td width="20%">{{ form.start_date.label}} </td>
+                    <td>
+                        {{ form.start_date }}&nbsp;&nbsp;{{ form.start_date.errors }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="20%">{{ form.end_date.label}} </td>
+                    <td>
+                        {{ form.end_date }}&nbsp;&nbsp;{{ form.end_date.errors }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="20%">{{ form.total_working_days.label}} </td>
+                    <td>
+                        {{ form.total_working_days }}&nbsp;&nbsp;
+                        {{ form.total_working_days.errors }}
+                    </td>
+                </tr>
+
+            </table>
+
+                    <input type="submit" value="Save" />
+                    
+
+        </fieldset>
+    </form>&nbsp;&nbsp;<a href="{% url 'payroll:payperiod_list' %}"><button>Back to Payperiod List</button></a>
+</div>
+
+        
+{% endblock %}

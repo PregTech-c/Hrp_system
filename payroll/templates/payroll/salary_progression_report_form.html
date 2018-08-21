@@ -1,0 +1,212 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+{% load humanize %}
+{% load widget_tweaks %}
+{% block extra_css %}
+  <style>
+    .dropbtn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .dropbtn:hover, .dropbtn:focus {
+        background-color: #3e8e41;
+    }
+
+    #myInput {
+        border-box: box-sizing;
+        background-image: url('searchicon.png');
+        background-position: 14px 12px;
+        background-repeat: no-repeat;
+        font-size: 16px;
+        padding: 14px 20px 12px 45px;
+        border: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    #myInput:focus {outline: 3px solid #ddd;}
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f6f6f6;
+        min-width: 230px;
+        overflow: auto;
+        border: 1px solid #ddd;
+        z-index: 1;
+    }
+
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown a:hover {background-color: #ddd;}
+
+    .show {display: block;}
+  </style>
+{% endblock %}
+
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_start_date").datepicker({
+                   dateFormat: 'yy-mm-dd',
+//                   minDate: "-0D", maxDate: "+365D"
+               });
+               jQuery("#id_end_date").datepicker({
+                   dateFormat: 'yy-mm-dd',
+//                   minDate: "-0D", maxDate: "+365D"
+               });
+
+            });
+        </script>
+        <script>
+            /* When the user clicks on the button,
+            toggle between hiding and showing the dropdown content */
+            function myFunction() {
+                document.getElementById("myDropdown").classList.toggle("show");
+            }
+
+            function filterFunction() {
+                var input, filter, ul, li, a, i;
+                input = document.getElementById("myInput");
+                filter = input.value.toUpperCase();
+                div = document.getElementById("myDropdown");
+                a = div.getElementsByTagName("a");
+                for (i = 0; i < a.length; i++) {
+                    if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        a[i].style.display = "";
+                    } else {
+                        a[i].style.display = "none";
+                    }
+                }
+            }
+        </script>
+
+{% endblock %}
+
+{% block main_content %}
+<div class="section">
+    <h3 class="ico_mug">Reports &rang; PIM &rang; Salary History Report</h3>
+
+    {% if form.errors and not form.non_field_errors %}
+    <div id="warning" class="info_div">
+        <span class="ico_error">
+                {% trans 'Please correct the errors below' %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div id="fail" class="info_div">
+        <span class="ico_cancel">
+            {% for error in form.non_field_errors %}
+                    {{ error }}
+            {% endfor %}
+    </span>
+    </div>
+    {% endif %}
+
+    <form action="{% url 'payroll:salary_progression_report' %}" method="get">
+
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>Search Criteria</span></legend>
+            <table width="100%">
+                <tr>
+                    <td width="15%">{{ form.employee.label}} </td>
+                    <td>
+                        <div style="margin-left: 2px;">{{ form.employee }}</div>
+                        {% if form.employee.errors %}
+                        <div id="fail" class="quickview left">
+                            <span class="ico_cancel">{{ form.employee.errors }}</span>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="15%">From </td>
+                    <td>
+                        <div class="left">{{ form.start_date }}&nbsp;&nbsp;</div>
+                        {% if form.start_date.errors %}
+                        <div id="fail" class="quickview left">
+                        <span class="ico_cancel">{{ form.start_date.errors }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="15%">To </td>
+                    <td>
+                        {{ form.end_date }}&nbsp;&nbsp;
+                        {% if form.end_date.errors %}
+                        <div id="fail" class="quickview left">
+                        <span class="ico_cancel">{{ form.end_date.errors }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+
+            </table>
+                  <div style="margin-left: 135px;">
+                    <input type="submit" value="Search" />&nbsp;&nbsp;
+                    <a href="{% url 'payroll:salary_progression_report' %}">Reset Form</a>
+                  </div>
+        </fieldset>
+    </form>
+
+    {% if payslips %}
+
+    <a href="{% url 'payroll:salary_progression_pdf' pk=get.employee from=get.start_date|default:0 to=get.end_date|default:0 %}"
+       target="_blank"><button>Export to PDF</button></a>
+
+    <table id="table">
+        <thead>
+            <tr>
+                <th>Pay Period</th>
+                <th>Contractual Pay</th>
+                <th>Basic Pay</th>
+                <th>Gross Pay</th>
+                <th>Net Pay</th>
+                <th>NSSF</th>
+                <th>PAYE</th>
+            </tr>
+        </thead>
+        {% for payslip in payslips %}
+        <tr>
+            <td>{{ payslip.payroll.pay_period }}</td>
+            <td align="right">{{ payslip.contractual_pay.amount|floatformat:"2"|intcomma }}</td>
+            <td align="right">{{ payslip.basic_pay|floatformat:"2"|intcomma }}</td>
+            <td align="right">{{ payslip.gross_pay|floatformat:"2"|intcomma }}</td>
+            <td align="right">{{ payslip.net_pay|floatformat:"2"|intcomma }}</td>
+            <td align="right">{{ payslip.nssf|floatformat:"2"|intcomma }}</td>
+            <td align="right">{{ payslip.paye|floatformat:"2"|intcomma }}</td>
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <td></td>
+            <td align="right"><b>{{ total_contractual_pay|floatformat:"2"|intcomma }}</b></td>
+            <td align="right"><b>{{ total_basic_pay|floatformat:"2"|intcomma }}</b></td>
+            <td align="right"><b>{{ total_gross_pay|floatformat:"2"|intcomma }}</b></td>
+            <td align="right"><b>{{ total_net_pay|floatformat:"2"|intcomma }}</b></td>
+            <td align="right"><b>{{ total_nssf|floatformat:"2"|intcomma }}</b></td>
+            <td align="right"><b>{{ total_paye|floatformat:"2"|intcomma }}</b></td>
+        </tr>
+    </table>
+    {% endif %}
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "easy_pdf/base.html" %}
+{% load staticfiles %}
+{% load pdf_filters %}
+{% load i18n %}
+{% load humanize %}
+
+{% block extra_style %}
+<style lang="text/css">
+    table {border-collapse: collapse;}
+    td {padding: 1px;}
+    h3 {border-bottom 1px solid black; font-weight: bold; padding-top: 5px}
+</style>
+{% endblock %}
+
+{% block page_header %}
+    <table width="100%">
+        <tr>
+            <td width="20%">
+                <img src="{{ img_path|add:'static/img/hrp-logo-4pdf.png'|get64 }}" alt="Logo" />
+            </td>
+            <td style="padding-left: 5px">
+                <strong>
+                ACTIVITY REPORT<br/>
+                {% if employee %}{{ employee }} {% endif %}{% if from != '0' %}From {{ from }}{% else %}the start{% endif %} To {% if to != '0' %}{{ to }}{% else %}{% now "Y-m-d G:i" %}{% endif %}
+                </strong><br/>
+            </td>
+        </tr>
+    </table>
+{% endblock %}
+
+{% block content %}
+<p>&nbsp;</p>
+    <table width="100%">
+        <thead>
+            <tr style="border-bottom: 1px solid black">
+                <th width="3%">#</th>
+                <th width="20%">{% trans "Time" %}</th>
+                <th width="20%">{% trans "User" %}</th>
+                <th width="57%">{% trans "Action" %}</th>
+            </tr>
+        </thead>
+    {% for log in activity_list %}
+    <tr>
+        <td align="center">{{ forloop.counter }}.</td>
+        <td>{{ log.time_stamp }}</td>
+        <td>{{ log.user }}</td>
+        <td>{{ log.action }}</td>
+    </tr>
+    {% endfor %}
+
+    </table>
+{% endblock %}

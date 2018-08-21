@@ -1,0 +1,79 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+<div id="dashboard" class="left">
+
+<h3 class="ico_mug">Leave &rang; Reports &rang; Leave Detail</h3>
+<table id="table">
+    <tr>
+        <th colspan='2'>{% trans 'Employee' %}</th>
+    </tr>
+    <tr>
+        <td width="25%"><strong>Name</strong>:</td>
+        <td>{{ leaverequest.profile.get_fullname }}</td>
+    </tr>
+    <tr>
+        <td><strong>Position:</td>
+        <td>{{ leaverequest.profile.position }}</td>
+    </tr>
+    <tr>
+        <td><strong>Service Line</strong>:</td>
+        <td>{{ leaverequest.profile.service_line }}</td>
+    </tr>
+</table>
+<div class='blankline'></div>
+<table id="table">
+    <tr>
+        <th colspan='4'>{% trans 'Leave Particulars' %}</th>
+    </tr>
+    <tr>
+        <td><strong>Leave Type</strong>:</td>
+        <td>{{ leaverequest.leave_type }}</td>
+        <td><strong>Approved By</strong>:</td>
+        <td>{{ leaverequest.get_approved_by.get_fullname }}</td>
+    </tr>
+    <tr>
+        <td width="25%"><strong>Financial Year</strong>:</td>
+        <td>{{ leaverequest.leave_period }}</td>
+        <td><strong>Approved On</strong>:</td>
+        <td>{{ leaverequest.get_approved_at }}</td>
+    </tr>
+    <tr>
+        <td><strong>Start Date</strong>:</td>
+        <td>{{ leaverequest.start_date|date:"SHORT_DATE_FORMAT" }}</td>
+        <td><strong>Approver Comment</strong>:</td>
+        <td>{{ leaverequest.get_approver_comment|default:"N/A" }}</td>
+    </tr>
+    <tr>
+        <td><strong>End Date</strong>:</td>
+        <td colspan='3'>{{ leaverequest.end_date|date:"SHORT_DATE_FORMAT" }}</td>
+    </tr>
+    <tr>
+        <td><strong>No. Of Days</strong>:</td>
+        <td colspan='3'>{{ leaverequest.get_no_of_days }}</td>
+    </tr>
+    <tr>
+        <td width="20%"><strong>Requested On</strong>:</td>
+        <td colspan='3'>{{ leaverequest.created_at|date:"SHORT_DATE_FORMAT" }}</td>
+    </tr>
+    <tr>
+        <td><strong>Employee Comment</strong>:</td>
+        <td colspan='3'>{{ leaverequest.comment|default:"N/A" }}</td>
+    </tr>
+</table>
+
+{% if request.session.search %}
+    <a href="{% url 'leave:leave_report_on_leave' search='on' show_form='on' %}"><button>Back</button></a>&nbsp;&nbsp;
+    {% else %}
+    <a href="{% url 'leave:leave_report_on_leave' search='off' show_form='on' %}"><button>Back</button></a>&nbsp;&nbsp;
+{% endif %}
+<a href="{% url 'leave:leave_request_detail_pdf' pk=object.pk %}" target="_blank"><button>Download PDF</button></a>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="educ_level_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock %}
+

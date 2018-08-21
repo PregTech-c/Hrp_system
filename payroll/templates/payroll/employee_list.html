@@ -1,0 +1,108 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h3 class="ico_mug">{% trans 'PIM' %} &rang; {% trans 'Staff List' %}</h3>
+    <div>
+        <form action="{% url 'payroll:user_search' %}" method="post" >
+        <fieldset>
+            {% csrf_token %}
+                Search Name:&nbsp;{{ form.emp_name }}&nbsp;<input type="submit" value="Filter" />&nbsp;&nbsp;
+                    <a href="{% url 'payroll:user_search' %}">{% trans 'Reset' %}</a>
+        <!--</fieldset>-->
+    <!--  </form>-->
+      <!--  <div>
+        <tr>
+           <td style="vertical-align: top" width="40%">
+             <table>
+               <tr>
+                   <td width="56.3%">Service Line</td>
+                   <td style="margin-left: 150px;">{{ form.service_line }}</td>
+               </tr>
+               <tr>
+                   <td>Branch</td>
+                   <td>{{ form.branch }}</td>
+               </tr>
+             </table>
+            </td>
+          </tr>
+        </div>-->
+    </div>
+  </field>
+</form>
+        {% if is_paginated %}
+            {% url 'payroll:user_list' as e_url %}
+        {% include "payroll/pagination.html" with page=page_obj url=e_url %}
+    {% endif %}
+	<BR/>
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    <table id="table">
+        <thead>
+            <tr>
+                <th width="5%">#</th>
+                <th width="15%">{% trans "Name" %}</th>
+                <th width="10%">{% trans "Username" %}</th>
+                <th width="10%">{% trans "Position" %}</th>
+                <th width="10%">{% trans "Role" %}</th>
+                <th width="10%">{% trans "Status" %}</th>
+                <th width="10%">{% trans "Service Line" %}</th>
+                <!--<th width="10%">{% trans "Children" %}</th>-->
+                <th width="12%">{% trans "Contract Type" %}</th>
+                <th width="" ><center>{% trans "Action" %}</center></th>
+            </tr>
+        </thead>
+
+    {% for emp in object_list %}
+    <tr>
+        <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+        <td><a href="{% url 'payroll:user_detail' pk=emp.id %}">{{ emp.profile.get_fullname|default:"N/A" }}</a></td>
+        <td>{{ emp.username|default:"N/A" }}</td>
+        <td>{{ emp.profile.position|default:"N/A" }}</td>
+        <td>
+            {% for group in emp.groups.all %}
+                {{ group }}
+            {% endfor %}
+        </td>
+        <td>
+            {{ emp.profile.get_status_display }}
+        </td>
+        <td>{{ emp.profile.service_line|default:"N/A" }}</td>
+
+        <!--<td>{{ emp.profile.branch|default:"N/A" }} {# emp.profile.exists_in_payroll #}</td>-->
+        <!--<td>
+          {{ emp.profile.number_of_children }}
+        </td>-->
+        <td>
+          {{ emp.profile.get_contract_type_display }}
+        </td>
+        <td>
+            {% if perms.payroll.hrp_manage_employee_info %}
+            <a href="{% url 'payroll:user_edit' pk=emp.id %}">{% trans "edit" %}</a>
+            &nbsp;
+            <a href="{% url 'payroll:user_delete' emp.id %}">{% trans "deactivate" %}</a>
+            &nbsp;
+            {% endif %}
+
+            {% if user.is_superuser %}
+            <a href="{% url 'payroll:user_send_password' pk=emp.id %}"
+                onClick="return confirm('Are you sure you want to send this employee a new password?')">send pwd</a>
+            {% endif %}
+<!--            <a href="/emp_detail">view details</a>-->
+       </td>
+    </tr>
+    {% endfor %}
+
+    </table>
+
+    {% if is_paginated %}
+		{% url 'payroll:user_list' as e_url %}
+        {% include "payroll/pagination.html" with page=page_obj url=e_url %}
+    {% endif %}
+    {% if user.is_superuser %}
+    <br/>
+    <div><a href="{% url 'payroll:user_add' %}"><button>{% trans 'Add Employee' %}</button></a></div>
+    {% endif %}
+</div>
+{% endblock main_content %}

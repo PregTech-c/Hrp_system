@@ -1,0 +1,23 @@
+{%load i18n %}
+
+{{ docsformset.management_form }}
+<table width="100%">
+                
+    {% for form in docsformset %}
+        <tr>
+            <td width="15%">
+                <label for="id_form-{{ forloop.counter0 }}-document">{{ forloop.counter }}.</label>
+            </td>
+            <td width="35%">
+                <input id="id_form-{{ forloop.counter0 }}-document" name="form-{{ forloop.counter0 }}-document" type="file" />
+            </td>
+            <td width="15%">
+                <label for="id_form-{{ forloop.counter0 }}-description">Description</label>
+            </td>
+            <td>
+                <input id="id_form-{{ forloop.counter0 }}-description" maxlength="32" name="form-{{ forloop.counter0 }}-description" type="text" size="60" />
+                <input id="id_form-{{ forloop.counter0 }}-id" name="form-{{ forloop.counter0 }}-id" type="hidden" />
+            </td>
+        </tr>
+    {% endfor %}
+</table>

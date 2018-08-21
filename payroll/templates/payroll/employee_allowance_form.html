@@ -1,0 +1,130 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_expired_at").datepicker({
+                   dateFormat: 'yy-mm-dd',
+                   minDate: "-0D", maxDate: "+365D"
+               });
+            });
+        </script>
+{% endblock %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+
+    <h3 class="ico_mug">{% trans 'Payroll' %} &rang; Recurring {% if form.allowance %}Allowance{% else %}Deduction{% endif %}</h3>
+
+    {% include "payroll/form_error_display.html" %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {% for h in form.hidden_fields %}
+        {{ h }}
+        {% endfor %}
+        <fieldset>
+            <legend><span>{% trans 'Adjustment' %}</span></legend>
+        <table width="100%">
+            <tr>
+              <td style="vertical-align: top" width="20%"><label for="id_employee">{% trans 'Sort by:' %}</label></td>
+              <td>
+                  <div class="left">
+                      {{ form.sort_by }} &nbsp;&nbsp;
+                  </div>
+                  {% if form.sort_by.errors %}
+                   <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.sort_by.errors|striptags }}</span></div>
+                   {% endif %}
+               </td>
+           </tr>
+
+            <tr>
+              {% if form.sort_by == "employee" %}
+               <td style="vertical-align: top" width="20%"><label for="id_employee">{% trans 'Employee' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.employee }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.employee.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.employee.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+              {% endif %}
+            </tr>
+            {% if form.allowance %}
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_allowance">{% trans 'Allowance' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.allowance }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.allowance.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.allowance.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_deduction">{% trans 'Deduction' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.deduction }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.deduction.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.deduction.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_amount">{% trans 'Amount' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.amount }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.amount.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.amount.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_comment">{% trans 'Comment' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.comment }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.comment.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.comment.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_expires_at">{% trans 'Expires' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.expired_at }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.expired_at.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.expired_at.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" /></td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+    <a href="{% url 'payroll:emp_adj_list' %}"><button>{% trans 'Back' %}</button></a>
+
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="educ_level_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock main_content %}

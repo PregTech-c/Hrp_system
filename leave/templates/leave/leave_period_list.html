@@ -1,0 +1,52 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">Administration &rang; {% trans 'Leave' %} &rang; Leave Periods</h3>
+
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+
+    <table id="table">
+
+        <tr>
+            <th width="10%">#</th>
+            <th width="">{% trans 'Start Date' %}</th>
+            <th width="">{% trans 'End Date' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+
+        {% for period in leave_period_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ period.start_date }}</td>
+            <td>{{ period.end_date }}</td>
+            <td>{{ period.comment }}</td>
+            <td align="center">
+                <a href="{% url 'leave:leave_period_edit' pk=period.id %}">Edit</a>
+                &nbsp;&nbsp;
+                <a href="{% url 'leave:leave_period_delete' pk=period.id %}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'leave:leave_period_list' as url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <div><a href="{% url 'leave:leave_period_create' %}"><button>{% trans 'Add Leave Period' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="leave_period_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

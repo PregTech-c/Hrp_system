@@ -1,0 +1,49 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h2 class="ico_mug">List of Branches</h2>
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+    </div><br/>
+    {% endif %}
+
+    <table id="table">
+
+        <tr>
+            <th width="10%">#</th>
+            <th width="70%">Name</th>
+            <th>Action</th>
+        </tr>
+
+        {% for branch in branch_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ branch.name }}</td>
+            <td>
+            <a href="{% url 'payroll:branch_edit' pk=branch.id %}">
+                <img src="{% static 'img/edit.jpg' %}" alt="delete" title="Edit"/></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url 'payroll:branch_delete' pk=branch.id %}" >
+                <img src="{% static 'img/cancel.jpg' %}" alt="delete" title="Delete" /></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'payroll:branch_list' as branch_url %}
+        {% include "payroll/pagination.html" with page=page_obj url=branch_url %}
+    {% endif %}
+
+    <br/>
+
+    <div><a href="{% url 'payroll:branch_add' %}"><button>{% trans 'Add Branch' %}</button></a></div>
+</div>
+{% endblock %}
