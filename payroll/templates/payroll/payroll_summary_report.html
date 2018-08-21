@@ -1,0 +1,87 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load payroll_extras %}
+{% load humanize %}
+
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_start_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd',
+                   minDate: "-0D", maxDate: "+365D"
+               });
+               jQuery("#id_end_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd',
+                   minDate: "-0D", maxDate: "+365D"
+               });
+               
+            });
+        </script>
+{% endblock %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+
+    <h3 class="ico_mug">
+        Reports &rang; Payroll &rang; {% trans 'Service Line Report' %}
+    </h3>
+    {% if form.errors and not form.non_field_errors %}
+    <div id="warning" class="info_div">
+        <span class="ico_error">
+                {% trans 'Please correct the errors below' %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div id="fail" class="info_div">
+        <span class="ico_cancel">
+            {% for error in form.non_field_errors %}
+                    {{ error }}
+            {% endfor %}
+    </span>
+    </div>
+    {{ form.errors }}
+    {% endif %}
+<form action="{% url 'payroll:payroll_summary_report' %}" method="post" >
+    {% csrf_token %}
+<fieldset>
+        <table style="width: 98%;">
+
+            <tr>
+                <td width="20%">Pay-period</td>
+                <td align="bottom">
+                    <div class="left">{{ form.payroll }}</div>
+                    {% if form.payroll.errors %}&nbsp;&nbsp;<div id="fail" class="quickview left"><span class="ico_cancel">{{ form.payroll.errors }}</div></span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td width="20%">Service Line</td>
+                <td align="bottom">
+                    <div class="left">{{ form.department }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Submit" /> &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="{% url 'payroll:payroll_summary_report' %}">{% trans 'Reset' %}</a>
+                </td>
+
+            </tr>
+        </table>
+</fieldset>
+</form>
+
+    {% if payroll %}
+<div>
+    <a target="_blank" href="{% url 'payroll:payroll_summary_pdf_report' payroll_id=payroll.id dept_id=department %}"><button>{% trans 'Download PDF' %}</button></a>&nbsp;&nbsp;
+    <a href="{% url 'payroll:payroll_summary_csv_report' payroll_id=payroll.id dept_id=department %}"><button>{% trans 'Download Excel' %}</button></a>&nbsp;&nbsp;
+</div>
+
+{% endif %}
+</div>
+
+{% endblock %}

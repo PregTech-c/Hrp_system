@@ -1,0 +1,78 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+
+    <h3 class="ico_mug">{% trans 'Recruitment' %} &rang; {% trans 'Applications' %} &rang; {{ vacancy }}</h3>
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    {% if request.session.show_search_form %}
+    {% include 'recruitment/jobapplication_list_search_form.html' %}
+    {% endif %}
+    {% if request.session.show_search_form %}
+    <a href="{% url 'recruitment:application_list_r' vac_id=vacancy.id page=1 search='on' show_form='off' %}"><button>Hide search form</button></a>
+    {% if form.is_bound %}
+    <a href="{% url 'recruitment:application_list_r' vac_id=vacancy.id page=1 search='off' show_form='on'%}"><button>Clear Search</button></a>
+    {% endif %}
+    {% else %}
+    <a href="{% url 'recruitment:application_list_r' vac_id=vacancy.id page=1 search='off' show_form='on' %}"><button>Show search form</button></a>
+    {% if form.is_bound %}
+    <a href="{% url 'recruitment:application_list_r' vac_id=vacancy.id page=1 search='off' show_form='off'%}"><button>Clear Search</button></a>
+    {% endif %}
+    {% endif %}
+    <table id="table">
+
+        {% if jobapplication_list %}
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="">{% trans 'Qualification' %}</th>
+            <th width="">{% trans 'Gender' %}</th>
+            <th width="">{% trans 'Age' %}</th>
+            <th width="">{% trans 'Exp.' %} (Yrs)</th>
+            <th width="">{% trans 'Stage' %}</th>
+            <th >{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for application in jobapplication_list %}
+
+        <tr>
+            <td>{{ page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ application.get_fullname }}</td>
+            <td>{{ application.get_qualification_display }}</td>
+            <td>{{ application.gender }}</td>
+            <td>{{ application.age_of_applicant }}</td>
+            <td align="right">{{ application.experience_years }}</td>
+            <td align="center">{{ application.evaluation_stage }}</td>
+            <td align="center">
+                <a href="{% url 'recruitment:application_detail' pk=application.id %}">details</a>
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "No applications found." %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% include "recruitment/pagination_digg.html" with paginator=paginator url=pg_url %}
+    {% endif %}
+    
+    <div class="blankline"></div>
+        <div class="blankline"></div>
+    {% if perms.payroll.hrp_manage_recruitment %}
+    <div><a href="{% url 'recruitment:vacancy_list' page=1 %}"><button>{% trans 'Back' %}</button></a></div>
+    {% endif %}
+
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="holiday_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

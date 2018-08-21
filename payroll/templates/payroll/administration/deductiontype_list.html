@@ -1,0 +1,60 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    
+    <h3 class="ico_mug">{% trans 'Administration' %} :: {% trans 'Payroll' %} :: {% trans 'Deduction Types' %}</h3>
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+
+    <table id="table">
+        {% if deductiontype_list %}
+        <tr>
+            <th width="5%">#</th>
+            <th width="20%">{% trans 'Name' %}</th>
+            <th width="30%">{% trans 'Description' %}</th>
+            <th width="20%">{% trans 'Affects Gross Pay' %}</th>
+            <th>Action</th>
+        </tr>
+        {% endif %}
+        
+        {% for deductiontype in deductiontype_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ deductiontype.name }}</td>
+            <td>{{ deductiontype.description }}</td>
+            <td>{{ deductiontype.affects_gross_pay|default_if_none:"False" }}</td>
+            <td align="center">
+            <a href="{% url 'payroll:deductiontype_edit' pk=deductiontype.id %}">{% trans "Edit" %}</a>
+            &nbsp;&nbsp;
+            <a href="{% url 'payroll:deductiontype_delete_p' pk=deductiontype.id %}">{% trans "Delete" %}</a>
+            &nbsp;&nbsp;
+       </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "There are no types defined. Click the ADD DEDUCTION TYPE button below to create one, e.g. Advance" %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'payroll:deductiontype_list' as d_url %}
+        {% include "payroll/pagination.html" with page=page_obj url=d_url %}
+    {% endif %}
+
+    <br/>
+
+    <div><a href="{% url 'payroll:deductiontype_add' %}"><button>{% trans 'Add Deduction Type' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="deductiontype_list" menu="payroll" %}
+{% endblock sidebar %}
+
+{% endblock %}

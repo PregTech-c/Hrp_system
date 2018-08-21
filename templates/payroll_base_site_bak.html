@@ -1,0 +1,179 @@
+{% extends 'payroll_base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% block body %}
+<div  id="header">
+    <div id="profile_info">
+        <img src="{% static 'img/avatar.jpg' %}" id="avatar" alt="avatar" />
+        <p>{% trans "Welcome " %} <strong>{{ user }}</strong>. <a href="{% url 'payroll:logout' %}">Log out?</a></p>
+<!--        <p>{% trans "System messages" %}: 3. <a href="#">{% trans "Read" %}?</a></p>-->
+        <p class="last_login">{% trans "Last login" %}: {{ user.last_login|date:"d/M/Y H:i" }}</p>
+    </div>
+    <div id="logo"><h1><a href="{% url 'payroll:home' %}">Payroll</a></h1></div>
+</div><!-- end header -->
+
+{% block menu %}
+<div id="content" >
+
+    <div id="top_menu" class="clearfix">
+    <ul class="sf-menu"> <!-- DROPDOWN MENU -->
+        <li class="current"><a href="{% url 'payroll:home' %}">{% trans "Home" %}</a></li>
+
+        {% if perms.payroll.can_view_system_info %}
+        <li>
+            <a href="#">{% trans "Administration" %}</a>
+            <ul>
+                <li class="current">
+                    <a href="{% url 'payroll:user_list' %}">{% trans "Setup" %}</a>
+                    <ul>
+                        <li>
+                            <a href="{% url 'payroll:user_list' %}">{% trans "Job Info" %}</a>
+                            <ul>
+                                <li><a href="{% url 'payroll:employeetitle_list' %}">{% trans "Employee Titles" %}</a></li>
+                                <li><a href="{% url 'payroll:position_list' %}">{% trans "Positions" %}</a></li>
+                                <li class="current">
+                                    <a href="{% url 'payroll:salary_scale_list' %}">{% trans "Salary Scales" %}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">{% trans "Qualifications" %}</a>
+                            <ul>
+                                <li class="current"><a href="{% url 'payroll:educ_level_list' %}">{% trans "Education" %}</a></li>
+                                <li><a href="{% url 'payroll:cert_list' %}">{% trans "Certification" %}</a></li>
+                                <li><a href="{% url 'payroll:skill_list' %}">{% trans "Skills" %}</a></li>
+                                <li><a href="{% url 'payroll:membership_list' %}">{% trans "Membership" %}</a></li>
+                                <li><a href="{% url 'payroll:lang_list' %}">{% trans "Languages" %}</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="{% url 'payroll:sl_list' %}">{% trans "Service Lines" %}</a></li>
+                        <li><a href="{% url 'payroll:nat_list' %}">{% trans "Nationalities" %}</a></li>
+                    </ul>
+                </li>
+                <li class="current">
+                    <a href="{% url 'payroll:user_list' %}">{% trans "Employees" %}</a>
+                    <ul>
+                        <li class="current">
+                            <a href="{% url 'payroll:user_list' %}">{% trans "List All" %}</a>
+                        </li>
+                        {% if perms.payroll.can_edit_employees %}
+                        <li><a href="{% url 'payroll:user_add' %}">{% trans "New Employee" %}</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li>
+                    <a href="{% url 'payroll:bank_list' %}">{% trans "Banks" %}</a>
+                    <ul>
+                            <li class="current">
+                                <a href="{% url 'payroll:bank_list' %}">{% trans "List All Banks" %}</a>
+                            </li>
+                            <li><a href="{% url 'payroll:bank_add' %}">{% trans "Add New Bank" %}</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{% url 'payroll:allowancetype_list' %}">{% trans "Allowances" %}</a>
+                    <ul>
+                            <li class="current">
+                                <a href="{% url 'payroll:allowancetype_list' %}">{% trans "List" %}</a>
+                            </li>
+                            <li><a href="{% url 'payroll:allowancetype_add' %}">{% trans "Add" %}</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{% url 'payroll:deductiontype_list' %}">{% trans "Deductions" %}</a>
+                    <ul>
+                            <li class="current">
+                                <a href="{% url 'payroll:deductiontype_list' %}">{% trans "List" %}</a>
+                            </li>
+                            <li><a href="{% url 'payroll:deductiontype_add' %}">{% trans "Add" %}</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        {% endif %}
+        
+            <li>
+                <a href="#a">{% trans "Payroll Management" %}</a>
+                <ul>
+                    <li>
+                        <a href="{% url 'payroll:payperiod_list' %}">{% trans "Pay Periods" %}</a>
+                        <ul>
+                            <li class="current">
+                                <a href="{% url 'payroll:payperiod_list' %}">{% trans "List" %}</a>
+                            </li>
+                    {% if perms.payroll.can_edit_payroll %}
+                            <li><a href="{% url 'payroll:payperiod_add' %}">{% trans "Add" %}</a></li>
+                    {% endif %}
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="#">{% trans "Reports" %}</a>
+                <ul>
+                    <li>
+                        <a href="#">{% trans "System" %} </a>
+                        <ul>
+                            {% if perms.payroll.can_view_system_info %}
+                            <li><a href="{% url 'payroll:user_report' %}">{% trans "Employee Details" %}</a></li>
+                            {% endif %}
+                            <li><a href="{% url 'payroll:salary_progression_report' %}">{% trans "Salary Progression" %}</a></li>
+                        </ul>
+                    </li>
+                    {% if perms.payroll.can_edit_payroll %}
+
+                    <li>
+                        <a href="#">Payroll </a>
+                        <ul>
+                            <li><a href="{% url 'payroll:payroll_cycles_summary' %}">{% trans "Payroll Cycles Summary" %}</a></li>
+                            {% if perms.payroll.can_view_system_info %}
+                            <li><a href="{% url 'payroll:bank_report' %}">{% trans "Bank" %}</a></li>
+                            <li><a href="{% url 'payroll:payroll_summary_report' %}">{% trans "Service Line" %}</a></li>
+                            <li><a href="{% url 'payroll:nssf_report' %}">{% trans "NSSF" %}</a></li>
+                            <li><a href="{% url 'payroll:paye_report' %}">{% trans "PAYE" %}</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    <!--                    <li>
+                        <a href="#">Funders Contributions</a>
+                        <ul>
+                            <li><a href="/#">Funders</a></li>
+                            <li><a href="#">Projects</a></li>
+                            <li><a href="#">Contributions</a></li>
+                        </ul>
+                    </li>-->
+                    {% endif %}
+                </ul>
+            </li>
+            <li>
+                <a href="#">{% trans "Tools" %}</a>
+                <ul>
+                    {% if perms.payroll.can_view_system_info %}
+                    <li><a href="{% url 'payroll:activity_list' %}">User Activity</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+            <li>
+                <a href="#">{% trans "Help" %}</a>
+            </li>
+    </ul>
+    <a href="http://www.ey.com/UG" id="visit"
+       class="right" target="_blank">
+        {% trans "Visit site" %}</a>
+</div>
+</div>
+{% endblock menu %}
+
+<div id="content_main" class="clearfix">
+
+{% block main_content %}{% endblock main_content %}
+</div><!-- end #content_main -->
+
+{% block footer %}
+<div  id="footer" class="clearfix">
+    <p class="left">Payroll Management - Admin Panel </p>
+    <p class="right">&copy;&nbsp;{% now "Y" %} Ernst &amp; Young</p>
+</div><!-- end #footer -->
+{% endblock footer %}
+{% endblock body %}

@@ -1,0 +1,64 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    
+    <h3 class="ico_mug">{% trans 'Assets' %} &rang; {% trans 'Asset List' %}</h3>
+    {% if appraisal_list %}
+    <p class="info">List of registered company assets.</p>
+    <div class="blankline"></div>
+    {% endif %}
+    {% include 'payroll/databox_notifications.html' with messages=messages %}
+    
+    <table id="table">
+
+        {% if asset_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="">{% trans 'Category' %}</th>
+            <th width="">{% trans 'ID Type' %}</th>
+            <th width="">{% trans 'ID No.' %}</th>
+            <th width="">{% trans 'Manufactured' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for asset in asset_list %}
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ asset.category }}</td>
+            <td>{{ asset.id_type }}</td>
+            <td>{{ asset.id_number }}</td>
+            <td>{{ asset.date_of_manufacture|date }}</td>
+            <td>{{ asset.description }}</td>
+            <td align="center">
+                <a href="{% url 'asset:asset_edit' pk=asset.id %}">{% trans 'edit' %}</a>
+                &nbsp;&nbsp;
+                <a href="{% url 'asset:asset_delete' pk=asset.id %}">{% trans 'delete' %}</a>
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "Register a new asset by clicking the ADD ASSET button below." %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'asset:asset_list' as url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <div><a href="{% url 'asset:asset_create' %}"><button>{% trans 'ADD ASSET' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="holiday_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

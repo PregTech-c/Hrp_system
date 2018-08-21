@@ -1,0 +1,143 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_due_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd',
+                   minDate: "-0D", maxDate: "+365D"
+               });
+               
+            });
+        </script>
+{% endblock %}
+
+{% block main_content %}
+<div id="dashboard" class="left">
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "New" as action %}{% endif %}     
+    <h3 class="ico_mug">
+        {% trans 'Recruitment' %} &rang;
+        <a href="{% url 'recruitment:vacancy_list' page=1 %}">Vacancies</a> 
+        &nbsp;&rang;&nbsp; {% blocktrans %}{{ action }} Vacancy{% endblocktrans %}
+    </h3>
+
+    {% include "payroll/form_error_display.html" %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Info' %}</span></legend>
+            <table width="100%">
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.vacancy_type.label}} </td>
+                    <td>
+                        <div class="left">{{ form.vacancy_type }}</div>
+                        {% if form.vacancy_type.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.vacancy_type.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.job_title.label}} </td>
+                    <td>
+                        <div class="left">{{ form.job_title }}</div>
+                        {% if form.job_title.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.job_title.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.number_of_positions.label}} </td>
+                    <td>
+                        <div class="left">{{ form.number_of_positions }}</div>
+                        {% if form.number_of_positions.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.number_of_positions.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.service_line.label}} </td>
+                    <td>
+                        <div class="left">{{ form.service_line }}</div>
+                        {% if form.service_line.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.service_line.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.reports_to.label}} </td>
+                    <td>
+                        <div class="left">{{ form.reports_to }}</div>
+                        {% if form.reports_to.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.reports_to.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.minimum_education.label}} </td>
+                    <td>
+                        <div class="left">{{ form.minimum_education }}</div>
+                        {% if form.minimum_education.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.minimum_education.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.required_gender.label}} </td>
+                    <td>
+                        <div class="left">{{ form.required_gender }}</div>
+                        {% if form.required_gender.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.required_gender.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.skills.label}} </td>
+                    <td>
+                        <div class="left">{{ form.skills }}</div>
+                        {% if form.skills.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.skills.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.fields_of_education.label}} </td>
+                    <td>
+                        <div class="left">{{ form.fields_of_education }}</div>
+                        {% if form.fields_of_education.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.fields_of_education.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.job_description.label}} </td>
+                    <td>
+                        <div class="left">{{ form.job_description }}</div>
+                        {% if form.job_description.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.job_description.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.due_date.label}} </td>
+                    <td>
+                        <div class="left">{{ form.due_date }}&nbsp;&nbsp;</div>
+                        {% if form.due_date.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.due_date.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Save" /></td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>&nbsp;&nbsp;<a href="{% url 'recruitment:vacancy_list' page=1 %}"><button>Back to Vacancy List</button></a>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="vacancy_list" menu="setup" %}
+{% endblock sidebar %}
+        
+{% endblock %}

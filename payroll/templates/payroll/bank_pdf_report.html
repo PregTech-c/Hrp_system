@@ -1,0 +1,87 @@
+{% extends "easy_pdf/base.html" %}
+{% load staticfiles %}
+{% load pdf_filters %}
+{% load i18n %}
+{% load humanize %}
+
+{% block extra_style %}
+<style lang="text/css">
+    table {border-collapse: collapse;}
+    td {padding: 1px;}
+    h3 {border-bottom: 1px solid black; font-weight: bold; padding-top: 5px}
+    .heading {font-weight: bold }
+</style>
+{% endblock %}
+
+{% block page_header %}
+    <table width="100%">
+        <tr>
+            <td width="20%"><img src="{{ img_path|add:'static/img/hrp-logo-4pdf.png'|get64 }}" alt="Logo" /></td>
+            <td valign="bottom" style="padding-left: 5px">
+                <div class="heading">SALARY REPORT</div>
+                Period: {{ rpt.payroll.pay_period }}<br/>
+                Date: {{ rpt.payroll.date }}
+            </td>
+        </tr>
+    </table>
+{% endblock %}
+
+{% block content %}
+
+<table width="100%" style="padding:1px; padding-top: 10px; border: 0px solid black" >
+    <tr style="border-bottom: 1px solid black;">
+        <th width="3%">#</th>
+        <th width="">SNo.</th>
+        <th width="">{% trans "Employee Name" %}</th>
+        <th width="">{% trans "Staff Bank" %}</th>
+        <th width="">{% trans "Sort Code" %}</th>
+        <th width="">{% trans "Account No." %}</th>
+        <th width="">{% trans "Net Pay" %}</th>
+    </tr>
+
+    {% if rpt.categorize %}
+    {% for dept in rpt.departments %}
+    <tr>
+        <td colspan="7" style="border-bottom: 1px solid; padding-top: 5px"><strong>{{ dept.name|upper }}</strong></td>
+    </tr>
+        {% for payslip in dept.payslips %}
+    <tr>
+        <td align="center">{{ forloop.counter }}</td>
+        <td>{{ payslip.employee.profile.employee_number|default:"N/A" }}</td>
+        <td>{{ payslip.employee.profile.get_fullname }}</td>
+        <td>{{ payslip.employee.profile.bank }}</td>
+        <td>{{ payslip.employee.profile.bank.sort_code }}</td>
+        <td>{{ payslip.employee.profile.bank_account_number }}</td>
+        <td align="right">{{ payslip.get_net_pay|floatformat:"0"|intcomma }}</td>
+    </tr>
+    {% endfor %}
+
+    <tr style="font-style: italic; font-weight: bold; border-top: 1px solid">
+        <td colspan="2">Sub Total</td><td colspan="4">&nbsp;</td>
+        <td align="right">{{ dept.total|floatformat:"0"|intcomma|default:"0" }}</td>
+    </tr>
+    {% endfor %}
+
+    {% else %}
+        {% for payslip in rpt.payslips %}
+            <tr>
+                <td align="right">{{ forloop.counter }}.</td>
+                <td>{{ payslip.employee.profile.employee_number|default:"N/A" }}</td>
+                <td>{{ payslip.employee.profile.get_fullname }}</td>
+                <td>{{ payslip.employee.profile.bank }}</td>
+                <td>{{ payslip.employee.profile.bank.sort_code }}</td>
+                <td>{{ payslip.employee.profile.bank_account_number }}</td>
+                <td align="right">{{ payslip.get_net_pay|floatformat:"0"|intcomma }}</td>
+            </tr>
+        {% endfor %}
+
+    {% endif %}
+    <tr><td colspan="7" style="padding-top: 10px">&nbsp;</td></tr>
+    <tr style="border-top: 1px solid black; font-weight: bold; ">
+        <td colspan="2">TOTAL</td>
+        <td colspan="4">&nbsp;</td>
+        <td align="right"><strong>{{ rpt.total_pay|floatformat:"0"|intcomma }}</strong></td>
+    </tr>
+
+    </table>
+{% endblock %}

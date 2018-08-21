@@ -1,0 +1,109 @@
+{% extends 'payroll_base_site.html' %}
+{% load staticfiles %}
+{% load i18n %}
+{% load humanize %}
+
+{% block main_content %}
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">
+        {% trans 'Recruitment' %} &rang; <a href="{% url 'recruitment:application_list' vac_id=vacancy.id page=1 %}">Applications</a>
+        &nbsp;{% blocktrans %}Applications Details{% endblocktrans %}
+    </h3>
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+
+    <table id="table" width="100%">
+        <tr>
+            <th colspan="2">Application Details</th>
+            <th>Documents</th>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Vacancy</td>
+            <td>{{ jobapplication.vacancy }}</td>
+            <td rowspan="11">
+                {% for doc in jobapplication.documents.all %}
+                    {% if doc.filename %}
+                    {{ forloop.counter }}. <a href="{% static doc.document.url|cut:'payroll/static/' %}" target="_blank">
+                        {{ doc.filename }}</a>&nbsp;
+                        <i>{{ doc.description }}</i>
+                    <br/>
+                    
+                    {% endif %}
+                {% empty %}
+                    None
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Name</td>
+            <td>{{ jobapplication.get_fullname }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Age</td>
+            <td>{{ jobapplication.age_of_applicant }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Gender</td>
+            <td>{{ jobapplication.gender }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Email</td>
+            <td>{{ jobapplication.email }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Qualification</td>
+            <td>{{ jobapplication.get_qualification_display }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Fields of Education</td>
+            <td>{{ jobapplication.education_fields }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Experience</td>
+            <td>{{ jobapplication.experience_years|floatformat:"0" }} Years</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Telephone Number</td>
+            <td>{{ jobapplication.tel_number }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Remarks</td>
+            <td>{{ jobapplication.remarks }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Evaluation Stage</td>
+            <td>{{ jobapplication.evaluation_stage }}</td>
+        </tr>
+    </table>
+    <div class='blankline'></div>
+    <div>
+        <a href="{% url 'recruitment:application_list' vac_id=vacancy.id page=1 %}"><button>Back</button></a>&nbsp;
+    </div>
+    {% if vacancy.evaluation_stages.count %}
+    <form action="" method="post">
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Change Evaluation Stage' %}</span></legend>
+            <table width="100%">
+                <tr>
+                    <td align="center">Move Application {{ application.stage }} to
+                        {{ form.stage }}
+                        <input type="submit" value="Submit" 
+                                onClick="return confirm('Are you sure you want to change the evaluation stage?')"/>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+    {% else %}
+        There are no evaluation stages defined for the vacancy {{ vacancy }}.
+        <a href="{% url 'recruitment:eval_list' vac_id=vacancy.id page=1 %}">Click here</a> to add.
+    {% endif %}
+</div>
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="vacancy_list" menu="setup" %}
+{% endblock sidebar %}
+        
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Appraisal' %} &rang; {% trans 'Parameters' %}</h3>
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    
+    <table id="table">
+
+        {% if appraisal_parameter_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="" valign="top">{% trans 'Description' %}</th>
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for param in appraisal_parameter_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ param.name }}</td>
+            <td>{{ param.description }}</td>
+            <td align="center">
+                {% if not param.is_core %}
+                <a href="{% url 'appraisal:appraisal_parameter_edit' pk=param.id %}">{% trans 'edit' %}</a>
+                &nbsp;&nbsp;
+                <a href="{% url 'appraisal:appraisal_parameter_delete' pk=param.id %}">{% trans 'delete' %}</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "Create a new parameter by clicking the NEW PARAMTER button below." %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'appraisal:appraisal_parameter_list' as url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <div><a href="{% url 'appraisal:appraisal_parameter_create' %}"><button>{% trans 'NEW PARAMETER' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="holiday_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

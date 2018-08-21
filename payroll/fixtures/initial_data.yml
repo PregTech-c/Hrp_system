@@ -1,0 +1,9 @@
+-   model: payroll.nationality
+    pk: 1
+    fields: { code: ug, name: Uganda }
+-   model: payroll.nationality
+    pk: 2
+    fields: { code: ke, name: Kenya }
+-   model: payroll.nationality
+    pk: 3
+    fields: { code: tz, name: Tanzania }

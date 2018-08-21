@@ -1,0 +1,75 @@
+<table width="100%">
+            <tr>
+               <td style="vertical-align: top" width="25%">
+                   <label for="id_amount">Contractual Pay</label></td>
+               <td>
+                   <div style="margin-left: -3px;" class="left">
+                       {{ sform.amount }} &nbsp;&nbsp;
+                   </div>
+                   {% if sform.amount.errors %}
+                    <div id="fail" class="quickview left">
+                        <span class="ico_cancel">{{ sform.amount.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top"><label for="id_currency">Currency</label></td>
+               <td>
+                   <div class="left">
+                       {{ sform.currency }} &nbsp;&nbsp;
+                   </div>
+                   {% if sform.currency.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ sform.currency.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top"><label for="id_bank">Bank Name</label></td>
+               <td>
+                   <div class="left">
+                       {{ pform.bank }} &nbsp;&nbsp;
+                   </div>
+                   {% if pform.bank.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ pform.bank.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top">
+                   <label for="id_bank_account_number">Bank Acct. Number</label></td>
+               <td>
+                   <div style="margin-left: -3px;" class="left">
+                       {{ pform.bank_account_number }} &nbsp;&nbsp;
+                   </div>
+                   {% if pform.bank_account_number.errors %}
+                    <div id="fail" class="quickview left">
+                        <span class="ico_cancel">{{ pform.bank_account_number.errors }}</span>
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top"><label for="id_nssf_number">NSSF Number</label></td>
+               <td>
+                   <div style="margin-left: -3px;" class="left">
+                       {{ pform.nssf_number }} &nbsp;&nbsp;
+                   </div>
+                   {% if pform.nssf_number.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ pform.nssf_number.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top"><label for="id_tin_number">TIN Number</label></td>
+               <td>
+                   <div style="margin-left: -3px;" class="left">
+                       {{ pform.tin_number }} &nbsp;&nbsp;
+                   </div>
+                   {% if pform.tin_number.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ pform.tin_number.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+
+
+        </table>

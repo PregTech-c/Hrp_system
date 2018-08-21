@@ -1,0 +1,60 @@
+from django.views.generic import *
+from payroll.models import *  
+from payroll.forms import BranchForm
+
+class BranchListView(ListView):
+    model = Branch
+    context_object_name = 'branch_list'
+    paginate_by = 8
+    queryset = Branch.objects.filter().order_by('name')
+
+    def get_context_data(self, **kwargs):
+        context = super(BranchListView, self).get_context_data(**kwargs)
+        try:
+            if self.request.session['page_message']:
+                context['page_message'] = '%s' % self.request.session['page_message']
+                self.request.session['page_message'] = ''
+        except:
+            None
+        return context
+
+class BranchCreateView(CreateView):
+    form_class = BranchForm
+
+    template_name = 'branch_form.html'
+    success_url = '/branch/'
+
+    def get_context_data(self, **kwargs):
+        context = super(BranchCreateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/branch/new/'
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = \
+            '%s has been successfully created.' % form.data['name']
+        return super(BranchCreateView, self).form_valid(form)
+
+class BranchUpdateView(UpdateView):
+    model = Branch
+    form_class = BranchForm
+    template_name = 'branch_form.html'
+    success_url = '/branch/'
+
+    def get_context_data(self, **kwargs):
+        context = super(BranchUpdateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/branch/edit/%s/' % self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = '%s has been successfully modified.' % \
+            str(self.get_object().name)
+        return super(BranchUpdateView, self).form_valid(form)
+
+class BranchDeleteView(DeleteView):
+    model = Branch
+    success_url = '/branch/'
+
+    def delete(self, request, *args, **kwargs):
+        request.session['page_message'] = '%s has been successfully deleted' % \
+            str(self.get_object().name)
+        return super(BranchDeleteView, self).delete(request, *args, **kwargs)

@@ -1,0 +1,61 @@
+{% extends "easy_pdf/base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+{% load humanize %}
+
+{% block extra_style %}
+<style lang="text/css">
+    table {border-collapse: collapse;}
+    td {padding: 1px;}
+    h3 {border-bottom 1px solid black; font-weight: bold; padding-top: 5px}
+    th {border-bottom: 1px solid black; text-align: left; padding-top: 15px}
+    .tlabel {width:  500px}
+    .toprow {padding-top: 5px}
+</style>
+{% endblock %}
+
+{% block page_header %}
+{% include 'pdf_report_header.html' with title="Employees On Leave" %}
+{% endblock %}
+
+{% block content %}
+<hr/>
+
+<div id="main_content" class="section">
+    
+    <h3>{{ page_message }}</h3>
+    <table id="table">
+        <tr>
+            <th width="5%">#</th>
+            <th width="" >{% trans 'Name' %}</th>
+            <th width="">{% trans 'Position' %}</th>
+            <!--<th width="">{% trans 'Service Line' %}</th>-->
+            <th width="">{% trans 'Type' %}</th>
+            <th width="">{% trans 'Approved On' %}</th>
+            <th width="">{% trans 'Approved By' %}</th>
+            <th width="10%">{% trans 'Start Date' %}</th>
+            <th width="5%">{% trans 'Days' %}</th>
+
+        </tr>
+
+        {% for request in leave_request_list %}
+
+        {% if forloop.counter == 1 %}
+        <tr><td colspan="8">&nbsp;</td></tr>
+        {% endif %}
+        <tr>
+            <td>{{ forloop.counter }}.</td>
+            <td>{{ request.profile.get_fullname }}</td>
+            <td>{{ request.profile.position }}</td>
+            <!--<td>{{ request.profile.service_line }}</td>-->
+            <td>{{ request.leave_type }}</td>
+            <td>{{ request.get_approved_at|date:"SHORT_DATE_FORMAT" }}</td>
+            <td>{{ request.get_approved_by.get_fullname }}</td>
+            <td>{{ request.start_date|date:"SHORT_DATE_FORMAT" }}</td>
+            <td align="right">{{ request.get_no_of_days }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

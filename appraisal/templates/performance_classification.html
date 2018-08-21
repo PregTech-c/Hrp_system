@@ -1,0 +1,44 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+<div id="dashboard" class="left">
+    <!--{% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Initiate" as action %}{% endif %}-->
+    <h3 class="ico_mug"><a href="{% url 'appraisal:appraisal_list' %}">{% trans 'Appraisal' %}</a> &nbsp;&rang;&nbsp; {% blocktrans %}Overall Performance Classification{% endblocktrans %}</h3>
+
+    {% include "payroll/form_error_display.html" %}
+    <form action="" method="post">
+
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Info' %}</span></legend>
+            <table width="100%">
+
+                <tr>
+                    <td style="vertical-align: top" width="20%">{% trans 'Overall Performance Classification' %} </td>
+                    <td>
+                        {{ form.performance_classification }}&nbsp;&nbsp;
+                        {{ form.performance_classification.errors }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{% trans 'Recommended Action' %} </td>
+                    <td>
+                        {{ form.comment }}&nbsp;&nbsp;
+                        {{ form.comment.errors }}<br/>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Save" /></td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>&nbsp;&nbsp;<a href="{% url 'appraisal:appraisal_list' %}"><button>Back to Appraisal List</button></a>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="holiday_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{% load i18n %}
+{% if show_search_form == 'on' %}
+<div>
+    <form action="{% url 'asset:asset_allocation_list' %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Search' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_date">{% trans 'Category' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ search_form.category }} &nbsp;&nbsp;
+                   </div>
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_employee">{% trans 'Employee' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ search_form.employee }} &nbsp;&nbsp;
+                   </div>
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_date">{% trans 'Allocation Status' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ search_form.issue_status }} &nbsp;&nbsp;
+                   </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Search" />&nbsp;&nbsp;
+                    {% if search_form.is_bound %}
+                    <a href="{% url 'asset:asset_allocation_list_s' page=1 show_asset_search_form='on' search_data='off' %}">Reset</a>
+                    {% endif %}
+                </td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+</div>
+<div>
+    <a href="{% url 'asset:asset_allocation_list_s' page=1 show_asset_search_form='off' search_data='off' %}"><button>Hide Search Form</button></a>
+</div>
+{% else %}
+<div>
+    <a href="{% url 'asset:asset_allocation_list_s' page=1 show_asset_search_form='on' search_data='off' %}"><button>Show Search Form</button></a>
+</div>
+{% endif %}

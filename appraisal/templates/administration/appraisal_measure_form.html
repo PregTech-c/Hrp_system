@@ -1,0 +1,86 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Add" as action %}{% endif %}
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Appraisal' %} &rang; {% blocktrans %}{{ action }} Measure{% endblocktrans %}</h3>
+
+    <form action="" method="post">
+
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Target Info' %}</span></legend>
+            <table width="100%">
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.parameter.label}} </td>
+                    <td>
+                        <div class="left">{{ form.parameter }}</div>
+                        {% if form.parameter.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.parameter.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.service_line.label}} </td>
+                    <td>
+                        <div class="left">{{ form.service_line }}</div>
+                        {% if form.position.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.position.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.definition.label}} </td>
+                    <td>
+                        <div class="left">{{ form.definition }}</div>
+                        {% if form.definition.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.definition.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.min_rating.label}} </td>
+                    <td>
+                        <div class="left">{{ form.min_rating }}</div>
+                        {% if form.min_rating.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.min_rating.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.max_rating.label}} </td>
+                    <td>
+                        <div class="left">{{ form.max_rating }}</div>
+                        {% if form.max_rating.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.max_rating.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.description.label}} </td>
+                    <td>
+                        <div class="left">{{ form.description }}</div>
+                        {% if form.description.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.description.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+
+                    <input type="submit" value="Save" />
+
+
+        </fieldset>
+    </form>&nbsp;&nbsp;<a href="{% url 'appraisal:appraisal_measure_list' %}"><button>Back to Measure List</button></a>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="holiday_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

@@ -1,0 +1,60 @@
+from django.views.generic import *
+from payroll.models import *
+from payroll.forms import AllowanceTypeForm
+
+class AllowanceTypeListView(ListView):
+    model = AllowanceType
+    context_object_name = 'allowancetype_list'
+    paginate_by = 8
+    queryset = AllowanceType.objects.filter().order_by('name')
+
+    def get_context_data(self, **kwargs):
+        context = super(AllowanceTypeListView, self).get_context_data(**kwargs)
+        try:
+            if self.request.session['page_message']:
+                context['page_message'] = '%s' % self.request.session['page_message']
+                self.request.session['page_message'] = ''
+        except:
+            None
+        return context
+
+class AllowanceTypeCreateView(CreateView):
+    form_class = AllowanceTypeForm
+
+    template_name = 'allowancetype_form.html'
+    success_url = '/allowancetype/'
+
+    def get_context_data(self, **kwargs):
+        context = super(AllowanceTypeCreateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/allowancetype/new/'
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = \
+            '%s has been successfully created.' % form.data['name']
+        return super(AllowanceTypeCreateView, self).form_valid(form)
+
+class AllowanceTypeUpdateView(UpdateView):
+    model = AllowanceType
+    form_class = AllowanceTypeForm
+    template_name = 'allowancetype_form.html'
+    success_url = '/allowancetype/'
+
+    def get_context_data(self, **kwargs):
+        context = super(AllowanceTypeUpdateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/allowancetype/edit/%s/' % self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = '%s has been successfully modified.' % \
+            str(self.get_object().name)
+        return super(AllowanceTypeUpdateView, self).form_valid(form)
+
+class AllowanceTypeDeleteView(DeleteView):
+    model = AllowanceType
+    success_url = '/allowancetype/'
+
+    def delete(self, request, *args, **kwargs):
+        request.session['page_message'] = '%s has been successfully deleted' % \
+            str(self.get_object().name)
+        return super(AllowanceTypeDeleteView, self).delete(request, *args, **kwargs)

@@ -1,0 +1,121 @@
+{% extends "easy_pdf/base.html" %}
+{% load staticfiles %}
+{% load humanize %}
+{% load pdf_filters %}
+
+{% block extra_style %}
+        <style type="text/css">
+            @page {
+            margin: 2cm;
+            margin-bottom: 2.5cm;
+            margin-top: 3.5cm;
+            size:  landscape;
+/*            background-image: url(static/img/cancel.jp);*/
+            @frame header {
+                -pdf-frame-content: headerContent;
+                top: 2cm;
+                margin-left: 2cm;
+                margin-right: 2cm;
+                height: 1cm;
+/*                -pdf-frame-border: 1;*/
+                }
+            @frame footer {
+                -pdf-frame-content: footerContent;
+                bottom: 2cm;
+                margin-left: 2cm;
+                margin-right: 2cm;
+                height: 1cm;
+/*                -pdf-frame-border: 0;*/
+                }
+/*                @frame body {
+                -pdf-frame-content: bodyContent;
+                top:1cm;
+             }*/
+            }
+        </style>
+
+{% endblock %}
+
+{% block page_header %}
+<div id="headerContent">
+    <table width="100%">
+        <tr>
+            <td width="10%"><img src="{{ img_path|add:'/static/img/ernst.jpg' | get64 }}" alt='Logo'/></td>
+            <td>
+                <h2>PAYROLL FOR THE PERIOD {{ payroll.pay_period.start_date|date }} to {{ payroll.pay_period.end_date|date }}</h2>
+            </td>
+        </tr>
+    </table>
+
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="bodyContent">
+    <table id="table" cellpadding="5px" width="100%">
+        <thead>
+            <tr>
+                <th width="3%">#</th>
+                <th width="">NAME</th>
+                <th width="">C.PAY</th>
+                <th width="5%">DAYS</th>
+                <th width="7%">B.PAY</th>
+                <th width="7%">ALLOW.</th>
+                <th width="">GROSS PAY</th>
+                <th width="7%">NSSF</th>
+                <th>PAYE</th>
+                <th>OTHER DED.</th>
+                <th width="">NETPAY</th>
+            </tr>
+        </thead>
+    <tr>
+        <td colspan="11" style="border-top: 1px solid black"></td>
+    </tr>
+    {% for payslip in payslip_list %}
+
+    <tr>
+        <td align="center" width="3%">{{ forloop.counter }}.</td>
+        <td>{{ payslip.employee.profile.get_fullname }}</td>
+        <td align="right">{{ payslip.contractual_pay_amount|floatformat:"0"|intcomma }}</td>
+        <td align="right">
+            {{ payslip.total_days_worked }}
+        </td>
+        <td align="right">{{ payslip.basic_pay|floatformat:"0"|intcomma }}</td>
+        <td align="right">{{ payslip.total_allowances|floatformat:"0"|intcomma }}</td>
+        <td align="right">{{ payslip.gross_pay|floatformat:"0"|intcomma }}</td>
+        <td align="right">{{ payslip.msu_nssf|add:payslip.nssf|floatformat:"0"|intcomma }}</td>
+        <td align="right">{{ payslip.paye|floatformat:"0"|intcomma }}</td>
+        <td align="right">{{ payslip.total_deduction|floatformat:"0"|intcomma }}</td>
+        <td align="right">{{ payslip.net_pay|floatformat:"0"|intcomma }}</td>
+
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="11" style="border-bottom: 1px solid black"></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><strong>Total</strong></td>
+        <td align="right"><strong>{{ total_contractual_pay|floatformat:"0"|intcomma }}</strong></td>
+        <td></td>
+        <td align="right"><strong>{{ total_basic_pay|floatformat:"0"|intcomma }}</strong></td>
+        <td align="right"><strong>{{ total_allowances|floatformat:"0"|intcomma }}</strong></td>
+        <td align="right"><strong>{{ total_gross_pay|floatformat:"0"|intcomma }}</strong></td>
+        <td align="right"><strong>{{ total_employee_nssf|add:total_msu_nssf|floatformat:"0"|intcomma }}</strong></td>
+        <td align="right"><strong>{{ total_paye|floatformat:"0"|intcomma }}</strong></td>
+        <td align="right"><strong>{{ total_deductions|floatformat:"0"|intcomma }}</strong></td>
+        <td align="right"><strong>{{ total_net_pay|floatformat:"0"|intcomma }}</strong></td>
+    </tr>
+    <tr>
+        <td colspan="11" style="border-top: 1px solid black"></td>
+    </tr>
+    </table>
+
+</div>
+
+<div id='footerContent' style='text-align: right'>
+    Confindential <pdf:pagenumber>
+</div>
+  </body>
+  {% endblock %}
+</html>

@@ -1,0 +1,12 @@
+-   model: asset.assetstatus
+    pk: 1
+    fields:
+        description: New
+-   model: asset.assetstatus
+    pk: 2
+    fields:
+        description: Functioning
+-   model: asset.assetstatus
+    pk: 3
+    fields:
+        description: Broken

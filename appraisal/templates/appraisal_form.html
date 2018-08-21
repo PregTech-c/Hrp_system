@@ -1,0 +1,130 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_start_date").datepicker({
+                   dateFormat: 'yy-mm-dd',
+                   minDate: "-3Y", maxDate: "+365D"
+               });
+               jQuery("#id_end_date").datepicker({
+                   dateFormat: 'yy-mm-dd',
+                   minDate: "-3Y", maxDate: "+365D"
+               });
+               jQuery("#id_due_date").datepicker({
+                   dateFormat: 'yy-mm-dd',
+                   minDate: "-0D", maxDate: "+365D"
+               });
+
+            });
+        </script>
+{% endblock %}
+
+{% block main_content %}
+<div id="dashboard" class="left">
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Initiate" as action %}{% endif %}
+    <h3 class="ico_mug"><a href="{% url 'appraisal:appraisal_list' %}">{% trans 'Appraisal' %}</a> &nbsp;&rang;&nbsp; {% blocktrans %}{{ action }} Appraisal{% endblocktrans %}</h3>
+
+    {% include "payroll/form_error_display.html" %}
+    <p class="info">
+        Create a new staff appraisal by specifying the its period and those it concerns, that is, all staff, a service line or an individual employee.
+    </p>
+    <form action="" method="post">
+
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Info' %}</span></legend>
+            <table width="100%">
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.start_date.label}} </td>
+                    <td>
+                        <div style="margin-left: -3px;" class="left">{{ form.start_date }}</div>
+                        {% if form.start_date.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.start_date.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.end_date.label}} </td>
+                    <td>
+                        <div style="margin-left: -3px;" class="left">{{ form.end_date }}&nbsp;&nbsp;</div>
+                        {% if form.end_date.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.end_date.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.due_date.label}} </td>
+                    <td>
+                        <div style="margin-left: -3px;" class="left">{{ form.due_date }}&nbsp;&nbsp;</div>
+                        {% if form.due_date.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.due_date.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.service_line.label}} </td>
+                    <td>
+                        {{ form.service_line }}&nbsp;&nbsp;
+                        {{ form.service_line.errors }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top; padding-bottom: 30px;" width="20%">{% trans 'Employee' %} </td>
+                    <td>
+                        {{ form.employee_profile }}&nbsp;&nbsp;
+                        {{ form.employee_profile.errors }}<br/>
+                        Selecting an employee overrides <em>Service Line</em> field above.
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top; padding-bottom: 10px;" width="20%">{% trans 'Overall Performance Classification' %} </td>
+                    <td>
+                        {{ form.performance_classification }}&nbsp;&nbsp;
+                        {{ form.performance_classification.help_text }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top; padding-bottom: 40px;" width="20%">{% trans 'Recommended Action' %} </td>
+                    <td>
+                        <div style="margin-left: -3px;" class="left">{{ form.comment }}
+                            <br/>{{ form.comment.help_text }}&nbsp;&nbsp;</div>
+                        {% if form.comment.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.comment.help_text }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top; padding-bottom: 40px;" width="20%">{{ form.description.label}} </td>
+                    <td>
+                        <div style="margin-left: -3px;" class="left">{{ form.description }}
+                            <br/>{{ form.description.help_text }}&nbsp;&nbsp;</div>
+                        {% if form.description.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.description.help_text }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.comment.label}} </td>
+                    <td>
+                        {{ form.comment }}
+                        {% if form.comment.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.comment.errors }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Save" /></td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>&nbsp;&nbsp;<a href="{% url 'appraisal:appraisal_list' %}"><button>Back to Appraisal List</button></a>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="holiday_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

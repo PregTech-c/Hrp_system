@@ -1,0 +1,62 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+<div id="main_panel_container" class="section">
+
+    <h3 class="ico_mug">Payroll &rang; Payslip &rang; {{ payslip.employee.profile.get_fullname }} &rang; Other Allowances </h3>
+
+    {% if allowance_list %}
+    <table id="table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Comment</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        {% for allowance in allowance_list %}
+        <tr>
+            <td>{#{ page_obj.start_index|add:forloop.counter0 }#}</td>
+            <td>{{ allowance.allowance_type.name }}</td>
+            <td>{{ allowance.amount }} </td>
+            <td>{{ allowance.comment }} </td>
+            <td><a href="{% url 'payroll:payslip_allowance_p' slip=payslip.id da=allowance.id %}">Remove</a></td>
+        </tr>
+        {% endfor %}
+
+    </table>
+    {% endif %}
+    
+    <form action="{% url 'payroll:payslip_allowance' slip=payslip.id %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>Adjustments</span></legend>
+            <table width="">
+                <tr>
+                    <td width="30%">{{ form.allowance_type.label }}</td>
+                    <td>{{ form.allowance_type }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.amount.label }}</td>
+                    <td>{{ form.amount }}&nbsp;&nbsp;{{ form.amount.errors }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.comment.label }}</td>
+                    <td>{{ form.comment }}</td>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" value="Save" />&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="{% url 'payroll:payroll_list' payperiod_id=payslip.payroll.pay_period.id %}">Back to Payroll</a>
+
+                    </td>
+                </tr>
+            </table>
+            {{ form.payslip }}
+        </fieldset>
+    </form>
+</div>
+{% endblock main_content %}

@@ -1,0 +1,174 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_date_of_birth").datepicker({ 
+                   dateFormat: 'yy-mm-dd',
+//                   minDate: "-80Y", maxDate: "+0D",
+                    yearRange: "-80:+0",
+                   changeYear: true,
+               });
+               
+            });
+        </script>
+{% endblock %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Submit" as action %}{% endif %}     
+    <h3 class="ico_mug">
+        {% trans 'Recruitment' %} &rang;
+        <a href="{% url 'recruitment:vacancy_list' page=1 %}">Applications</a> 
+        &nbsp;&rang;&nbsp; {% blocktrans %}{{ action }} Application{% endblocktrans %}
+    </h3>
+    <p class="info">
+        Submit the form below to apply for the post of <strong>{{ vacancy.job_title }}</strong>. 
+    </p>
+    {% include "payroll/form_error_display.html" %}
+
+    <form action="" method="post" enctype="multipart/form-data">
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Info' %}</span></legend>
+            <table width="100%">
+                <tr>
+                    <td style="vertical-align: top; padding-bottom: 10px;" width="20%">{{ form.surname.label}} </td>
+                    <td>
+                        {{ form.surname }}
+                        {% if form.surname.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.surname.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;" width="20%">{{ form.first_name.label}} </td>
+                    <td>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.first_name.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;" width="20%">{{ form.other_names.label}} </td>
+                    <td>
+                        {{ form.other_names }}
+                        {% if form.other_names.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.other_names.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;" width="20%">{{ form.date_of_birth.label}} </td>
+                    <td>
+                        {{ form.date_of_birth }}
+                        {% if form.date_of_birth.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.date_of_birth.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;" width="20%">{{ form.gender.label}} </td>
+                    <td>
+                        {{ form.gender }}
+                        {% if form.gender.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.gender.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;" width="20%">Qualification</td>
+                    <td>
+                        {{ form.qualification }}
+                        {% if form.qualification.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.qualification.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;" width="20%">{{ form.education_fields.label }}</td>
+                    <td>
+                        {{ form.education_fields }}
+                        {% if form.education_fields.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.education_fields.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;" width="20%">Experience (Years)</td>
+                    <td>
+                        {{ form.experience_years }}
+                        {% if form.experience_years.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.experience_years.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;" width="20%">{{ form.email.label}} </td>
+                    <td>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.email.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;" width="20%">Telephone Number</td>
+                    <td>
+                        {{ form.tel_number }}
+                        {% if form.tel_number.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.tel_number.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;" width="20%">Comment</td>
+                    <td>
+                        {{ form.remarks }}
+                        {% if form.remarks.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.remarks.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;" width="20%">Documents</td>
+                    <td style="padding-top: 10px">
+                        <table width="100%" ">
+                            <tr>
+                                <td>File</td>
+                                <td>Description</td>
+                            </tr>
+                            {{ docs_formset.management_form }}
+                            {% for f in docs_formset %}
+                            {% for hidden in f.hidden_fields %}{{ hidden }}{% endfor %}
+                            {{ f.id }}
+                            <tr>
+                                <td>{{ f.document }}</td>
+                                <td>
+                                    {{ f.description }}{{ f.errors }}
+                                    {% if f.document.errors %}
+                                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ f.document.errors|striptags }}</span></div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </td>
+                </tr>                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Save" /></td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>&nbsp;&nbsp;<a href="{% url 'recruitment:vacancy_list' page=1 %}"><button>Back to Vacancy List</button></a>
+</div>
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="vacancy_list" menu="setup" %}
+{% endblock sidebar %}
+        
+{% endblock %}

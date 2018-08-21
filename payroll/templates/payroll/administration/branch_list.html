@@ -1,0 +1,59 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; Company Info &rang; {% trans 'Branch' %}</h3>
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+    </div><br/>
+    {% endif %}
+
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+
+    <table id="table">
+
+        {% if branch_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="">{% trans 'Location' %}</th>
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+
+        {% for branch in branch_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ branch.name }}</td>
+            <td>{{ branch.location }}</td>
+            <td>
+                <!--<a href="{% url 'payroll:branch_edit' pk=branch.id %}"><img src="{% static 'img/edit.jpg' %}" alt="delete" title="Edit"/></a>-->
+                <a href="{% url 'payroll:branch_edit' pk=branch.id %}">edit</a>
+                &nbsp;|&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning"><span class="ico_error">{% trans "There are no branch setup yet. Click the ADD BRANCH button below to create one, e.g. I.T. Manager" %}</span></div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'payroll:branch_list' as c_url %}
+        {% include "payroll/pagination.html" with page=page_obj url=c_url %}
+    {% endif %}
+
+    <br/>
+
+    <div><a href="{% url 'payroll:branch_add' %}"><button>{% trans 'Add Branch' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="branch_list" menu="company" %}
+{% endblock sidebar %}
+
+{% endblock %}

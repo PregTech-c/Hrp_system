@@ -1,0 +1,46 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h2 class="ico_mug">Titles</h2>
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+    </div><br/>
+    {% endif %}
+
+    <table id="table">
+
+        <tr>
+            <th width="10%">#</th>
+            <th width="70%">Name</th>
+            <th>Action</th>
+        </tr>
+
+        {% for title in title_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ title.name }}</td>
+            <td>
+            <a href="/employeetitle/edit/{{ title.id }}/"><img src="{{ STATIC_URL }}img/edit.jpg" alt="delete" title="Edit"/></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/employeetitle/delete/{{ title.id }}/">
+                <img src="{{ STATIC_URL }}img/cancel.jpg" alt="delete" title="Delete" /></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% include "payroll/pagination.html" with page=page_obj url="/employeetitle" %}
+    {% endif %}
+
+    <br/>
+
+    <div><a href="/employeetitle/new"><button>Add Title</button></a></div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+-   model: asset.assetstatus
+    pk: 1
+    fields:
+        description: New
+-   model: asset.assetstatus
+    pk: 2
+    fields:
+        description: Functioning
+-   model: asset.assetstatus
+    pk: 3
+    fields:
+        description: Broken
+        
+-   model: asset.assetstatus
+    pk: 1
+    fields:
+        description: New
+        
+-   model: asset.category
+    pk: 1
+    fields:
+        name: Car
+        description: Portable computers
+-   model: asset.category
+    pk: 2
+    fields:
+        name: Laptop
+        description: Portable computers
+
+-   model: asset.asset
+    pk: 1
+    fields:
+        category_id: 1
+        model: Harrier 2015
+        serial_no: Eng. No - 89989439843E
+        description: CEOs official car
+-   model: asset.asset
+    pk: 2
+    fields:
+        category_id: 1
+        model: Spacio
+        serial_no: Eng. No - 89989439843D
+        description: Sales department car
+-   model: asset.asset
+    pk: 3
+    fields:
+        category_id: 2
+        model: MacBook Pro Mid-2014
+        serial_no: EW889200233289
+        description: CTO's laptop

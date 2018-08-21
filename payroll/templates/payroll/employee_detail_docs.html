@@ -1,0 +1,45 @@
+{% load i18n %}
+{% load staticfiles %}
+<table  id="table" width="80%">
+    <thead>
+    <tr>
+        <th colspan="2" style="text-align: left">{% trans 'Documents' %}</th>
+    </tr>
+    </thead>
+    {% for doc in documents %}
+    <tr>
+        <td width="5%">{{ forloop.counter }}.</td>
+        <td>
+            {% if doc.document %}
+            <a href="{% static doc.document.url|cut:'payroll/static/' %}" target="_blank">{{ doc.filename }}</a>
+            {% if perms.payroll.hrp_manage_employee_info %}
+            &nbsp;&nbsp;
+            {% blocktrans asvar msg %}Are you sure you want to remove {{ doc.filename }}?{% endblocktrans %}
+            (<a href="{% url 'payroll:emp_remove_doc' pk=profile.user.pk doc_id=doc.pk %}" onClick="return confirm('Are you sure you want to delete this document?')">remove</a>)
+            {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="2">
+            {% trans 'No uploads yet.' %}
+        </td>   
+    <tr>
+    {% endfor %}
+    
+    {% if perms.payroll.hrp_manage_employee_info %}
+    <tr>
+        <td>{% trans 'Add ' %}</td>
+        <td>
+            <form action="{% url 'payroll:emp_upload_doc' pk=profile.user.pk %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input id="id_document" name="document" type="file" />
+                <input id="id_employee_profile" name="employee_profile" type="hidden" value="{{ profile.pk }}"/>
+                
+                <input type="Submit"/>
+            </form>
+        </td>
+    </tr>
+    {% endif %}
+</table>

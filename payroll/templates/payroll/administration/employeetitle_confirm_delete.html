@@ -1,0 +1,25 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Personnel' %} &rang; {% trans 'Titles' %} &rang; Confirm Deletion</h3>
+
+<form action="{% url 'payroll:employeetitle_delete' pk=object.id %}" method="post">
+    {% csrf_token %}
+    <div align="center" id="warning">
+        <span class="ico_error">
+    {% blocktrans %}Are you sure you want to delete the title <strong>{{ object }}</strong>?{% endblocktrans %}
+        </span>
+    </div>
+    <div align="center">
+    <input type="submit" value="Delete" />
+&nbsp;&nbsp;
+        <a href="{% url 'payroll:employeetitle_list' %}">{% trans 'Cancel' %}</a>
+    </div>
+</form>
+
+
+</div>
+{% endblock main_content %}

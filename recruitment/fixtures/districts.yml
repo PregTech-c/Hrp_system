@@ -1,0 +1,336 @@
+-   model: recruitment.district
+    pk: 1
+    fields: {short_name: '', name: Abim}
+-   model: recruitment.district
+    pk: 2
+    fields: {short_name: '', name: Adjumani}
+-   model: recruitment.district
+    pk: 3
+    fields: {short_name: '', name: Agago}
+-   model: recruitment.district
+    pk: 4
+    fields: {short_name: '', name: Alebtong}
+-   model: recruitment.district
+    pk: 5
+    fields: {short_name: '', name: Amolatar}
+-   model: recruitment.district
+    pk: 6
+    fields: {short_name: '', name: Amudat}
+-   model: recruitment.district
+    pk: 7
+    fields: {short_name: '', name: Amuria}
+-   model: recruitment.district
+    pk: 8
+    fields: {short_name: '', name: Amuru}
+-   model: recruitment.district
+    pk: 9
+    fields: {short_name: '', name: Apac}
+-   model: recruitment.district
+    pk: 10
+    fields: {short_name: '', name: Arua}
+-   model: recruitment.district
+    pk: 11
+    fields: {short_name: '', name: Budaka}
+-   model: recruitment.district
+    pk: 12
+    fields: {short_name: '', name: Bududa}
+-   model: recruitment.district
+    pk: 13
+    fields: {short_name: '', name: Bugiri}
+-   model: recruitment.district
+    pk: 14
+    fields: {short_name: '', name: Buhweju}
+-   model: recruitment.district
+    pk: 15
+    fields: {short_name: '', name: Buikwe}
+-   model: recruitment.district
+    pk: 16
+    fields: {short_name: '', name: Bukedea}
+-   model: recruitment.district
+    pk: 17
+    fields: {short_name: '', name: Bukomansimbi}
+-   model: recruitment.district
+    pk: 18
+    fields: {short_name: '', name: Bukwa}
+-   model: recruitment.district
+    pk: 19
+    fields: {short_name: '', name: Bulambuli}
+-   model: recruitment.district
+    pk: 20
+    fields: {short_name: '', name: Buliisa}
+-   model: recruitment.district
+    pk: 21
+    fields: {short_name: '', name: Bundibugyo}
+-   model: recruitment.district
+    pk: 22
+    fields: {short_name: '', name: Bushenyi}
+-   model: recruitment.district
+    pk: 23
+    fields: {short_name: '', name: Busia}
+-   model: recruitment.district
+    pk: 24
+    fields: {short_name: '', name: Butaleja}
+-   model: recruitment.district
+    pk: 25
+    fields: {short_name: '', name: Butambala}
+-   model: recruitment.district
+    pk: 26
+    fields: {short_name: '', name: Buvuma}
+-   model: recruitment.district
+    pk: 27
+    fields: {short_name: '', name: Buyende}
+-   model: recruitment.district
+    pk: 28
+    fields: {short_name: '', name: Dokolo}
+-   model: recruitment.district
+    pk: 29
+    fields: {short_name: '', name: Gomba}
+-   model: recruitment.district
+    pk: 30
+    fields: {short_name: '', name: Gulu}
+-   model: recruitment.district
+    pk: 31
+    fields: {short_name: '', name: Hoima}
+-   model: recruitment.district
+    pk: 32
+    fields: {short_name: '', name: Ibanda}
+-   model: recruitment.district
+    pk: 33
+    fields: {short_name: '', name: Iganga}
+-   model: recruitment.district
+    pk: 34
+    fields: {short_name: '', name: Isingiro}
+-   model: recruitment.district
+    pk: 35
+    fields: {short_name: '', name: Jinja}
+-   model: recruitment.district
+    pk: 36
+    fields: {short_name: '', name: Kaabong}
+-   model: recruitment.district
+    pk: 37
+    fields: {short_name: '', name: Kabale}
+-   model: recruitment.district
+    pk: 38
+    fields: {short_name: '', name: Kabarole}
+-   model: recruitment.district
+    pk: 39
+    fields: {short_name: '', name: Kaberamaido}
+-   model: recruitment.district
+    pk: 40
+    fields: {short_name: '', name: Kalangala}
+-   model: recruitment.district
+    pk: 41
+    fields: {short_name: '', name: Kaliro}
+-   model: recruitment.district
+    pk: 42
+    fields: {short_name: '', name: Kalungu}
+-   model: recruitment.district
+    pk: 43
+    fields: {short_name: '', name: Kampala}
+-   model: recruitment.district
+    pk: 44
+    fields: {short_name: '', name: Kamuli}
+-   model: recruitment.district
+    pk: 45
+    fields: {short_name: '', name: Kamwenge}
+-   model: recruitment.district
+    pk: 46
+    fields: {short_name: '', name: Kanungu}
+-   model: recruitment.district
+    pk: 47
+    fields: {short_name: '', name: Kapchorwa}
+-   model: recruitment.district
+    pk: 48
+    fields: {short_name: '', name: Kasese}
+-   model: recruitment.district
+    pk: 49
+    fields: {short_name: '', name: Katakwi}
+-   model: recruitment.district
+    pk: 50
+    fields: {short_name: '', name: Kayunga}
+-   model: recruitment.district
+    pk: 51
+    fields: {short_name: '', name: Kibaale}
+-   model: recruitment.district
+    pk: 52
+    fields: {short_name: '', name: Kiboga}
+-   model: recruitment.district
+    pk: 53
+    fields: {short_name: '', name: Kibuku}
+-   model: recruitment.district
+    pk: 54
+    fields: {short_name: '', name: Kiruhura}
+-   model: recruitment.district
+    pk: 55
+    fields: {short_name: '', name: Kiryandongo}
+-   model: recruitment.district
+    pk: 56
+    fields: {short_name: '', name: Kisoro}
+-   model: recruitment.district
+    pk: 57
+    fields: {short_name: '', name: Kitgum}
+-   model: recruitment.district
+    pk: 58
+    fields: {short_name: '', name: Koboko}
+-   model: recruitment.district
+    pk: 59
+    fields: {short_name: '', name: Kole}
+-   model: recruitment.district
+    pk: 60
+    fields: {short_name: '', name: Kotido}
+-   model: recruitment.district
+    pk: 61
+    fields: {short_name: '', name: Kumi}
+-   model: recruitment.district
+    pk: 62
+    fields: {short_name: '', name: Kween}
+-   model: recruitment.district
+    pk: 63
+    fields: {short_name: '', name: Kyankwanzi}
+-   model: recruitment.district
+    pk: 64
+    fields: {short_name: '', name: Kyegegwa}
+-   model: recruitment.district
+    pk: 65
+    fields: {short_name: '', name: Kyenjojo}
+-   model: recruitment.district
+    pk: 66
+    fields: {short_name: '', name: Lamwo}
+-   model: recruitment.district
+    pk: 67
+    fields: {short_name: '', name: Lira}
+-   model: recruitment.district
+    pk: 68
+    fields: {short_name: '', name: Luuka}
+-   model: recruitment.district
+    pk: 69
+    fields: {short_name: '', name: Luweero}
+-   model: recruitment.district
+    pk: 70
+    fields: {short_name: '', name: Lwengo}
+-   model: recruitment.district
+    pk: 71
+    fields: {short_name: '', name: Lyantonde}
+-   model: recruitment.district
+    pk: 72
+    fields: {short_name: '', name: Manafwa}
+-   model: recruitment.district
+    pk: 73
+    fields: {short_name: '', name: Maracha}
+-   model: recruitment.district
+    pk: 74
+    fields: {short_name: '', name: Masaka}
+-   model: recruitment.district
+    pk: 75
+    fields: {short_name: '', name: Masindi}
+-   model: recruitment.district
+    pk: 76
+    fields: {short_name: '', name: Mayuge}
+-   model: recruitment.district
+    pk: 77
+    fields: {short_name: '', name: Mbale}
+-   model: recruitment.district
+    pk: 78
+    fields: {short_name: '', name: Mbarara}
+-   model: recruitment.district
+    pk: 79
+    fields: {short_name: '', name: Mitooma}
+-   model: recruitment.district
+    pk: 80
+    fields: {short_name: '', name: Mityana}
+-   model: recruitment.district
+    pk: 81
+    fields: {short_name: '', name: Moroto}
+-   model: recruitment.district
+    pk: 82
+    fields: {short_name: '', name: Moyo}
+-   model: recruitment.district
+    pk: 83
+    fields: {short_name: '', name: Mpigi}
+-   model: recruitment.district
+    pk: 84
+    fields: {short_name: '', name: Mubende}
+-   model: recruitment.district
+    pk: 85
+    fields: {short_name: '', name: Mukono}
+-   model: recruitment.district
+    pk: 86
+    fields: {short_name: '', name: Nakapiripirit}
+-   model: recruitment.district
+    pk: 87
+    fields: {short_name: '', name: Nakaseke}
+-   model: recruitment.district
+    pk: 88
+    fields: {short_name: '', name: Nakasongola}
+-   model: recruitment.district
+    pk: 89
+    fields: {short_name: '', name: Namayingo}
+-   model: recruitment.district
+    pk: 90
+    fields: {short_name: '', name: Namutumba}
+-   model: recruitment.district
+    pk: 91
+    fields: {short_name: '', name: Napak}
+-   model: recruitment.district
+    pk: 92
+    fields: {short_name: '', name: Nebbi}
+-   model: recruitment.district
+    pk: 93
+    fields: {short_name: '', name: Ngora}
+-   model: recruitment.district
+    pk: 94
+    fields: {short_name: '', name: Ntoroko}
+-   model: recruitment.district
+    pk: 95
+    fields: {short_name: '', name: Ntungamo}
+-   model: recruitment.district
+    pk: 96
+    fields: {short_name: '', name: Nwoya}
+-   model: recruitment.district
+    pk: 97
+    fields: {short_name: '', name: Otuke}
+-   model: recruitment.district
+    pk: 98
+    fields: {short_name: '', name: Oyam}
+-   model: recruitment.district
+    pk: 99
+    fields: {short_name: '', name: Pader}
+-   model: recruitment.district
+    pk: 100
+    fields: {short_name: '', name: Pallisa}
+-   model: recruitment.district
+    pk: 101
+    fields: {short_name: '', name: Rakai}
+-   model: recruitment.district
+    pk: 102
+    fields: {short_name: '', name: Rubirizi}
+-   model: recruitment.district
+    pk: 103
+    fields: {short_name: '', name: Rukungiri}
+-   model: recruitment.district
+    pk: 104
+    fields: {short_name: '', name: Sembabule}
+-   model: recruitment.district
+    pk: 105
+    fields: {short_name: '', name: Serere}
+-   model: recruitment.district
+    pk: 106
+    fields: {short_name: '', name: Sheema}
+-   model: recruitment.district
+    pk: 107
+    fields: {short_name: '', name: Sironko}
+-   model: recruitment.district
+    pk: 108
+    fields: {short_name: '', name: Soroti}
+-   model: recruitment.district
+    pk: 109
+    fields: {short_name: '', name: Tororo}
+-   model: recruitment.district
+    pk: 110
+    fields: {short_name: '', name: Wakiso}
+-   model: recruitment.district
+    pk: 111
+    fields: {short_name: '', name: Yumbe}
+-   model: recruitment.district
+    pk: 112
+    fields: {short_name: '', name: Zombo}

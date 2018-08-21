@@ -1,0 +1,907 @@
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, get_list_or_404
+from django.db.models import Q
+
+from django.shortcuts import render_to_response
+from django.views.generic import *
+from payroll.forms import *
+from django.template import RequestContext
+from decimal import Decimal, ROUND_HALF_UP
+
+from payroll.models import *
+from payroll.views import write_pdf
+
+import datetime
+
+class PayrollView1(View):
+    pass
+#    def get(self, *args, **kwargs):
+#
+
+class PayrollView(ListView):
+
+    model = Payslip
+    context_object_name = 'payslip_list'
+    paginate_by = 20
+    template_name='payroll_list.html'
+
+
+    def get_queryset(self):
+
+        try:
+            payroll = Payroll.objects.get(pay_period=self.kwargs['period'])
+            try:
+                # TODO Check permission
+                if not payroll.authorized_by and self.kwargs['auth_id']:
+                    Payroll.objects.filter(pay_period=self.kwargs['period']
+                        ).update(authorized_by=self.request.user,
+                            authorized_at=datetime.datetime.now())
+
+                    # commit payroll figures
+                    for payslip in payroll.payslip_set.all():
+                        payslip.nssf = payslip.get_employee_nssf()
+                        payslip.paye = payslip.get_paye()
+                        payslip.msu_nssf = payslip.get_msu_nssf()
+#                        payslip.advance = payslip.get_advance()
+                        payslip.net_pay = payslip.get_net_pay()
+                        payslip.total_deduction = payslip.get_total_deduction()
+                        payslip.gross_pay = payslip.get_paye()
+#                        payslip.taxable_income = payslip.get_paye()
+#                        payslip.allowances = payslip.get_allowances()
+#                        payslip.deductions = payslip.get_deductions()
+
+                        payslip.save()
+
+
+            except KeyError:
+                pass
+        except Payroll.DoesNotExist:
+            Payroll(pay_period_id=self.kwargs['period']).save()
+            payroll = Payroll.objects.get(
+                            pay_period=self.kwargs['period'])
+
+        if self.request.user.has_perm('payroll.can_view_payroll'):
+            return Payslip.objects.filter(payroll=payroll)
+        else:
+            return Payslip.objects.filter(payroll=payroll,
+                    employee=self.request.user)
+
+    def get_context_data(self, **kwargs):
+
+
+        context = super(PayrollView, self).get_context_data(**kwargs)
+        payroll = Payroll.objects.get(pay_period=self.kwargs['period'])
+
+
+        context['payroll'] = payroll
+        context['can_edit'] = self.request.user.has_perms('payroll.can_edit_payroll')
+        context['can_authorize'] = self.request.user.has_perms('payroll.can_authorize_payroll')
+        context['can_send'] = self.request.user.has_perms('payroll.can_send_payslips')
+
+        context['total_contractual_pay'] = payroll.get_total_contractual_pay(self.request.user)
+        context['total_employee_nssf'] = payroll.get_total_employee_nssf(self.request.user)
+        context['total_msu_nssf'] = payroll.get_total_msu_nssf(self.request.user)
+        context['total_paye'] = payroll.get_total_paye(self.request.user)
+        context['total_deductions'] = payroll.get_total_deductions(self.request.user)
+        context['total_net_pay'] = payroll.get_total_net_pay(self.request.user)
+        context['total_basic_pay'] = payroll.get_total_basic_pay(self.request.user)
+        context['total_outreach_allowance'] = payroll.get_total_outreach_allowance(self.request.user)
+        context['total_allowances'] = payroll.get_total_allowances(self.request.user)
+        context['total_gross_pay'] = payroll.get_total_gross_pay(self.request.user)
+
+        log_message = 'Viewd payroll: %s.' % payroll.pay_period
+        Log(user=self.request.user, action=log_message).save()
+
+        return context
+
+class PayrollReportView(ListView):
+
+    context_object_name = 'payroll_list'
+    template_name = 'payroll_report.html'
+
+    def get_queryset(self):
+        get = self.request.GET.copy()
+
+        if len(get):
+            self.form = PayperiodSearchForm(self.request.GET)
+
+            if get.get('start_date') and get.get('end_date'):
+                return Payroll.objects.filter(
+                    pay_period__start_date__gt=get.get('start_date'),
+                    pay_period__end_date__lt=get.get('end_date')
+                )
+            else:
+                return Payroll.objects.all()
+
+        else:
+            self.form = PayperiodSearchForm(initial={
+                    'number_of_staff': 'on',
+                    'total_allowances': 'on',
+                    'total_paye': 'on',
+                    'total_msu_nssf': 'on',
+                    'total_deductions': 'on',
+                    'total_nssf': 'on',
+                    'total_net_pay': 'on',
+                })
+
+#        return Payroll.objects.filter(pk=0)
+        return Payroll.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(PayrollReportView, self).get_context_data(**kwargs)
+        context['form'] = self.form
+
+#        if request.user.has_perm('payroll.can_view_payroll'):
+#            payroll_list = get_list_or_404(Payroll)
+#        else:
+#            payroll_list = get_list_or_404(Payroll, employee=self.request.user)
+#
+#        context['total_contractual_papy'] =
+        context['get'] = self.request.GET.copy()
+        self.request.session['get'] = self.request.GET.copy()
+
+        log_message = 'Opened payroll report search tool.'
+        Log(user=self.request.user, action=log_message).save()
+
+        return context
+
+class PayrollReportPdfView(View):
+
+    def get(self, request, *args, **kwargs):
+
+
+        if kwargs.get('start_date') and kwargs.get('end_date'):
+            payroll_list = Payroll.objects.filter(
+                    pay_period__start_date__gt=kwargs['start_date'],
+                    pay_period__end_date__lt=kwargs['end_date']
+                )
+        else:
+            payroll_list = Payroll.objects.all()
+
+        return write_pdf(
+            'payroll_pdf_report.html',
+            {
+                'payroll_list': payroll_list,
+                'get': request.session['get'],
+                'num_columns': len(request.session['get'])-1,
+            }
+        )
+
+def payroll_csv_report_view(request, *args, **kwargs):
+    import csv
+    from django.template import loader, Context
+
+    response = HttpResponse(mimetype='application/vnd.ms-excel')
+    response['content-disposition'] = 'attachment; filename=payroll_summary.xls'
+
+    if request.session['get'].get('start_date') and request.session['get'].get('end_date'):
+        payroll_list = Payroll.objects.filter(
+                pay_period__start_date__gt=request.session['get'].get('start_date'),
+                pay_period__end_date__lt=request.session['get'].get('end_date')
+            )
+    else:
+        payroll_list = Payroll.objects.all()
+
+    t = loader.get_template('payroll_csv_report.html')
+    c = Context({
+        'payroll_list': payroll_list,
+        'get': request.session['get'],
+        'num_columns': len(request.session['get'])-1
+    })
+    response.write(t.render(c    ))
+    return response
+
+class PayrollReportExcelView(ListView):
+    pass
+
+class PayslipAllowanceView(View):
+
+    template_name = 'allowance_add.html'
+
+    def get(self, request, *args, **kwargs):
+        payslip = Payslip.objects.get(pk=kwargs['slip'])
+        try:
+            PayslipAllowance.objects.get(pk=kwargs['da']).delete()
+        except:
+            pass
+        
+        allowances = payslip.payslipallowance_set.all()
+
+        return render_to_response(
+            self.template_name,
+            {
+                'payslip': payslip,
+                'allowance_list': allowances,
+                'form': PayslipAllowanceForm(
+                            initial={'payslip': payslip, 'allowance_type': 1}
+                            )
+            },
+            RequestContext(request)
+        )
+
+    def post(self, request, *args, **kwargs):
+
+        payslip = Payslip.objects.get(pk=kwargs['slip'])
+        allowances = payslip.payslipallowance_set.all()
+
+        form = PayslipAllowanceForm(data=request.POST)
+        if form.is_valid():
+            try:
+                allowance = PayslipAllowance.objects.get(
+                    payslip=request.POST['payslip'],
+                    allowance_type=request.POST['allowance_type']
+                    # self.fields['allowance_type'].
+                )
+
+                PayslipAllowance(
+                    id=allowance.id,
+                    payslip=payslip,
+                    allowance_type=AllowanceType.objects.get(
+                        pk=request.POST['allowance_type']),
+                    amount=request.POST['amount'],
+                    comment=request.POST['comment']).save()
+            except PayslipAllowance.DoesNotExist:
+                form.save()
+            except PayslipAllowance.MultipleObjectsReturned:
+                PayslipAllowance.objects.filter(
+                    payslip=request.POST['payslip'],
+                    allowance_type=request.POST['allowance_type']
+                ).delete()
+                form.save()
+
+            form = PayslipAllowanceForm(
+                            initial={'payslip': payslip, 'allowance_type': 1}
+                            )
+        else:
+            form = PayslipAllowanceForm(data=request.POST,
+                        error_class=DivErrorList)
+
+        return render_to_response(
+            self.template_name,
+            {
+                'payslip': payslip,
+                'allowance_list': allowances,
+                'form': form
+            },
+            RequestContext(request)
+        )
+
+class PayslipDeductionView(View):
+
+    template_name = 'deduction_add.html'
+
+    def get(self, request, *args, **kwargs):
+        payslip = Payslip.objects.get(pk=kwargs['slip'])
+
+        deductions = payslip.payslipdeduction_set.all()
+
+        return render_to_response(
+            self.template_name,
+            {
+                'payslip': payslip,
+                'deduction_list': deductions,
+                'form': PayslipDeductionForm(
+                            initial={'payslip': payslip, 'deduction_type': 1}
+                            )
+            },
+            RequestContext(request)
+        )
+
+    def post(self, request, *args, **kwargs):
+
+        payslip = Payslip.objects.get(pk=kwargs['slip'])
+        deductions = payslip.payslipdeduction_set.all()
+
+        form = PayslipDeductionForm(data=request.POST)
+
+        if form.is_valid():
+            try:
+                deduction = PayslipDeduction.objects.get(
+                    payslip=request.POST['payslip'],
+                    deduction_type=request.POST['deduction_type']
+                    # self.fields['allowance_type'].
+                )
+
+                PayslipDeduction(
+                    id=deduction.id,
+                    payslip=payslip,
+                    deduction_type=DeductionType.objects.get(
+                        pk=request.POST['deduction_type']),
+                    amount=request.POST['amount'],
+                    comment=request.POST['comment']).save()
+            except PayslipDeduction.DoesNotExist:
+                form.save()
+            except PayslipDeduction.MultipleObjectsReturned:
+                PayslipDeduction.objects.filter(
+                    payslip=request.POST['payslip'],
+                    deduction_type=request.POST['deduction_type']
+                ).delete()
+                form.save()
+
+            form = PayslipDeductionForm(
+                            initial={'payslip': payslip, 'deduction_type': 1}
+                            )
+
+        else:
+            form = PayslipDeductionForm(data=request.POST,
+                        error_class=DivErrorList)
+
+        return render_to_response(
+            self.template_name,
+            {
+                'payslip': payslip,
+                'deduction_list': deductions,
+                'form': form
+            },
+            RequestContext(request)
+        )
+
+class PayslipTotalDaysWorkedView(UpdateView):
+    model = Payslip
+    form_class = PayslipTotalDaysWorked
+
+    template_name = 'payslip_days_form.html'
+#    success_url = '/bank/'
+
+    def get_success_url(self):
+        payslip = Payslip.objects.get(pk=self.kwargs['pk'])
+        return '/payroll/%s/' % payslip.payroll.id
+
+    def get_context_data(self, **kwargs):
+        context = super(PayslipTotalDaysWorkedView, self).get_context_data(**kwargs)
+        context['action_url'] = '/payslip/edit/%s/' % self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = '%s has been successfully modified.' % \
+            str(self.get_object())
+        return super(PayslipTotalDaysWorkedView, self).form_valid(form)
+
+
+class PayslipTotalOutreachDaysView(UpdateView):
+    model = Payslip
+    form_class = PayslipTotalOutreachDays
+
+    template_name = 'payslip_outreach_days_form.html'
+#    success_url = '/bank/'
+
+    def get_success_url(self):
+        payslip = Payslip.objects.get(pk=self.kwargs['pk'])
+        return '/payroll/%s/' % payslip.payroll.id
+
+    def get_context_data(self, **kwargs):
+        context = super(PayslipTotalOutreachDaysView, self).get_context_data(**kwargs)
+        context['action_url'] = '/payslip/edit/%s/' % self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = '%s has been successfully modified.' % \
+            str(self.get_object())
+        return super(PayslipTotalOutreachDaysView, self).form_valid(form)
+
+class PayslipDetailView(DetailView):
+
+    template_name='payslip_detail.html'
+    context_object_name = 'payslip'
+
+    def get_object(self):
+        return get_object_or_404(Payslip, pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super(PayslipDetailView, self).get_context_data(**kwargs)
+
+#        allowances = []
+#        for allowance in self.get_object().payslipallowance_set.all():
+#            allowances = allowances.append(allowance)
+
+#        center = self.employee.get_profile().center
+#
+#        if center.is_outreach:
+#            daily_allowance = int(center.daily_outreach_allowance)
+#            days = self.get_total_days_worked()
+#
+#            total = total + (days * daily_allowance)
+
+        context['allowances'] = self.get_object().payslipallowance_set.all()
+        context['deductions'] = self.get_object().payslipdeduction_set.all()
+        context['profile'] = self.get_object().employee.get_profile()
+        return context
+
+
+def fetch_resources(uri, rel):
+    import os
+    path = os.path.join(
+#            '/Users/steve/NetBeansProjects/Payroll/payroll/static/',
+            settings.STATIC_ROOT,
+            uri.replace(settings.STATIC_URL, ""),
+            ""
+        )
+    return os.path.join(__file__, uri)
+    return path
+
+
+
+def pdf_payslip(request, pk):
+    import os
+    from django.conf import settings
+    import urllib
+
+    if request.user.has_perm('payroll.can_view_payroll'):
+        payslip_list = get_list_or_404(Payslip, payroll=pk)
+    else:
+        payslip_list = get_list_or_404(Payslip, payroll=pk, employee=request.user)
+    payroll = get_object_or_404(Payroll, pk=pk)
+
+    return write_pdf('payroll_pdf.html',{
+            'pagesize' : 'A4',
+            'payroll' : payroll,
+            'payslip_list' : payslip_list,
+
+            'total_basic_pay': payroll.get_total_basic_pay(request.user),
+            'total_contractual_pay': payroll.get_total_contractual_pay(request.user),
+            'total_outreach_allowance': payroll.get_total_outreach_allowance(request.user),
+            'total_allowances': payroll.get_total_allowances(request.user),
+            'total_gross_pay': payroll.get_total_gross_pay(request.user),
+            'total_employee_nssf': payroll.get_total_employee_nssf(request.user),
+            'total_msu_nssf': payroll.get_total_msu_nssf(request.user),
+            'total_paye': payroll.get_total_paye(request.user),
+            'total_deductions': payroll.get_total_deductions(request.user),
+            'total_net_pay': payroll.get_total_net_pay(request.user)
+        }
+        )
+
+class PayrollPDFView(ListView):
+
+    model = Payslip
+    context_object_name = 'payslip_list'
+    paginate_by = 5
+    template_name='payroll_pdf.html'
+
+    def get_queryset(self):
+        try:
+            payroll = Payroll.objects.get(pay_period=self.kwargs['period'])
+        except Payroll.DoesNotExist:
+            Payroll(pay_period_id=self.kwargs['period']).save()
+        except: # Payroll.MultipleObjectsExist:
+            Payroll.objects.filter(
+                pay_period=self.kwargs['period']).delete()
+            Payroll(pay_period_id=self.kwargs['period']).save()
+
+        payroll = Payroll.objects.get(pay_period=self.kwargs['period'])
+
+        return Payslip.objects.filter(payroll=payroll)
+
+    def get_context_data(self, **kwargs):
+        context = super(PayrollView, self).get_context_data(**kwargs)
+        payroll = Payroll.objects.filter(pay_period=self.kwargs['period']).order_by('-id')[:2]
+
+        context['payroll'] = payroll
+
+
+        return context
+
+class PayrollCSVView1(View):
+    import csv
+    template_name = 'payroll_csv.html'
+
+    def get(self, request, *args, **kwargs):
+
+        return render_to_response(
+            self.template_name,
+            {},
+            RequestContext(request)
+        )
+
+
+
+def payroll_csv_view(request, pk):
+    import csv
+
+    response = HttpResponse(mimetype='text/csv')
+    response['content-disposition'] = 'attachment; filename=payroll.csv'
+
+    payroll = get_object_or_404(Payroll, pk=pk)
+#    if request.user.has_perm('payroll.can_view_payroll'):
+#        payslip_list = payroll.payslip_set.all()
+    if request.user.has_perm('payroll.can_view_payroll'):
+        payslip_list = get_list_or_404(Payslip, payroll=pk)
+    else:
+        payslip_list = get_list_or_404(Payslip, payroll=pk, employee=request.user)
+
+#    payslip_list = Payslip.objects.filter(payroll=pk)
+    title = 'MSU Payroll: %s to %s' % (payroll.pay_period.start_date,
+                payroll.pay_period.end_date)
+
+    writer = csv.writer(response)
+    writer.writerow([title])
+    writer.writerow([''])
+
+    writer.writerow([
+        'Name',
+        'Center',
+        'Contractual Pay',
+        'Days Worked',
+        'Basic Pay',
+        'O/R Allowance',
+        'Other Allowances',
+        'Gross Pay',
+        'NSSF',
+        'MSU NSSF',
+        'PAYE',
+        'Other Deductions',
+        'Net Pay'
+        ])
+
+    for payslip in payslip_list:
+        profile = payslip.employee.get_profile()
+        writer.writerow([
+            profile.get_fullname(),
+            profile.center.short_name,
+            Decimal(str(profile.get_contractual_pay().amount)
+                ).quantize(Decimal('0'), ROUND_HALF_UP),
+            payslip.get_total_days_worked(),
+            Decimal(str(payslip.get_basic_pay())
+                ).quantize(Decimal('0'), ROUND_HALF_UP),
+            Decimal(str(payslip.get_outreach_allowance())
+                ).quantize(Decimal('0'), ROUND_HALF_UP),
+            Decimal(str(payslip.get_allowances())
+                ).quantize(Decimal('0'), ROUND_HALF_UP),
+            Decimal(str(payslip.get_gross_pay())
+                ).quantize(Decimal('0'), ROUND_HALF_UP),
+            Decimal(str(payslip.get_employee_nssf())
+                ).quantize(Decimal('0'), ROUND_HALF_UP),
+            Decimal(str(payslip.get_msu_nssf())
+                ).quantize(Decimal('0'), ROUND_HALF_UP),
+            Decimal(str(payslip.get_paye())
+                ).quantize(Decimal('0'), ROUND_HALF_UP),
+            Decimal(str(payslip.get_deductions())
+                ).quantize(Decimal('0'), ROUND_HALF_UP),
+            Decimal(str(payslip.get_net_pay())
+                ).quantize(Decimal('0'), ROUND_HALF_UP),
+        ])
+
+    writer.writerow([])
+
+    writer.writerow([
+        '', '',
+        payroll.get_total_contractual_pay(request.user),
+        '',
+        payroll.get_total_basic_pay(request.user),
+        payroll.get_total_outreach_allowance(request.user),
+        payroll.get_total_allowances(request.user),
+        payroll.get_total_gross_pay(request.user),
+        payroll.get_total_employee_nssf(request.user),
+        payroll.get_total_msu_nssf(request.user),
+        payroll.get_total_paye(request.user),
+        payroll.get_total_deductions(request.user),
+        payroll.get_total_net_pay(request.user)
+
+    ])
+    return response
+
+class PayslipFundsSourceView(View):
+
+    template_name = 'payslip_funds_source.html'
+
+    def get(self, request, *args, **kwargs):
+
+        try:
+            PayslipFundsSource.objects.get(pk=kwargs['del']).delete()
+        except:
+            pass
+        
+        payslip = Payslip.objects.get(pk=kwargs['slip'])
+
+        sources = payslip.payslipfundssource_set.all()
+
+        return render_to_response(
+            self.template_name,
+            {
+                'payslip': payslip,
+                'source_list': sources,
+                'form': PayslipFundsSourceForm(
+                            initial={'payslip': payslip, 'source': 1}
+                            )
+            },
+            RequestContext(request)
+        )
+
+    def post(self, request, *args, **kwargs):
+
+        payslip = Payslip.objects.get(pk=kwargs['slip'])
+        sources = payslip.payslipfundssource_set.all()
+
+        form = PayslipFundsSourceForm(data=request.POST)
+
+        if form.is_valid():
+            try:
+                source = PayslipFundsSource.objects.get(
+                    payslip=request.POST['payslip'],
+                    source=request.POST['source']
+                )
+
+                PayslipFundsSource(
+                    id=source.id,
+                    payslip=payslip,
+                    source=DonorLine.objects.get(pk=request.POST['source']),
+                    amount=request.POST['amount']).save()
+            except PayslipFundsSource.DoesNotExist:
+                form.save()
+            except PayslipFundsSource.MultipleObjectsReturned:
+                PayslipFundsSource.objects.filter(
+                    payslip=request.POST['payslip'],
+                    source=request.POST['source']
+                ).delete()
+                form.save()
+
+            form = PayslipFundsSourceForm(
+                            initial={'payslip': payslip, 'source': 1}
+                            )
+            test = "should save"
+        else:
+            form = PayslipFundsSourceForm(data=request.POST,
+                        error_class=DivErrorList)
+            test = "error"
+        return render_to_response(
+            self.template_name,
+            {
+                'payslip': payslip,
+                'source_list': sources,
+                'form': PayslipFundsSourceForm(
+                            initial={'payslip': payslip, 'source': 1}
+                            ),
+                'test': test
+            },
+            RequestContext(request)
+        )
+
+class NssfReportView(View):
+
+    action_url = "/report/nssf/"
+
+    def get(self, request, *args, **kwargs):
+        return render_to_response(
+            "nssf_report_form.html",
+            {
+                'form': SearchPayrollForm,
+                'test': "test",
+                'action_url': self.action_url
+            },
+            RequestContext(request)
+        )
+
+    def post(self, request, *args, **kwargs):
+
+        form = SearchPayrollForm(data=request.POST)
+
+        if form.is_valid():
+
+            payroll = Payroll.objects.get(pk=request.POST['payroll'])
+            payslips = payroll.payslip_set.all()
+            return render_to_response(
+                "nssf_report.html",
+                {
+                    'payslips': payslips,
+                    'payroll': payroll
+                },
+                RequestContext(request)
+            )
+            pass
+        else:
+            form = SearchPayrollForm(data=request.POST,
+                        error_class=DivErrorList)
+
+            return render_to_response(
+                "nssf_report_form.html",
+                {
+                    'form': form,
+                    'action_url': self.action_url,
+                },
+                RequestContext(request)
+            )
+
+def nssf_report_csv_view(request, pk):
+    import csv
+
+    response = HttpResponse(mimetype='text/csv')
+    response['content-disposition'] = 'attachment; filename=nssf.csv'
+
+    payroll = get_object_or_404(Payroll, pk=pk)
+
+    if request.user.has_perm('payroll.can_view_payroll'):
+        payslip_list = get_list_or_404(Payslip, payroll=pk)
+    else:
+        payslip_list = get_list_or_404(Payslip, payroll=pk, employee=request.user)
+
+    title = 'MSU NSSF: %s to %s' % (payroll.pay_period.start_date,
+                payroll.pay_period.end_date)
+
+    writer = csv.writer(response)
+    writer.writerow([title])
+    writer.writerow([''])
+
+
+    writer.writerow([
+
+                "Staff Number",
+                "NSSF Number",
+                "Contribution Type",
+                "Contribution Year",
+                "Contribution Month",
+                "Employee Name",
+                "Employee Gross Pay",
+                "Employee Contribution",
+                "Employer Contribution",
+                "Total Contribution"
+        ])
+
+    for payslip in payslip_list:
+        profile = payslip.employee.get_profile()
+        t = payslip.payroll.date.timetuple()
+        writer.writerow([
+            profile.employee_number,
+            profile.nssf_number,
+            'Normal',
+            t[0],
+            t[1],
+            profile.get_fullname(),
+            payslip.get_gross_pay(),
+            payslip.get_employee_nssf(),
+            payslip.get_msu_nssf(),
+            payslip.get_msu_nssf() + payslip.get_employee_nssf(),
+        ])
+
+    return response
+
+class NssfReportPdfView(View):
+
+    def get(self, request, *args, **kwargs):
+
+#    try:
+        pk = self.kwargs.get('pk')
+        if request.user.has_perm('payroll.can_view_payroll'):
+            payslip_list = get_list_or_404(Payslip, payroll=pk)
+        else:
+            payslip_list = get_list_or_404(Payslip, payroll=pk, employee=request.user)
+
+        return write_pdf(
+            'nssf_pdf_report.html',
+            {
+                'payslip_list': payslip_list,
+            }
+        )
+
+class BankReportView(View):
+
+    action_url = "/report/bank/"
+
+    def get(self, request, *args, **kwargs):
+
+        return render_to_response(
+            'bank_report_form.html',
+            {
+                "form": SearchPayrollForm,
+                "action_url": self.action_url
+            },
+            RequestContext(request)
+        )
+
+    def post(self, request, *args, **kwargs):
+
+        form = SearchPayrollForm(data=request.POST)
+        if form.is_valid():
+
+            payroll = Payroll.objects.get(pk=request.POST['payroll'])
+
+            if not request.POST['bank']:
+                payslips = payroll.payslip_set.all()
+            else:
+                payslips = payroll.payslip_set.filter(
+                    employee__employeeprofile__bank=request.POST['bank'])
+
+            total_pay = 0
+            for payslip in payslips:
+                total_pay += payslip.get_net_pay()
+
+            return render_to_response(
+                "bank_report.html",
+                {
+                    'payslips': payslips,
+                    'payroll': payroll,
+                    'total_pay': total_pay,
+                    'bank': request.POST['bank'],
+                },
+                RequestContext(request)
+            )
+        else:
+            form = SearchPayrollForm(data=request.POST,
+                        error_class=DivErrorList)
+
+            return render_to_response(
+                "bank_report_form.html",
+                {
+                    'form': form,
+                    'action_url': self.action_url,
+                },
+                RequestContext(request)
+            )
+
+def bank_report_csv_view(request, pk):
+    import csv
+
+    response = HttpResponse(mimetype='text/csv')
+    response['content-disposition'] = 'attachment; filename=bank.csv'
+
+    payroll = get_object_or_404(Payroll, pk=pk)
+    bank=0
+    if not bank:
+        payslips = payroll.payslip_set.all()
+    else:
+        payslips = payroll.payslip_set.filter(
+            employee__employeeprofile__bank=bank)
+
+    total_pay = 0
+    for payslip in payslips:
+        total_pay += payslip.get_net_pay()
+
+
+    writer = csv.writer(response)
+    writer.writerow(['MARIESTOPES UGANDA'])
+    writer.writerow([
+                'No. Acc.',
+                'Debit Amount (UGX)',
+                'Account to be Debited',
+                'Total Amount'
+    ])
+    writer.writerow([
+                0,
+                total_pay,
+                0,
+                total_pay,
+    ])
+
+    writer.writerow([
+
+                "SNo",
+                "Employee Name",
+                "Staff Bank",
+                "Sort Code",
+                "Account Number",
+                "Net Pay",
+        ])
+
+    for payslip in payslips:
+        profile = payslip.employee.get_profile()
+        writer.writerow([
+            profile.employee_number,
+            profile.get_fullname(),
+            profile.bank,
+            profile.bank.sort_code,
+            profile.bank_account_number,
+            payslip.get_net_pay(),
+        ])
+
+    return response
+
+class BankReportPdfView(View):
+
+    def get(self, request, *args, **kwargs):
+
+#    try:
+        pk = self.kwargs.get('pk')
+        if request.user.has_perm('payroll.can_view_payroll'):
+            payslip_list = get_list_or_404(Payslip, payroll=pk)
+        else:
+            payslip_list = get_list_or_404(Payslip, payroll=pk, employee=request.user)
+
+        total_pay = 0
+        for payslip in payslip_list:
+            total_pay += payslip.get_net_pay()
+
+        return write_pdf(
+            'bank_pdf_report.html',
+            {
+                'payslip_list': payslip_list,
+                'total_pay': total_pay,
+            }
+        )

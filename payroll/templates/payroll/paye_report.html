@@ -1,0 +1,51 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load humanize %}
+
+{% block main_content %}
+<div id="main_panel_container" class="section">
+    <h3 class="ico_mug">Reports &rang; Payroll &rang; PAYE Report for Paroll {{ payroll }}</h3>
+
+    <table id="table">
+        <thead>
+            <tr>
+                <th width="3%">#</th>
+<!--                <th width="5%">{% trans "Staff Number" %}</th>-->
+                <th width="10%">{% trans "TIN" %}</th>
+<!--                <th width="5%">{% trans "Contribution Year" %}</th>-->
+                <th width="5%">{% trans "Contribution Month" %}</th>
+                <th width="20%">{% trans "Employee Name" %}</th>
+                <th width="">{% trans "Gross Pay" %}</th>
+                <th width="">{% trans "Basic Pay" %}</th>
+                <th width="">{% trans "PAYE" %}</th>
+            </tr>
+        </thead>
+    {% for payslip in payslips %}
+    <tr>
+        <td align="center">{{ forloop.counter }}.</td>
+<!--        <td>{{ payslip.employee.profile.employee_number }}</td>-->
+        <td>{{ payslip.employee.profile.tin_number }}</td>
+<!--        <td>{{ payslip.payroll.date|date:"Y" }}</td>-->
+        <td>{{ payslip.payroll.date|date:"F" }}</td>
+        <td>{{ payslip.employee.profile.get_fullname }}</td>
+        <td align="right">{{ payslip.gross_pay|floatformat:"2"|intcomma }}</td>
+        <td align="right">{{ payslip.basic_pay|floatformat:"2"|intcomma }}</td>
+        <td align="right">{{ payslip.paye|floatformat:"2"|intcomma }}</td>
+    </tr>
+    {% endfor %}
+
+    </table>
+    {% if is_paginated %}
+        {% include "payroll/pagination.html" with page=page_obj url="/activity" %}
+    {% endif %}
+
+    <br/>
+
+    <div>
+        <a href="{% url 'payroll:paye_report' %}"><button>{% trans 'Back to Search' %}</button></a>
+        <a href="{% url 'payroll:paye_pdf_report' pk=payroll.id %}" target="_blank"><button>{% trans 'Export to PDF' %}</button></a>&nbsp;&nbsp;
+        <a href="{% url 'payroll:paye_excel_report' pk=payroll.id %}"><button>{% trans 'Export to Excel' %}</button></a>
+    </div>
+
+</div>
+{% endblock main_content %}

@@ -1,0 +1,238 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load humanize %}
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h3 class="ico_mug">Reports &rang; PIM &rang; Employee Report</h3>
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+    </div><br/>
+    {% endif %}
+
+    {% if form.errors and not form.non_field_errors %}
+    <div id="warning" class="info_div">
+        <span class="ico_error">
+                {% trans 'Please correct the errors below' %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div id="fail" class="info_div">
+        <span class="ico_cancel">
+            {% for error in form.non_field_errors %}
+                    <font style="font-size: 6px">{{ error }}</font>
+            {% endfor %}
+    </span>
+    </div>
+    {% endif %}
+
+    <form action="." method="get">
+        {# % csrf_token % #}
+        <fieldset>
+            <legend><span>Search Info</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="40%">
+                   <table width="100%">
+                       <tr>
+                           <td width="40%">Service Line</td>
+                           <td>{{ form.service_line }}</td>
+                       </tr>
+
+                       <tr>
+                           <td>Position</td>
+                           <td>{{ form.position }}</td>
+                       </tr>
+                       <tr>
+                           <td>Bank</td>
+                           <td>{{ form.bank }}</td>
+                       </tr>
+                       <tr>
+                         <td>Branch</td>
+                         <td>{{ form.branch }}</td>
+                       </tr>
+                   </table>
+               </td>
+               <td width="30%">
+                   <table>
+                       <tr>
+                           <th colspan="3">Fields to Include</th>
+                       </tr>
+                       <tr>
+                           <td>
+                               <table>
+                                   <tr>
+                                       <td>{{ form.service_line_field }}</td>
+                                       <td>Department</td>
+                                   </tr>
+                                   <tr>
+                                       <td>{{ form.branch_field }}</td>
+                                       <td>{{ form.branch.label }}</td>
+                                   </tr>
+                                   <tr>
+                                       <td>{{ form.position_field }}</td>
+                                       <td>Position</td>
+                                   </tr>
+                                   <tr>
+                                       <td>{{ form.nssf_number_field }}</td>
+                                       <td>NSSF Number</td>
+                                   </tr>
+                                   <tr>
+                                       <td>{{ form.status_field }}</td>
+                                       <td>Status</td>
+                                   </tr>
+                                   <tr>
+                                       <td>{{ form.employee_number_field }}</td>
+                                       <td>Employee Number</td>
+                                   </tr>
+                                   <tr>
+                                       <td>{{ form.sort_code_field }}</td>
+                                       <td>Sort Code</td>
+                                   </tr>
+                               </table>
+                            </td>
+                            <td>&nbsp;&nbsp;&nbsp;</td>
+                            <td>
+                               <table>
+
+                                   <tr>
+                                       <td>{{ form.bank_field }}</td>
+                                       <td>Bank</td>
+                                   </tr>
+                                   <tr>
+                                       <td>{{ form.acct_no_field }}</td>
+                                       <td>Bank Account no.</td>
+                                   </tr>
+                                   <tr>
+                                       <td>{{ form.tin_field }}</td>
+                                       <td>TIN</td>
+                                   <tr>
+                                       <td>{{ form.salary_field }}</td>
+                                       <td>Salary</td>
+                                   </tr>
+                                   <tr>
+                                       <td>{{ form.email_field }}</td>
+                                       <td>Email Address</td>
+                                   </tr>
+                                   <tr>
+                                       <td>{{ form.phone_number_field }}</td>
+                                       <td>Phone Number</td>
+                                   </tr>
+                               </table>
+                            </td>
+                        </tr>
+                   </table>
+                </td>
+            <tr>
+                <td colspan="2" style="text-align: center">
+                    <input type="submit" value="Filter" />&nbsp;&nbsp;
+                    <a href="{% url 'payroll:user_report' %}">{% trans 'Reset' %}</a>
+                </td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+
+    {% if get|length > 2%}
+    <div>
+        <a href="{% url 'payroll:user_pdf_report' %}" target="_blank"><button>{% trans 'Export to PDF' %}</button></a>
+        <a href="{% url 'payroll:user_excel_report' %}"><button>{% trans 'Export to Excel' %}</button></a>
+    </div>
+    <table id="table">
+
+        <tr>
+            <th width="3%">#</th>
+            <th width="15%">Name</th>
+            {% if get.service_line_field %}
+            <th width="10%">Service Line</th>
+            {% endif %}
+            {% if get.position_field %}
+            <th width="10%">Position</th>
+            {% endif %}
+            {% if get.branch_field %}
+            <th width="5%">Branch</th>
+            {% endif %}
+            {% if get.nssf_number_field %}
+            <th width="10%">NSSF No.</th>
+            {% endif %}
+            {% if get.bank_field %}
+            <th width="10%">Bank</th>
+            {% endif %}
+            {% if get.tin_field %}
+            <th width="10%">TIN</th>
+            {% endif %}
+            {% if get.acct_no_field %}
+            <th width="10%">Acct. No.</th>
+            {% endif %}
+            {% if get.status_field %}
+            <th width="10%">Status</th>
+            {% endif %}
+            {% if get.employee_number_field %}
+            <th width="10%">Empl. No.</th>
+            {% endif %}
+            {% if get.email_field %}
+            <th width="10%">Email</th>
+            {% endif %}
+            {% if get.phone_number_field %}
+            <th width="10%">Phone</th>
+            {% endif %}
+            {% if get.sort_code_field %}
+            <th width="10%">Sort Code</th>
+            {% endif %}
+            {% if get.salary_field %}
+            <th width="10%">Contractual Pay</th>
+            {% endif %}
+        </tr>
+
+        {% for profile in profile_list %}
+        <tr>
+            <td>{{ forloop.counter0|add:page_obj.start_index }}.</td>
+            <td>{{ profile.get_fullname }}</td>
+            {% if get.service_line_field %}
+            <td>{{ profile.service_line }}</td>
+            {% endif %}
+            {% if get.position_field %}
+            <td>{{ profile.position }}</td>
+            {% endif %}
+            {% if get.nssf_number_field %}
+            <td>{{ profile.nssf_number }}</td>
+            {% endif %}
+            {% if get.bank_field %}
+            <td>{{ profile.bank }}</td>
+            {% endif %}
+            {% if get.tin_field %}
+            <td>{{ profile.tin_number }}</td>
+            {% endif %}
+            {% if get.acct_no_field %}
+            <td>{{ profile.bank_account_number }}</td>
+            {% endif %}
+            {% if get.status_field %}
+            <td>{{ profile.get_status_display }}</td>
+            {% endif %}
+            {% if get.employee_number_field %}
+            <td>{{ profile.employee_number }}</td>
+            {% endif %}
+            {% if get.email_field %}
+            <td>{{ profile.user.email }}</td>
+            {% endif %}
+            {% if get.phone_number_field %}
+            <td>{{ profile.phone_number }}</td>
+            {% endif %}
+            {% if get.sort_code_field %}
+            <td>{{ profile.bank.sort_code }}</td>
+            {% endif %}
+            {% if get.salary_field %}
+            {% endif %}
+        {% endfor %}
+    </table>
+
+
+    <br/>
+    {% endif %}
+</div>
+{% endblock %}

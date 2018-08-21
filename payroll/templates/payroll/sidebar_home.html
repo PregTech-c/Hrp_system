@@ -1,0 +1,57 @@
+{% load i18n %}
+<div id="sidebar" class="right">
+        <h3 class="ico_mug">Sidebar</h3>
+<ul id="menu">
+        <li>
+                <a href="#" class="ico_posts">Personnel Information Management</a>
+                <ul>
+                    <li><a href="{% url 'payroll:user_list' %}">{% trans "Employee List" %}</a></li>
+                    {% if perms.payroll.can_edit_payroll %}
+                        <li>
+                            <a href="{% url 'payroll:payperiod_add' %}">{% trans "New Payroll" %}</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <a href="#" class="ico_posts">Payroll</a>
+                <ul>
+                        <li><a href="{% url 'payroll:payperiod_list' %}">{% trans "Pay-Period" %}</a></li>
+                    {% if perms.payroll.can_edit_payroll %}
+                        <li>
+                            <a href="{% url 'payroll:payperiod_add' %}">{% trans "New Payroll" %}</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <a href="#" class="ico_page">{% trans "Reports" %}</a>
+                <ul>
+                    {% if perms.payroll.can_edit_employees %}
+                        <li><a href="{% url 'payroll:user_report' %}">{% trans "Employees" %}</a></li>
+                    {% endif %}
+                        {% if perms.payroll.can_view_payroll %}
+                            <li><a href="{% url 'payroll:payroll_cycles_summary' %}">{% trans "Payroll Summary" %}</a></li>
+                            <li><a href="{% url 'payroll:nssf_report' %}">{% trans "NSSF" %}</a></li>
+                            <li><a href="{% url 'payroll:bank_report' %}">{% trans "Pay/Department" %}</a></li>
+                        {% endif %}
+
+                        <li><a href="{% url 'payroll:activity_list' %}">{% trans "Activity" %}</a></li>
+                </ul>
+                {% if perms.payroll.can_edit_employees %}
+                <a href="#" class="ico_user">Users</a>
+                <ul>
+<!--                        <li><a href="">Edit users</a></li>-->
+                        <li><a href="{% url 'payroll:user_add' %}">Add user</a></li>
+                        <li><a href="{% url 'payroll:user_list' %}">Manage users</a></li>
+                </ul>
+                {% endif %}
+<!--                <a href="#" class="ico_settings">Settings</a>
+                <ul>
+                        <li><a href="#">Database</a></li>
+                        <li><a href="#">Themes</a></li>
+                        <li><a href="#">Options</a></li>
+                </ul>-->
+
+        </li>
+
+
+</ul>
+
+</div><!-- end #sidebar -->

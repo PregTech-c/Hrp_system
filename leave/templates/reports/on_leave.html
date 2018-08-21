@@ -1,0 +1,91 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% load humanize %}
+
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_start_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd',
+                    maxDate: "+365D"
+               });
+               jQuery("#id_end_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd',
+                   maxDate: "+365D"
+               });
+               
+            });
+        </script>
+{% endblock %}
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">Reports &rang; {% trans 'Leave' %} &rang; On Leave</h3>
+    
+    {% if show_form %}
+    {% include 'reports/on_leave_search_form.html' %}
+    <a href="{% url 'leave:leave_report_on_leave' search='on' show_form='off' %}"><button>Hide Search Form</button></a>
+    {% else %}
+    <a href="{% url 'leave:leave_report_on_leave' search='on' show_form='on' %}"><button>Show Search Form</button></a>&nbsp;&nbsp;
+
+    {% endif %}
+    {% if request.session.search %}
+        <a href="{% url 'leave:leave_report_on_leave' search='off' show_form='on' %}"><button>{% trans 'Clear Filter' %}</button></a>
+    {% endif %}
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+
+    {% if leave_request_list %}
+    <p class='info'>{{ page_message }}</p>
+    <div class='blankline'></div>
+    <table id="table">
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="">{% trans 'Type' %}</th>
+            <th width="">{% trans 'Approved By' %}</th>
+            <th width="">{% trans 'Start Date' %}</th>
+            <th width="">{% trans 'Days' %}</th>
+            <th>{% trans 'Action' %}</th>
+        </tr>
+
+        {% for request in leave_request_list %}
+
+        <tr>
+            <td>{{ page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ request.profile.get_fullname }}</td>
+            <td>{{ request.leave_type }}</td>
+            <td>{{ request.get_approved_by.get_fullname }}</td>
+            <td>{{ request.start_date|date:"SHORT_DATE_FORMAT" }}</td>
+            <td>{{ request.get_no_of_days }}</td>
+            <td><a href="{% url 'leave:leave_request_detail' pk=request.id %}">details</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <div id="warning">
+            <span class="ico_error">
+            {% if request.session.search %}
+                {% trans 'No leaves found for specified search criteria' %}
+            {% else %}
+                {% trans 'No one is currently on leave. Use the form above submit a search criteria.' %}
+            {% endif %}
+            </span>
+        </div>        
+    {% endif %}
+    {% if is_paginated %}
+        {% url 'leave:leave_report_on_leave' as url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=url %}
+    {% endif %}
+    <div class="blankline"></div>
+    {% if leave_request_list %}
+    <a href="{% url 'leave:leave_report_on_leave_pdf' %}" target='_blank'><button>Download PDF</button></a>
+    {% endif %}
+</div>
+
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="educ_level_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock %}

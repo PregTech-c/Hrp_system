@@ -1,0 +1,92 @@
+{% load i18n %}
+{% load humanize %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+{% load humanize %}
+<html>
+
+    <head>
+        <title>PAYE</title>
+        <link rel="stylesheet" type="text/css" href="static/css/style.css" />
+
+        <style type="text/css">
+            @page {
+            margin: 1cm;
+            margin-bottom: 2.5cm;
+            margin-top: 3.5cm;
+            /* size: A4 Landscape; */
+/*            background-image: url(static/img/cancel.jp);*/
+            @frame header {
+                -pdf-frame-content: headerContent;
+                top: 1cm;
+                margin-left: 1cm;
+                margin-right: 1cm;
+                height: 1cm;
+/*                -pdf-frame-border: 1;*/
+                }
+            @frame footer {
+                -pdf-frame-content: footerContent;
+                bottom: 2cm;
+                margin-left: 1cm;
+                margin-right: 1cm;
+                height: 1cm;
+/*                -pdf-frame-border: 0;*/
+                }
+/*                @frame body {
+                -pdf-frame-content: bodyContent;
+                top:1cm;
+             }*/
+            }
+        </style>
+    </head>
+  <body>
+
+<!--<div id="success" class="info_div">test</div>-->
+<div id="headerContent">
+    <table width="100%">
+        <tr><td width="20%">
+      <img src="../static/img/ernst.jpg" alt="Logo" /></td>
+        <td>
+            <strong>
+                <h2>PAYE REPORT FOR {{ pay_period }}</h2>
+            </strong>
+
+        </td></tr>
+    </table>
+
+</div>
+
+<div id="bodyContent">
+
+    <table id="table" cellpadding="5px" width="100%">
+        <thead>
+            <tr>
+                <th width="3%">#</th>
+<!--                <th width="10%">{% trans "Staff Number" %}</th>-->
+                <th width="10%">{% trans "TIN" %}</th>
+<!--                <th width="9%">{% trans "Contribution Year" %}</th>-->
+                <th width="9%">{% trans "Contribution Month" %}</th>
+                <th>{% trans "Employee Name" %}</th>
+                <th width="10%">{% trans "Gross Pay" %}</th>
+                <th width="10%">{% trans "Basic Pay" %}</th>
+                <th width="10%">{% trans "PAYE" %}</th>
+            </tr>
+        </thead>
+    {% for payslip in payslip_list %}
+    <tr>
+        <td align="center">{{ forloop.counter }}.</td>
+        <td>{{ payslip.employee.profile.tin_number }}</td>
+<!--        <td>{{ payslip.employee.profile.nssf_number }}</td>-->
+<!--        <td align="center">{{ payslip.payroll.date|date:"Y" }}</td>-->
+        <td align="center">{{ payslip.payroll.date|date:"F" }}</td>
+        <td align="left">{{ payslip.employee.profile.get_fullname }}</td>
+        <td align="right">{{ payslip.basic_pay|floatformat:"2"|intcomma }}</td>
+        <td align="right">{{ payslip.gross_pay|floatformat:"2"|intcomma }}</td>
+        <td align="right">{{ payslip.paye|floatformat:"2"|intcomma }}</td>
+    </tr>
+    {% endfor %}
+
+    </table>
+</div>
+</body>
+</html>

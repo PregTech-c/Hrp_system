@@ -1,0 +1,154 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load payroll_extras %}
+{% load humanize %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+
+    <h3 class="ico_mug">
+        Payroll &rang; Period {{ payroll.pay_period }} &rang; Payslips
+        {% if payroll.is_authorized %}&rang;&nbsp;[Final]{% endif %}
+    </h3>
+<form action="{% url 'payroll:payroll_search' payroll.pay_period.id %}" method="post" >
+    {% csrf_token %}
+<fieldset>
+        <table style="width: 98%;">
+            <tr>
+                <td width="30%">{% trans 'Search by Name' %}:&nbsp;{{form.emp_name }}
+
+                &nbsp;<input type="submit" value="Search" />&nbsp;&nbsp;
+                  <a href="{% url 'payroll:payroll_search' payroll.pay_period.id %}"><button>{% trans 'Reset' %}</button></a>
+                </td>
+            </tr>
+        </table>
+</fieldset>
+</form>
+
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+
+    </div><br/>
+    {% endif %}
+    <table id="table" style="width: 98%; font-size: 11px">
+        <thead>
+            <tr>
+                <th width="">#</th>
+                <th width="">{% trans "NAME" %}</th>
+                <th width="">{% trans "C.PAY" %}</th>
+                <th width="">{% trans "DAYS" %}</th>
+                <th width="">{% trans "B. PAY" %}</th>
+<!--                <th width="8%">{% trans "O/R" %}</th>-->
+                <th width="">{% trans "ALLOW." %}</th>
+                <th width="">{% trans "GROSS PAY" %}</th>
+                <th width="">{% trans "NSSF" %}</th>
+                <th width="">{% trans "Co. NSSF" %}</th>
+                <th width="">{% trans "PAYE" %}</th>
+                <th width="">{% trans "OTHER DED." %}</th>
+                <th width="">{% trans "NETPAY" %}</th>
+                <th>{% trans "Action" %}</th>
+            </tr>
+        </thead>
+    {% for payslip in payslip_list %}
+    <tr>
+
+        <td align="center">{{ page_obj.start_index|add:forloop.counter0 }}.</td>
+        <td>{{ payslip.employee.profile.get_fullname }}</td>
+        <td align="">
+                {{ payslip.contractual_pay_amount|floatformat:"0"|intcomma }}
+                {# payslip.employee.profile.get_contractual_pay.amount|floatformat:"0"|intcomma #}
+        </td>
+        <td align="">
+        {% if payroll.authorized_by == null and perms.payroll.hrp_manage_payroll %}
+            <a href="{% url 'payroll:payslip_days' pk=payslip.id %}">{{ payslip.total_days_worked|floatformat:"1" }}</a>
+        {% else %}
+            {{ payslip.total_days_worked|floatformat:"1" }}
+        {% endif %}
+        </td>
+        <td align="">
+            {{ payslip.basic_pay|floatformat:"0"|intcomma  }}</td>
+
+        <td align="">
+                {% if payroll.authorized_by == null and perms.payroll.hrp_manage_payroll %}
+            <a href="{% url 'payroll:payslip_allowance' slip=payslip.id %}">
+                {{ payslip.total_allowances|floatformat:"0"|intcomma }}
+            </a>
+                {% else %}
+                {{ payslip.total_allowances|floatformat:"0"|intcomma }}
+                {% endif %}
+        </td>
+        <td align="">
+            {{ payslip.gross_pay|floatformat:"0"|intcomma }}
+        <td align="">{{ payslip.nssf|floatformat:"0"|intcomma }}</td>
+        <td align="">{{ payslip.msu_nssf|floatformat:"0"|intcomma }}</td>
+        <td align="">{{ payslip.paye|floatformat:"0"|intcomma }}</td>
+        <td align="">
+                {% if payroll.authorized_by == null and perms.payroll.hrp_manage_payroll %}
+            <a href="{% url 'payroll:deduction_list' slip=payslip.id%}">
+                {{ payslip.total_deduction|floatformat:"0"|intcomma }}
+            </a>
+                {% else %}
+                {{ payslip.total_deduction|floatformat:"0"|intcomma }}
+                {% endif %}
+        </td>
+        <td align="">
+            {{ payslip.net_pay|floatformat:"0"|intcomma }}
+        </td>
+        <td>
+<!--            <a href="center/edit/{{ payslip.id }}/">
+                <img src="{{ STATIC_URL }}img/edit.jpg" alt="delete" title="Adjust"/></a>-->
+            <a href="{% url 'payroll:payslip_detail' payslip.id %}">{% trans 'Details' %}</a>
+       </td>
+    </tr>
+    {% endfor %}
+
+    </table>
+
+    <div class="pagination">
+        {% with page=page_obj %}
+        {% if page.has_previous %}
+        <a href="{% url 'payroll:payroll_list_p' payperiod_id=payperiod_id page=page.previous_page_number %}">previous</a>
+        {% endif %}
+
+        {% for i in page.paginator.page_range %}
+        {% ifequal i page.number %}
+        <span class="pages">
+           Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+        {% else %}
+        <a href="{% url 'payroll:payroll_list_p' payperiod_id=payperiod_id page=forloop.counter %}">{{ i }}</a>
+        {% endifequal %}
+        {% endfor %}
+        {% if page.has_next %}
+
+        <a href="{% url 'payroll:payroll_list_p' payperiod_id=payperiod_id page=page_obj.next_page_number %}">next</a>
+        {% endif %}
+        {% endwith %}
+</div>
+        <br/>
+    <div>
+        <a href="{% url 'payroll:payperiod_list' %}"><button>Back</button></a>&nbsp;&nbsp;
+        {% if not center %}
+        {% if payroll.authorized_by == null and perms.payroll.hrp_authorize_payroll %}
+        <a href="{% url 'payroll:payroll_list_auth' payperiod_id=payperiod_id auth=1%}" onClick="return confirm('Are you sure you want to authorize this payroll?')">
+            <button>{% trans 'Authorize Payroll' %}</button></a>&nbsp;&nbsp;
+        <a href="{% url 'payroll:payroll_summary_csv_report' payroll_id=payroll.id dept_id=0 %}">
+            <button>{% trans 'Download Service Line Report' %}</button>
+        </a>&nbsp;&nbsp;
+        {% endif %}
+        {% if payroll.authorized_at and not payroll.notified_recipients %}
+        <a href="{% url 'payroll:payroll_send_slips' payperiod_id=payperiod_id %}"><button>{% trans 'Send Pay-Slips' %}</button></a>&nbsp;&nbsp;&nbsp;&nbsp;
+        {% endif %}
+        <a href="{% url 'payroll:payslip_pdf' pk=payroll.id %}" target="_blank">
+            <button>{% trans 'Generate PDF' %}</button></a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="{% url 'payroll:payslip_csv' pk=payroll.id %}"><button>{% trans 'Generate Excel' %}</button></a>&nbsp;&nbsp;&nbsp;&nbsp;
+
+        {% endif %}
+    </div>
+
+</div>
+
+
+{% endblock %}

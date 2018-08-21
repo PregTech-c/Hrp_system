@@ -1,0 +1,52 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h2 class="ico_mug">Centers</h2>
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+    </div><br/>
+    {% endif %}
+    <table id="table">
+        <thead>
+            <tr>
+                <th width="3%">#</th>
+                <th width="20%">{% trans "Name" %}</th>
+                <th width="10%">{% trans "Code" %}</th>
+                <th width="20%">{% trans "Branch" %}</th>
+                <th width="10%">{% trans "Outreach" %}</th>
+                <th width="20%">{% trans "Daily Allowance" %}</th>
+                <th width="10%">{% trans "Action" %}</th>
+            </tr>
+        </thead>
+    {% for center in center_list %}
+    <tr>
+        <td align="center">{{ page_obj.start_index|add:forloop.counter0 }}.</td>
+        <td>{{ center.long_name }}</td>
+        <td>{{ center.short_name }}</td>
+        <td>{{ center.branch }}</td>
+        <td>{{ center.is_outreach|yesno:"Yes,No,UNDEFINED" }}</td>
+        <td>{{ center.daily_outreach_allowance }}</td>
+        <td>
+            <a href="{% url payroll:center_edit pk=center.id %}"><img src="{{ STATIC_URL }}img/edit.jpg" alt="delete" title="Edit"/></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="{% url payroll:center_delete_p pk=center.id %}" >
+                <img src="{{ STATIC_URL }}img/cancel.jpg" alt="delete" title="Delete" /></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+    </tr>
+    {% endfor %}
+
+    </table>
+    {% if is_paginated %}
+        {% url payroll:center_list as center_url %}
+        {% include "payroll/pagination.html" with page=page_obj url=center_url %}
+    {% endif %}
+
+    <br/>
+    <div><a href="{% url payroll:center_add %}"><button>Add Center</button></a></div>
+</div>
+    {% endblock %}

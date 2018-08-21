@@ -1,0 +1,24 @@
+{% load i18n %}
+{% load widget_tweaks %}
+
+<table width="70%">
+    <tr>
+        <td style="vertical-align: top" width="25%"><label for="id_education_level">{% trans 'Education Level' %}</label></td>
+        <td>{{ pform.education_level|add_class:"form-control" }}&nbsp;&nbsp;</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top" width="25%"><label for="id_certifications">{% trans 'Certifications' %}</label></td>
+        <td>{{ pform.certifications|add_class:"form-control" }}&nbsp;&nbsp;</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top" width="25%"><label for="id_memberships">{% trans 'Memberships' %}</label></td>
+        <td>{{ pform.memberships|add_class:"form-control" }}&nbsp;&nbsp;</td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top" width="25%"><label for="id_skills">{% trans 'Skills' %}</label></td>
+        <td>{{ pform.skills|add_class:"form-control" }}&nbsp;&nbsp;</td>
+    </tr>
+
+</table>
+<!--<input class="btn btn-primary" type="submit" value="{{ button_text }}" />-->
+<button class="btn btn-outline-primary"><a class="next">Next &raquo;</a></button>

@@ -1,0 +1,64 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Payroll' %} &rang; {% trans 'Allowance Types' %}</h3>
+    
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+
+
+    <table id="table">
+        {% if allowancetype_list %}
+        <tr>
+            <th width="5%">#</th>
+            <th width="15%">{% trans 'Name' %}</th>
+            <th width="30%">{% trans 'Description' %}</th>
+            <th width="15%">{% trans 'Taxable' %}?</th>
+            <th width="15%">{% trans 'Asset Allow.' %}?</th>
+            <th>{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        
+        {% for allowancetype in allowancetype_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ allowancetype.name }}</td>
+            <td>{{ allowancetype.description }}</td>
+            <td>{% if allowancetype.is_taxed %}Yes{% else %}No{% endif %}</td>
+            <td>{% if allowancetype.is_asset_allowance %}Yes{% else %}No{% endif %}</td>
+            <td>
+                {% if allowancetype.name != "Claim/Refund" %}
+            <a href="{% url 'payroll:allowancetype_edit' pk=allowancetype.id %}">{% trans "Edit" %}</a>
+            &nbsp;&nbsp;
+            <a href="{% url 'payroll:allowancetype_delete_p' pk=allowancetype.id %}">{% trans "Delete" %}</a>
+            &nbsp;&nbsp;
+                {% endif %}
+       </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "There are no types defined. Click the ADD ALLOWANCE TYPE button below to create one, e.g. Overtime" %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'payroll:allowancetype_list' as a_url %}
+        {% include "payroll/pagination.html" with page=page_obj url=a_url %}
+    {% endif %}
+
+    <br/>
+
+    <div><a href="{% url 'payroll:allowancetype_add' %}"><button>{% trans 'Add Allowance Type' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="allowancetype_list" menu="payroll" %}
+{% endblock sidebar %}
+
+{% endblock %}

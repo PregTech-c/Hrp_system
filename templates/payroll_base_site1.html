@@ -1,0 +1,40 @@
+{% extends 'payroll_base1.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% block body %}
+<!-- Loader -->
+<body>
+  <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
+  <!--<div id="content_main" class="clearfix" >-->
+  <div class="wrapper">
+    <div class="container-fluid">
+    <!--  {% include 'navbar.html' %}-->
+
+        {% block menu %}
+        <div id="content" >
+        {% include 'top_menu.html' %}
+        </div>
+        {% endblock menu %}
+
+      {% block main_content %}{% endblock main_content %}
+      <!--</div>--><!-- end #content_main -->
+    </div>
+  </div>
+
+  <footer class="footer">
+      <div class="container-fluid">
+          <div class="row">
+              <div class="col-12">
+                  © {% now "Y" %}
+                  <i class="mdi mdi-heart text-danger"></i>
+                  Human Resource and Payroll.<br/>
+
+              </div>
+          </div>
+      </div>
+  </footer><!-- end #footer -->
+
+
+</body>
+
+{% endblock body %}

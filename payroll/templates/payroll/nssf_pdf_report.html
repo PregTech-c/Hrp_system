@@ -1,0 +1,60 @@
+{% extends "easy_pdf/base.html" %}
+{% load humanize %}
+{% load staticfiles %}
+{% load i18n %}
+{% load payroll_extras %}
+{% load pdf_filters %}
+
+{% block extra_style %}
+<style lang="text/css">
+    table {border-collapse: collapse; padding: 1px}
+    td {padding: 1px;}
+    h3 {border-bottom 1px solid black; font-weight: bold; padding-top: 5px}
+    .heading {font-weight: bold }
+</style>
+{% endblock %}
+
+{% block page_header %}
+    <table width="100%">
+        <tr>
+            <td width="20%"><img src="{{ img_path|add:'static/img/hrp-logo-4pdf.png'|get64 }}" alt="Logo" /></td>
+            <td style="text-align: bottom; padding-left: 5px;">
+                <div class="heading">NSSF REPORT</div>
+                 PAYROLL: {{ pay_period.payroll }}
+            </td>
+        </tr>
+    </table>
+{% endblock %}
+
+{% block content %}
+
+    <table id="table" cellpadding="5px" width="100%">
+        <thead>
+            <tr style="border-bottom: 1px solid black; padding-top: 10px;">
+                <th width="3%">#</th>
+                <th>{% trans "Contribution Month" %}</th>
+                <th>{% trans "NSSF Number" %}</th>
+                <th width="20%">{% trans "Employee Name" %}</th>
+                <th>{% trans "Employee Gross Pay" %}</th>
+                <th>{% trans "Employee Contribution" %}</th>
+                <th>{% trans "Employer Contribution" %}</th>
+                <th>{% trans "Total Contribution" %}</th>
+            </tr>
+        </thead>
+    {% for payslip in payslip_list %}
+    <tr>
+        <td align="center">{{ forloop.counter }}.</td>
+        <td align="center">{{ payslip.payroll.date|date:"F" }}</td>
+        <td align="left">{{ payslip.employee.profile.nssf_number }}</td>
+        <td align="left">{{ payslip.employee.profile.get_fullname }}</td>
+        <td align="right">{{ payslip.gross_pay|floatformat:"0"|intcomma }}</td>
+        <td align="right">{{ payslip.nssf|floatformat:"0"|intcomma }}</td>
+        <td align="right">{{ payslip.msu_nssf|floatformat:"0"|intcomma }}</td>
+        {% with nssf=payslip.nssf|floatformat:"0"|add:0 %}
+        <td align="right">{{ payslip.msu_nssf|floatformat:"0"|add:0|add:nssf|intcomma }}</td>
+        {% endwith %}
+    </tr>
+    {% endfor %}
+
+    </table>
+{% endblock %}

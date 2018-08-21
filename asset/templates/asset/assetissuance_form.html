@@ -1,0 +1,104 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block extra_css %}
+<style>
+    .td {padding-bottom: 8px}
+</style>
+{% endblock %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+
+    <h3 class="ico_mug">{% trans 'Asset' %} &rang; {% if form.instance.id %} Return {% else %}Allocate {% endif %}Asset</h3>
+    {% include "payroll/form_error_display.html" %}
+    <form action="" method="post" id="allocation_form">
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        <fieldset>
+            <legend><span>{% trans 'Asset' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="padding-bottom: 8px">{% trans 'Asset' %}</td>
+               <td>{{ asset.category }}</td>
+            </tr>
+            <tr>
+               <td style="padding-bottom: 8px">{% trans 'Model' %}</td>
+               <td>{{ asset.model }}</td>
+            </tr>
+            <tr>
+               <td style="padding-bottom: 8px">{% trans 'ID No.' %}</td>
+               <td>{{ asset.get_id }}</td>
+            </tr>
+            {% if not form.instance.id %}
+            <tr>
+               <td style="vertical-align: top; padding-bottom: 8px" width="20%"><label for="id_category">{% trans 'Employee' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.employee }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.employee.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.employee.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            <tr>
+            <tr>
+               <td style="vertical-align: top; padding-bottom: 8px" width="20%"><label for="status">{% trans 'Asset Status' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.asset_status }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.asset_status.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.asset_status.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            <tr>
+            {% else %}
+            <tr>
+               <td style="padding-bottom: 8px">{% trans 'Employee' %}</td>
+               <td>{{ object.employee.profile.get_fullname }}</td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top; padding-bottom: 8px" width="20%"><label for="status">{% trans 'Asset Status' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.asset_status }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.asset_status.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.asset_status.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            <tr>
+            {% endif %}
+            <tr>
+               <td style="vertical-align: top; padding-bottom: 8px" width="20%"><label for="status">{% trans 'Comment' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.comment }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.comment.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.comment.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            <tr>
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" /></td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+    <a href="{% url 'asset:asset_allocation_list' %}"><button>{% trans 'Back' %}</button></a>
+
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="educ_level_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock main_content %}

@@ -1,0 +1,253 @@
+# Create your views here.
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, get_list_or_404
+from django.db.models import Q
+
+from django.shortcuts import render, render_to_response
+from django.views.generic import *
+from django.contrib.auth.models import User
+from django.contrib.auth.views import login as auth_login
+from payroll.forms import *
+from django.template import RequestContext
+from decimal import Decimal, ROUND_HALF_UP
+
+from payroll.models import *
+
+#def payroll_login(request, *args, **kwargs):
+#    if not request.user.is_staff:
+#        request.user.is_authenticated() = False
+#
+#    response = auth_login(request, **kwargs)
+
+@login_required(login_url='login')
+def index(request):
+	return render(request, '/payroll/home.html')
+
+@login_required(login_url='/login/')
+def home(request):
+    Log(user=request.user, action='Logged in.').save()
+    return render(request, 'home.html')
+
+class CenterListView(ListView):
+    model = Center
+    context_object_name = 'center_list'
+    paginate_by = 5
+    queryset = Center.objects.filter().order_by('long_name')
+
+    def get_context_data(self, **kwargs):
+        Log(user=self.request.user, action='Viewed list of centers.').save()
+        context = super(CenterListView, self).get_context_data(**kwargs)
+        try:
+            if self.request.session['page_message']:
+                context['page_message'] = '%s' % self.request.session['page_message']
+                self.request.session['page_message'] = ''
+        except:
+            None
+        return context
+            
+class CenterCreateView(CreateView):
+    form_class = CenterForm
+    
+    template_name = 'center_form.html'
+    success_url = '/center/'
+
+    def get_context_data(self, **kwargs):
+        context = super(CenterCreateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/center/new/'
+        return context
+
+    def form_valid(self, form):
+
+        log_message = 'Created center %s.' % form.data['long_name']
+        Log(user=self.request.user, action=log_message).save()
+
+        self.request.session['page_message'] = '%s has been successfully created.' % form.data['long_name']
+        return super(CenterCreateView, self).form_valid(form)
+
+class CenterUpdateView(UpdateView):
+    model = Center
+    form_class = CenterForm
+    template_name = 'center_form.html'
+    success_url = '/center/'
+
+    def get_context_data(self, **kwargs):
+        context = super(CenterUpdateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/center/edit/%s/' % self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+
+        log_message = 'Edited center %s.' % form.data['long_name']
+        Log(user=self.request.user, action=log_message).save()
+
+        self.request.session['page_message'] = '%s has been successfully modified.' % \
+            str(self.get_object())
+        return super(CenterUpdateView, self).form_valid(form)
+
+class CenterDeleteView(DeleteView):
+    model = Center
+    success_url = '/center/'
+
+    def delete(self, request, *args, **kwargs):
+
+        log_message = 'Deleted center %s.' % str(self.get_object())
+        Log(user=self.request.user, action=log_message).save()
+
+        request.session['page_message'] = '%s has been successfully deleted' % \
+            str(self.get_object())
+        return super(CenterDeleteView, self).delete(request, *args, **kwargs)
+
+## Pay period
+class PayPeriodCreateView(CreateView):
+    form_class = PayPeriodForm #(error_class=DivErrorList)
+    template_name = 'payperiod_form.html'
+    success_url = '/payperiod/'
+
+#    def __init__(self, ):
+    def form_valid(self, form):
+        log_message = 'Created payperiod: from %s to %s.' % \
+            (form.data['start_date'], form.data['start_date'])
+        Log(user=self.request.user, action=log_message).save()
+
+        return super(PayPeriodCreateView, self).form_valid(form)
+    
+class PayPeriodListView(ListView):
+#    model = PayPeriod
+    context_object_name = 'pay_period_list'
+    paginate_by = 5
+
+    def get_queryset(self):
+       Log(user=self.request.user, action='Viewed pay-periods list.').save()
+       try:
+           delete_period = self.kwargs['del_id']
+           PayPeriod.objects.get(pk=delete_period).delete()
+       except:
+           pass#    def get_context_data(self, **kwargs):
+       if self.request.user.has_perm('payroll.can_view_payroll'):
+           return PayPeriod.objects.all()
+       else:
+           payslip_set = self.request.user.payslip_set.all()
+           payroll_set = Payroll.objects.filter(payslip__in=payslip_set)
+           return PayPeriod.objects.filter(payroll__in=payroll_set)
+           return PayPeriod.objects.all()
+
+
+## Begin Banks
+class BankListView(ListView):
+    model = Bank
+    context_object_name = 'bank_list'
+    paginate_by = 3
+    queryset = Bank.objects.filter().order_by('name')
+
+    def get_context_data(self, **kwargs):
+        Log(user=self.request.user, action='Listed saved banks.').save()
+        context = super(BankListView, self).get_context_data(**kwargs)
+        try:
+            if self.request.session['page_message']:
+                context['page_message'] = '%s' % self.request.session['page_message']
+                self.request.session['page_message'] = ''
+        except:
+            None
+        return context
+
+class BankCreateView(CreateView):
+    form_class = BankForm
+
+    template_name = 'bank_form.html'
+    success_url = '/bank/'
+
+    def get_context_data(self, **kwargs):
+        context = super(BankCreateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/bank/new/'
+        return context
+
+    def form_valid(self, form):
+
+        log_message = 'Entered a new bank: %s.' % form.data['name']
+        Log(user=self.request.user, action=log_message).save()
+
+        self.request.session['page_message'] = \
+            '%s has been created' % form.data['name']
+        return super(BankCreateView, self).form_valid(form)
+    
+class BankUpdateView(UpdateView):
+    model = Bank
+    form_class = BankForm
+    template_name = 'bank_form.html'
+    success_url = '/bank/'
+
+    def get_context_data(self, **kwargs):
+        context = super(BankUpdateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/bank/edit/%s/' % self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+        log_message = 'Edited bank %s.' % form.data['name']
+        Log(user=self.request.user, action=log_message).save()
+
+        self.request.session['page_message'] = '%s has been successfully modified.' % \
+            str(self.get_object())
+        return super(BankUpdateView, self).form_valid(form)
+
+class BankDeleteView(DeleteView):
+    model = Bank
+    success_url = '/bank/'
+
+    def delete(self, request, *args, **kwargs):
+
+        log_message = 'Deleted bank: %s.' % str(self.get_object())
+        Log(user=self.request.user, action=log_message).save()
+
+        request.session['page_message'] = '%s has been successfully deleted' % \
+            str(self.get_object())
+        return super(BankDeleteView, self).delete(request, *args, **kwargs)
+## End Banks
+
+class ActivityListView(ListView):
+#    model = Log
+    context_object_name = 'log_list'
+    template_name = 'activity_list.html'
+    paginate_by = 10
+
+    def get_queryset(self, **kwargs):
+        if self.request.user.has_perm('payroll.can_monitor_activity'):
+            queryset = Log.objects.filter().order_by('id')
+        else:
+            queryset = Log.objects.filter(user=self.request.user).order_by('id')
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        Log(user=self.request.user, action='Reviewed user system activity.').save()
+        context = super(ActivityListView, self).get_context_data(**kwargs)
+        return context
+
+
+def write_pdf(template_src, context_dict):
+    from django import http
+    from django.template.loader import get_template
+    from django.template import Context
+    import ho.pisa as pisa
+    import cStringIO as StringIO
+    import cgi
+    import os
+    from django.conf import settings
+
+    template = get_template(template_src)
+    context = Context(context_dict)
+
+    html  = template.render(context)
+    result = StringIO.StringIO()
+
+    pdf = pisa.pisaDocument(
+            StringIO.StringIO(html.encode("UTF-8")),
+            result,
+            path=__file__,
+#            link_callback=fetch_resources
+        )
+
+    if not pdf.err:
+        return http.HttpResponse(result.getvalue(), \
+             mimetype='application/pdf')
+
+    return http.HttpResponse('Gremlins ate your pdf! %s' % cgi.escape(html))

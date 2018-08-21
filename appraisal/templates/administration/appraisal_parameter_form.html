@@ -1,0 +1,42 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Add" as action %}{% endif %}     
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Appraisal' %} &rang; {% blocktrans %}{{ action }} Parameter{% endblocktrans %}</h3>
+
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Parameter Info' %}</span></legend>
+            <table width="100%">
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.name.label}} </td>
+                    <td>
+                        {{ form.name }}&nbsp;&nbsp;{{ form.name.errors }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top" width="20%">{{ form.description.label}} </td>
+                    <td style="vertical-align: top" width="20%">
+                        {{ form.description }}&nbsp;&nbsp;{{ form.description.errors }}
+                    </td>
+                </tr>
+            </table>
+
+                    <input type="submit" value="Save" />
+                    
+
+        </fieldset>
+    </form>&nbsp;&nbsp;<a href="{% url 'appraisal:appraisal_parameter_list' %}"><button>Back to Parameter List</button></a>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="holiday_list" menu="setup" %}
+{% endblock sidebar %}
+
+        
+{% endblock %}

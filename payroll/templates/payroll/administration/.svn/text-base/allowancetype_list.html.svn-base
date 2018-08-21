@@ -1,0 +1,50 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h2 class="ico_mug">Allowance Types</h2>
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+    </div><br/>
+    {% endif %}
+
+    <table id="table">
+
+        <tr>
+            <th width="10%">#</th>
+            <th width="20%">Name</th>
+            <th width="30%">Description</th>
+            <th width="20%">Is an Asset Allow.?</th>
+            <th>Action</th>
+        </tr>
+
+        {% for allowancetype in allowancetype_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ allowancetype.name }}</td>
+            <td>{{ allowancetype.description }}</td>
+            <td>{% if allowancetype.is_asset_allowance %}Yes{% else %}No{% endif %}</td>
+            <td>
+            <a href="/allowancetype/edit/{{ allowancetype.id }}/"><img src="{{ STATIC_URL }}img/edit.jpg" alt="delete" title="Edit"/></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/allowancetype/delete/{{ allowancetype.id }}/">
+                <img src="{{ STATIC_URL }}img/cancel.jpg" alt="delete" title="Delete" /></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% include "payroll/pagination.html" with page=page_obj url="/branch" %}
+    {% endif %}
+
+    <br/>
+
+    <div><a href="/allowancetype/new"><button>Add Allowance Type</button></a></div>
+</div>
+{% endblock %}

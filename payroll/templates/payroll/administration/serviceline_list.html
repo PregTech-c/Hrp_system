@@ -1,0 +1,61 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Company Info' %} &rang; {% trans 'Service Lines' %}</h3>
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+    </div><br/>
+    {% endif %}
+
+    <table id="table">
+
+        {% if serviceline_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="30%">{% trans 'Name' %}</th>
+            <th>{% trans 'Type' %}</th>
+            <th>{% trans 'Under' %}</th>
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        
+        {% for sl in serviceline_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ sl.name }}</td>
+            <td>{{ sl.service_line_type }}</td>
+            <td>{{ sl.parent_service_line }}</td>
+            <td align="center">
+                <a href="{% url 'payroll:sl_edit' pk=sl.id %}">edit</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="{% url 'payroll:sl_delete' pk=sl.id %}" >
+                    delete</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning"><span class="ico_error">{% trans "There are no service lines defined yet. Create one by clicking the ADD SERVICE LINE button below." %}</span></div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'payroll:sl_list' as d_url %}
+        {% include "payroll/pagination.html" with page=page_obj url=d_url %}
+    {% endif %}
+
+    <br/>
+
+    <div><a href="{% url 'payroll:sl_add' %}"><button>{% trans 'Add Service Line' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="sl_list" menu="company" %}
+{% endblock sidebar %}
+
+{% endblock %}

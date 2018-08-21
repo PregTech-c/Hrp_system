@@ -1,0 +1,141 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% load humanize %}
+
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_start_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd',
+                   minDate: "-0D", maxDate: "+365D"
+               });
+               jQuery("#id_end_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd',
+                   minDate: "-0D", maxDate: "+365D"
+               });
+               
+            });
+        </script>
+{% endblock %}
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Leave' %} &rang; My Requests</h3>
+    
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+
+    <p class="info">You have requested the following leave days.</p>
+    <p>
+        {% if category == None %}
+            all
+        {% else %}
+        <a href="{% url 'leave:leave_request_list' %}">all</a>
+        {% endif %}&nbsp;&nbsp;
+        {% if category == 'A' %}
+            approved
+        {% else %}
+            <a href="{% url 'leave:leave_request_list_f' cat='A' %}">approved</a>&nbsp;&nbsp;
+        {% endif %}&nbsp;&nbsp;
+        {% if category == 'P' %}
+            pending
+        {% else %}
+            <a href="{% url 'leave:leave_request_list_f' cat='P' %}">pending</a>
+        {% endif %}&nbsp;&nbsp;
+        {% if category == 'D' %}
+            denied
+        {% else %}
+        <a href="{% url 'leave:leave_request_list_f' cat='D' %}">denied</a>
+        {% endif %}&nbsp;&nbsp;
+        {% if category == 'E' %}
+            expired
+        {% else %}
+        <a href="{% url 'leave:leave_request_list_f' cat='E' %}">expired</a>
+        {% endif %}&nbsp;&nbsp;
+        {% if category == 'C' %}
+            canceled
+        {% else %}
+        <a href="{% url 'leave:leave_request_list_f' cat='C' %}">canceled</a>
+        {% endif %}&nbsp;&nbsp;
+    </p>
+    {% if leave_request_list %}
+    
+    <table id="table">
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Type' %}</th>
+            <th width="">{% trans 'Start Date' %}</th>
+            <th width="">{% trans 'End Date' %}</th>
+            <th width="">{% trans 'Days' %}</th>
+            <th width="10%">{% trans 'Status' %}</th>
+            <th width="10%">{% trans 'Action' %}</th>
+        </tr>
+
+        {% for request in leave_request_list %}
+
+        <tr>
+            <td>{{ page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ request.leave_type }}</td>
+            <td>{{ request.start_date }}</td>
+            <td>{{ request.end_date }}</td>
+            <td>{{ request.get_no_of_days }}</td>
+            <td>{{ request.get_status_display }}</td>
+            <td align="center">
+                {% if request.get_status == 'P' %}
+                <a href="{% url 'leave:leave_request_cancel' cancel_pk=request.id %}">cancel</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "There are no leave request setup yet. Click the button below to submit one." %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+    {% else %}
+        None
+    {% endif %}
+    {% if is_paginated %}
+        {% if category %}
+        {% url 'leave:leave_request_list_f' cat=category as url %}
+        {% else %}
+        {% url 'leave:leave_request_list' as url %}
+        {% endif %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <a href="{% url 'leave:leave_request_create' %}"><button>{% trans 'Request Leave Days' %}</button></a>
+    <div class="blankline"></div>
+    <div class="blankline"></div>
+        <p class="info">Below are the leave details that have been availed to you.</p>
+        <div class="blankline"></div>
+    <table id="table">
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="">{% trans 'Days' %}</th>
+            <th width="">{% trans 'Days Left' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+        </tr>
+
+        {% for type in leave_type_list %}
+
+        <tr>
+            <td>{{ forloop.counter }}.</td>
+            <td width="20%">{{ type.name }}</td>
+            <td align="right" width="15%">{{ type.no_of_days|floatformat:"0" }}</td>
+            <td align="right" width="15%">{{ type.no_of_days_left|floatformat:"0" }}</td>
+            <td>{{ type.description }}</td>
+        </tr>
+        
+        {% endfor %}
+    </table>
+</div>
+
+{% block sidebar %}
+    {% include 'leave/sidebar.html' with url="leave_request_list" menu="requests" %}
+{% endblock sidebar %}
+
+{% endblock %}

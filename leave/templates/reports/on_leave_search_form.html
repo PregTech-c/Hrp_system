@@ -1,0 +1,28 @@
+{% load i18n %}
+{% include "payroll/form_error_display.html" %}
+
+<form action="" method="post">
+    {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Search' %}</span></legend>    
+    <table width="50%">
+        <tr>
+            <td width="20%">From:</td>
+            <td>{{ form.start_date }}</td>
+        </tr>
+        <tr>
+            <td width="20%">To:</td>
+            <td>{{ form.end_date }}</td>
+        </tr>
+        <tr>
+            <td width="20%">Employee:</td>
+            <td>{{ form.employee }}</td>
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Filter" />
+            </td>
+        </tr>
+    </table>
+    </fieldset>
+</form>
