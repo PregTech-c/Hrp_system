@@ -1,0 +1,6 @@
+Merge remote branch 'origin/master'
+
+Conflicts:
+	.gitignore
+	appraisal/forms.py
+	hrp/settings/dev.py

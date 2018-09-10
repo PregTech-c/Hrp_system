@@ -1,0 +1,66 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+<div id="main_panel_container" class="section">
+
+    <h3 class="ico_mug">Payroll &rang; Payslip &rang; {{ payslip.employee.profile.get_fullname }} &rang; Other Deductions </h3>
+    {% if deduction_list %}
+        <table id="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>{% trans 'Type' %}</th>
+                <th>{% trans 'Amount' %}</th>
+                <th>{% trans 'Comment' %}</th>
+                <th>{% trans 'Action' %}</th>
+            </tr>
+            </thead>
+
+            {% for deduction in deduction_list %}
+            <tr>
+                <td>{#{ page_obj.start_index|add:forloop.counter0 }#}</td>
+                <td>{{ deduction.deduction_type.name }}</td>
+                <td>{{ deduction.amount }} </td>
+                <td>{{ deduction.comment }} </td>
+                <td>
+                    <a href="{% url 'payroll:payslip_deduction_del' slip=payslip.id dd=deduction.id %}">
+                        Remove
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    
+    <form action="{% url 'payroll:deduction_list' slip=payslip.id %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Adjustments' %}</span></legend>
+            <table width="">
+                <tr>
+                    <td width="30%">{{ form.deduction_type.label }}</td>
+                    <td>{{ form.deduction_type }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.amount.label }}</td>
+                    <td>{{ form.amount }}&nbsp;&nbsp;{{ form.amount.errors }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.comment.label }}</td>
+                    <td>{{ form.comment }}</td>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" value="{% trans 'Save' %}" />
+                        <a href="{% url 'payroll:payroll_list' payperiod_id=payslip.payroll.pay_period.id %}">{% trans 'Back to Payroll' %}</a>
+                    </td>
+                </tr>
+            </table>
+
+        </fieldset>
+        {{ form.payslip }}
+    </form>
+</div>
+
+{% endblock main_content %}

@@ -1,0 +1,7 @@
+-   model: payroll.servicelinetype
+    pk: 1
+    fields: { name: Service Line, description: A department in the company}
+
+-   model: payroll.skill
+    pk: 1
+    fields: {name: Driving}

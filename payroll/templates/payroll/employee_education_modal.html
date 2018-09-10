@@ -1,0 +1,61 @@
+{% load i18n %}
+<div id="educationModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button">x</button>
+                    <h3>Add Education Level</h3>                            
+            </div>
+
+            <form action="{% url 'payroll:educ_add' %}" method="POST" class="form-horizontal" id="employee_education_form">
+            <div class="modal-body">
+                <div class="widget-box">
+                    <div class="widget-content nopadding">
+                            {% for hidden in employee_title_form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                            {% csrf_token %}
+                            <input type='hidden' name='ajax' value='1'/>
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="col-sm-3 col-md-3 col-lg-2 control-label" for="id_name">Level</label>
+                                    <div class="col-sm-6 col-md-6 col-lg-5">
+                                        {{ employee_education_form.level }}
+                                    </div>
+                                    {% if employee_education_form.level.errors %}
+                                     <div class="col-sm-3 col-md-3 col-lg-5"><span class="ico_cancel">{{ education_form.name.errors }}</span></div>
+                                     {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 col-md-3 col-lg-2 control-label" for="id_name">Qualification</label>
+                                    <div class="col-sm-6 col-md-6 col-lg-5">
+                                        {{ employee_education_form.qualification }}
+                                    </div>
+                                    {% if employee_education_form.qualification.errors %}
+                                     <div class="col-sm-3 col-md-3 col-lg-5"><span class="ico_cancel">{{ education_form.qualification.errors }}</span></div>
+                                     {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 col-md-3 col-lg-2 control-label" for="id_name">Remarks</label>
+                                    <div class="col-sm-6 col-md-6 col-lg-5">
+                                        {{ employee_education_form.description }}
+                                    </div>
+                                    {% if employee_education_form.description.errors %}
+                                     <div class="col-sm-3 col-md-3 col-lg-5"><span class="ico_cancel">{{ education_form.description.errors }}</span></div>
+                                     {% endif %}
+                                </div>
+
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-sm" value="add">{% trans "Add" %}</button>
+                </div>
+            </div>
+                        </form>
+        </div>
+        
+    </div>
+</div>

@@ -1,0 +1,34 @@
+Misc updates
+Merge branch 'master' of gitlab.com:steven.kawuma/hrp
+
+Conflicts:
+	payroll/admin.py
+	payroll/models/employee_models.py
+	payroll/templates/payroll/payroll_list.html
+	payroll/views/payroll_views.py
+#
+# It looks like you may be committing a MERGE.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+#
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch and 'origin/master' have diverged,
+# and have 4 and 5 different commit(s) each, respectively.
+#
+# Changes to be committed:
+#
+#	modified:   .gitignore
+#	modified:   payroll/admin.py
+#	new file:   payroll/migrations/0064_allowancetype_is_taxed.py
+#	modified:   payroll/models/employee_models.py
+#	modified:   payroll/models/payroll_models.py
+#	modified:   payroll/templates/payroll/administration/allowancetype_form.html
+#	modified:   payroll/templates/payroll/administration/allowancetype_list.html
+#	modified:   payroll/templates/payroll/payperiod_form.html
+#	modified:   payroll/views/payroll_views.py
+#	modified:   requirements.txt
+#

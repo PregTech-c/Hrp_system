@@ -1,0 +1,24 @@
+{% load i18n %}
+{% include "payroll/form_error_display.html" %}
+
+<form action="" method="post">
+    {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Searches' %}</span></legend>    
+    <table width="50%">
+        <tr>
+            <td width="20%">Employee:</td>
+            <td>{{ form.employee }}</td>
+        </tr>
+        <tr>
+            <td width="20%">Leave Period:</td>
+            <td>{{ form.leave_period }}</td>
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Filter" />
+            </td>
+        </tr>
+    </table>
+    </fieldset>
+</form>

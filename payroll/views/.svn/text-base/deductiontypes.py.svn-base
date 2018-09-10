@@ -1,0 +1,60 @@
+from django.views.generic import *
+from payroll.models import *
+from payroll.forms import DeductionTypeForm
+
+class DeductionTypeListView(ListView):
+    model = DeductionType
+    context_object_name = 'deductiontype_list'
+    paginate_by = 8
+    queryset = DeductionType.objects.filter().order_by('name')
+
+    def get_context_data(self, **kwargs):
+        context = super(DeductionTypeListView, self).get_context_data(**kwargs)
+        try:
+            if self.request.session['page_message']:
+                context['page_message'] = '%s' % self.request.session['page_message']
+                self.request.session['page_message'] = ''
+        except:
+            None
+        return context
+
+class DeductionTypeCreateView(CreateView):
+    form_class = DeductionTypeForm
+
+    template_name = 'deductiontype_form.html'
+    success_url = '/deductiontype/'
+
+    def get_context_data(self, **kwargs):
+        context = super(DeductionTypeCreateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/deductiontype/new/'
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = \
+            '%s has been successfully created.' % form.data['name']
+        return super(DeductionTypeCreateView, self).form_valid(form)
+
+class DeductionTypeUpdateView(UpdateView):
+    model = DeductionType
+    form_class = DeductionTypeForm
+    template_name = 'deductiontype_form.html'
+    success_url = '/deductiontype/'
+
+    def get_context_data(self, **kwargs):
+        context = super(DeductionTypeUpdateView, self).get_context_data(**kwargs)
+        context['action_url'] = '/deductiontype/edit/%s/' % self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+        self.request.session['page_message'] = '%s has been successfully modified.' % \
+            str(self.get_object().name)
+        return super(DeductionTypeUpdateView, self).form_valid(form)
+
+class DeductionTypeDeleteView(DeleteView):
+    model = DeductionType
+    success_url = '/deductiontype/'
+
+    def delete(self, request, *args, **kwargs):
+        request.session['page_message'] = '%s has been successfully deleted' % \
+            str(self.get_object().name)
+        return super(DeductionTypeDeleteView, self).delete(request, *args, **kwargs)

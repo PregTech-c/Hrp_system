@@ -1,0 +1,59 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Payroll' %} &rang; {% trans 'Banks' %}</h3>
+
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    <table id="table" style="width: 100%">
+        {% if bank_list %}
+        <thead>
+            <tr>
+                <th width="3%">#</th>
+                <th width="30%">{% trans "Name" %}</th>
+<!--                <th width="">{% trans "Sort Code" %}</th>-->
+                <th width="30%">{% trans "Telephone Number" %}</th>
+                <th width="">{% trans "Action" %}</th>
+            </tr>
+        </thead>
+        {% endif %}
+        
+    {% for bank in bank_list %}
+    <tr>
+        <td align="center">{{ page_obj.start_index|add:forloop.counter0 }}.</td>
+        <td>{{ bank.name }}</td>
+<!--        <td>{{ bank.sort_code }}</td>-->
+        <td>{{ bank.phone_number }}</td>
+        <td>
+            <a href="{% url 'payroll:bank_edit' pk=bank.id %}">{% trans "Edit" %}</a>
+            &nbsp;&nbsp;
+            <a href="{% url 'payroll:bank_delete' pk=bank.id %}">{% trans "Delete" %}</a>
+            &nbsp;&nbsp;
+            <a href="{% url 'payroll:bank_branch_list' bank_id=bank.id %}"> {% trans 'branch list' %}</a>
+       </td>
+    </tr>
+    {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "There are no banks setup yet. Click the ADD BANK button below to create one, along with its branches." %}
+            </span>
+        </div>
+    {% endfor %}
+
+    </table>
+    {% if is_paginated %}
+        {% url 'payroll:bank_list' as bank_url %}
+        {% include "payroll/pagination.html" with page=page_obj url=bank_url %}
+    {% endif %}
+
+    <br/>
+    <div><a href="{% url 'payroll:bank_add' %}"><button>{% trans 'Add Bank' %}</button></a></div>
+</div>
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="bank_list" menu="payroll"  %}
+{% endblock sidebar %}
+
+{% endblock %}

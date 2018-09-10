@@ -1,0 +1,218 @@
+from django.views.generic import View, ListView, DeleteView
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.http import HttpResponseRedirect, HttpResponse
+from django.db.models import Q
+from django.template import loader, Context
+from payroll.views import write_pdf
+
+from payroll.models import User, EmployeeProfile
+from payroll.forms import (EmployeeForm, EmployeeProfileForm, 
+    ContractualPayForm, DivErrorList, EmployeeSearchForm)
+from urllib import urlencode
+
+class EmployeeListView(ListView):
+    template_name = 'employee_list.html'
+    context_object_name = 'employee_list'
+    paginate_by = 10
+    queryset = User.objects.filter(employeeprofile__deleted_on__isnull=True).order_by('last_name')
+
+    def get_context_data(self, **kwargs):
+        context = super(EmployeeListView, self).get_context_data(**kwargs)
+        if self.request.session.get('page_message'):
+            context['page_message'] = '%s' % self.request.session['page_message']
+            self.request.session['page_message'] = ''
+        return context
+
+class EmployeeCreateView(View):
+
+    template_name = 'employee_form.html'
+
+    def get(self, request, *args, **kwargs):
+        button_text = ''
+        try:
+#            employee = User.objects.get(pk=1)
+            employee = User.objects.get(pk=self.kwargs['pk'])
+            uform = EmployeeForm(instance=employee)
+            pform = EmployeeProfileForm(instance=employee.get_profile())
+            sform = ContractualPayForm(instance=employee.get_profile().get_contractual_pay())
+            button_text = 'Update'
+            action_url = '/user/update/%s/' % self.kwargs['pk']
+#        except AttributeError:
+        except:
+            uform = EmployeeForm()
+            pform = EmployeeProfileForm()
+            sform = ContractualPayForm()
+            button_text = 'Add User'
+            action_url = '/user/new/'
+
+        return render_to_response(
+                    self.template_name,
+                    {
+                        'uform': uform,
+                        'pform': pform,
+                        'sform': sform,
+                        'button_text': button_text,
+                        'action_url': action_url,
+                    },
+                    RequestContext(request)
+                )
+
+    def post(self, request, *args, **kwargs):
+#        employee = User()
+        if self.kwargs.get('pk'):
+#        try:
+            edit = True
+            employee = User.objects.get(pk=self.kwargs['pk'])
+            uform = EmployeeForm(instance=employee, data=request.POST)
+            pform = EmployeeProfileForm(instance=employee.get_profile(), data=request.POST)
+            sform = ContractualPayForm(instance=employee.get_profile().get_contractual_pay(), data=request.POST)
+#        except AttributeError:
+        else:
+            edit = False
+            uform = EmployeeForm(data=request.POST)
+            pform = EmployeeProfileForm(data=request.POST)
+            sform = ContractualPayForm(data=request.POST)
+
+        if uform.is_valid() and pform.is_valid() \
+            and sform.is_valid() :
+            user = uform.save()
+
+            profile = pform.save(commit=False)
+            profile.user = user
+            profile.save()
+
+            salary = sform.save(commit=False)
+            salary.employee = user
+            salary.save()
+
+            if edit:
+                msg = '%s\'s info has been updated.' %\
+                    employee.get_profile().get_fullname()
+            else:
+#                Generate and email user the new password
+#                password = ''.join(random.choice(
+#                    string.letters+string.digits) for i in xrange(6))
+#                if request.POST['create_login']:
+#                    employee.send_email
+                msg = '%s %s has been successfully added.' % \
+                    (request.POST['first_name'], request.POST['last_name'])
+
+            request.session['page_message'] = msg
+
+            return HttpResponseRedirect('/user/')
+        else:
+            return render_to_response(
+
+                self.template_name,
+                {
+                    'uform': EmployeeForm(request.POST, error_class=DivErrorList),
+                    'pform': EmployeeProfileForm(request.POST, error_class=DivErrorList),
+                    'sform': ContractualPayForm(request.POST, error_class=DivErrorList),
+                     'button_text': '%s' % ('Update' if self.kwargs.get('pk') else 'Add'),
+                        'action_url': '/user/%s' % (
+                            ('update/%s/' % self.kwargs['pk']) if self.kwargs.get('pk') else 'new/')
+                    
+
+                },
+                RequestContext(request)
+            )
+
+class EmployeeDeleteView(DeleteView):
+    model = EmployeeProfile
+    success_url = '/user/'
+
+    def delete(self, request, *args, **kwargs):
+        request.session['page_message'] = '%s has been successfully deleted' % \
+            str(self.get_object().get_fullname())
+        return super(EmployeeDeleteView, self).delete(request, *args, **kwargs)
+
+class EmployeeReportView(ListView):
+    template_name = 'employee_report.html'
+    queryset = EmployeeProfile.objects.all()
+    context_object_name = 'profile_list'
+    paginate_by = 20000
+
+    def get_queryset(self):
+        get = self.request.GET.copy()
+        self.baseurl = urlencode(get)
+
+        if(len(get)):
+            self.form = EmployeeSearchForm(self.request.GET)
+        else:
+            self.form = EmployeeSearchForm(
+                initial={
+                    'bank_field':'on',
+                    'designation_field': 'on',
+                    'category_field': 'on',
+                    'acct_no_field': 'on',
+                    'tin_field': 'on',
+                    'center_field': 'on',
+                    'nssf_number_field': 'on',
+                    'salary_field': 'on'
+                }
+            )
+
+        model = EmployeeProfile
+
+        if len(get):
+            qset = Q(deleted_on__isnull=True)
+            if get.get('designation'):
+                qset &= Q(designation=get.get('designation'))
+            if get.get('center'):
+                qset &= Q(center=get.get('center'))
+            if get.get('category'):
+                qset &= Q(category=get.get('category'))
+            if get.get('bank'):
+                qset &= Q(bank=get.get('bank'))
+
+            return model.objects.filter(qset)
+        else:
+            return model.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(EmployeeReportView, self).get_context_data(**kwargs)
+        context['form'] = self.form
+
+        get = self.request.GET.copy()
+
+        self.request.session['get'] = ''
+        if len(get):
+            context['get'] = get
+            self.request.session['get'] = get
+        context['baseurl'] = "user/report/"
+        return context
+
+def employee_pdf_view(request):
+    import os
+    from django.conf import settings
+    import urllib
+
+    profile_list = EmployeeProfile.objects.all()
+#    payroll = get_object_or_404(Payroll, pk=pk)
+
+    return write_pdf('employee_pdf_report.html',{
+        'pagesize' : 'A4',
+#        'payroll' : payroll,
+        'profile_list' : profile_list,
+        'get': request.session['get'],
+        'num_columns': len(request.session['get'])-2})
+
+def employee_csv_view(request):
+    import csv
+
+    response = HttpResponse(mimetype='text/csv')
+    response['content-disposition'] = 'attachment; filename=Employees.csv'
+
+    profile_list = EmployeeProfile.objects.all()
+
+    t = loader.get_template('employee_csv_report.html')
+    c = Context({
+        'profile_list': profile_list,
+        'get': request.session['get'],
+        'num_columns': len(request.session['get'])-2
+    })
+    
+    response.write(t.render(c))
+    return response
+

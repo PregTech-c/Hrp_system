@@ -1,0 +1,128 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+<div class="section">
+    <h2 class="ico_mug">Add a New Center</h2>
+
+    {% if form.errors and not form.non_field_errors %}
+    <div id="warning" class="info_div">
+        <span class="ico_error">
+                {% trans 'Please correct the errors below' %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div id="fail" class="info_div">
+        <span class="ico_cancel">
+            {% for error in form.non_field_errors %}
+                    <font style="font-size: 6px">{{ error }}</font>
+            {% endfor %}
+    </span>
+    </div>
+    {% endif %}
+
+    <form action="{{ action_url }}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>Center Info</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_long_name">Name</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.long_name }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.long_name.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.long_name.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top"><label for="id_short_name">Code</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.short_name }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.short_name.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.short_name.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_branch">Branch</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.branch }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.branch.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.branch.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_is_outreach">Is Outreach</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.is_outreach }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.is_outreach.errors %}
+                    <div id="fail" class="quickview left">
+                        <span class="ico_cancel">{{ form.is_outreach.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="allow_div" style="display: none">
+                    <table width="100%">
+                        <tr>
+                            <td style="vertical-align: top" width="20%">
+                                <label for="id_daily_outreach_allowance">Daily Allowance</label></td>
+                            <td>
+                               <div class="left">
+                                   {{ form.daily_outreach_allowance }} &nbsp;&nbsp;
+                               </div>
+                               {% if form.daily_outreach_allowance.errors %}
+                                <div id="fail" class="quickview left">
+                                    <span class="ico_cancel">
+                                        {{ form.daily_outreach_allowance.errors }}</span></div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                   </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" /></td>
+            </tr>
+        </table>
+        </fieldset>
+    </form>
+    
+</div>
+
+    <script type="text/javascript">
+    function toggle() {
+
+        var allow_div = document.getElementById("allow_div");
+
+        if (document.getElementById("id_is_outreach").checked) {
+            allow_div.style.display = "block";
+        } else {
+            allow_div.style.display = "none"
+        }
+
+    }
+    </script>
+
+<script type="text/javascript">
+    toggle();
+</script>
+
+{% endblock main_content %}

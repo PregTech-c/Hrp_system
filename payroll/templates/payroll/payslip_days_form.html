@@ -1,0 +1,37 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+<div id="main_panel_container" class="section">
+
+    <h3 class="ico_mug">Payroll &rang; {% trans 'Adjust Days Worked for' %} {{ payslip.employee.profile.get_fullname }}</h3>
+    {% if form.errors and not form.non_field_errors %}
+    <div id="warning" class="info_div">
+        <span class="ico_error">
+                {% trans 'Please correct the errors below' %}
+        </span>
+    </div>
+    {% endif %}
+    <form action="{% url 'payroll:payslip_days' pk=payslip.id %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Adjustments' %}</span></legend>
+            <table width="100%">
+                   {% if form.total_days_worked.errors %}
+                   <tr><td>
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.total_days_worked.errors }}</span></div>
+                    </td></tr>
+                    {% endif %}
+                    <tr><td>
+                   {{ form.total_days_worked }}
+
+
+                    <input type="submit" value="Save" />
+                <a href="{% url 'payroll:payroll_list' payperiod_id=payperiod_id %}"><button>{% trans 'Back' %}</button></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                        </td></tr>
+            </table>
+
+        </fieldset>
+    </form>
+</div>
+{% endblock main_content %}

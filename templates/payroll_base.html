@@ -1,0 +1,94 @@
+{% load staticfiles %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+{% load i18n %}
+<!--{% load notification_tags %}-->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>{% block title %} {% endblock %}</title>
+        {% if form %}
+            {{ form.media }}
+        {% endif %}
+        {% if pform %}
+            {{ pform.media }}
+        {% endif %}
+    <meta http-equiv="Content-Type" content="text/html; charset=latin1" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="robots" content="index,follow" />
+    {% block extra_scripts %}{% endblock %}
+
+    <!--[if IE 7]><link rel="stylesheet" href="{% static 'css/ie.css' %}" type="text/css" media="screen, projection" /><![endif]-->
+    <!--[if IE 6]><link rel="stylesheet" href="{% static 'css/ie6.css' %}" type="text/css" media="screen, projection" /><![endif]-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" type="text/css" media="all" href="{% static 'css/style.css' %}" />
+    <link rel="Stylesheet" type="text/css" href="{% static 'css/smoothness/jquery-ui-1.7.1.custom.css' %}"  />
+    <!--[if IE]>
+            <style type="text/css">
+              .clearfix {
+                zoom: 1;     /* triggers hasLayout */
+                display: block;     /* resets display for IE/Win */
+                }  /* Only IE can see inside the conditional comment
+                and read this CSS rule. Don't ever use a normal HTML
+                comment inside the CC or it will close prematurely. */
+            </style>
+    <![endif]-->
+    <style>
+    .label {font-weight: bold}
+    .td {padding-bottom: 8px}
+    </style>
+    <!-- JavaScript -->
+
+    {% if user.is_authenticated %}
+        <!--[if IE 7]><link rel="stylesheet" href="{% static 'css/ie.css' %}" type="text/css" media="screen, projection" /><![endif]-->
+        <!--[if IE 6]><link rel="stylesheet" href="{% static 'css/ie6.css' %}" type="text/css" media="screen, projection" /><![endif]-->
+        <link rel="stylesheet" type="text/css" href="{% static 'markitup/skins/markitup/style.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'markitup/sets/default/style.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/superfish.css' %}" media="screen" />
+    {% endif %}
+
+    {% block extra_css %}{% endblock %}
+
+<!--    <script type="text/javascript" src="/static/admin/js/core.js"></script>
+    <script type="text/javascript" src="/static/admin/js/getElementsBySelector.js"></script>
+    <script type="text/javascript" src="/static/admin/js/actions.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+    <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>-->
+        <link rel="Stylesheet" type="text/css" href="{% static 'css/filterfield.css' %}"  />
+        <script type="text/javascript" src="{% static 'js/filterfield.js' %}"></script>
+
+
+</head>
+
+<body>
+<div class="container" id="container">
+
+    {% block body %}{% endblock body %}
+
+</div>
+
+    <script type="text/javascript" src="{% static 'jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-ui-1.12.1.custom.min.js' %}"></script>
+    <!--<script type="text/javascript" src="{% static 'js/jquery-migrate-3.0.1.min.js' %}"></script>-->
+     <!--[if IE]><script language="javascript" type="text/javascript" src="{% static 'excanvas.pack.js' %}"></script><![endif]-->
+
+     {% if user.is_authenticated %}
+        <script type="text/javascript" src="{% static 'js/custom.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/hoverIntent.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/superfish.js' %}"></script>
+
+        <script type="text/javascript" src="{% static 'js/excanvas.pack.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/jquery.flot.pack.js' %}"></script>
+        <script type="text/javascript" src="{% static 'markitup/jquery.markitup.pack.js' %}"></script>
+        <script type="text/javascript" src="{% static 'markitup/sets/default/set.js' %}"></script>
+        <script src="{% static 'notify/notifyX.js' %}"></script>
+
+    {% endif %}
+        
+    {% include 'session_security/all.html' %}
+    
+</body>
+    
+</html>

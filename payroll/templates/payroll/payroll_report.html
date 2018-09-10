@@ -1,0 +1,248 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load humanize %}
+
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_start_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd'
+               });
+               jQuery("#id_end_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd'
+               });
+               
+            });
+        </script>
+{% endblock %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h3 class="ico_mug">{% trans 'Payroll Cycles' %}</h3>
+
+    {% if form.errors and not form.non_field_errors %}
+    <div id="warning" class="info_div">
+        <span class="ico_error">
+                {% trans 'Please correct the errors below' %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div id="fail" class="info_div">
+        <span class="ico_cancel">
+            {% for error in form.non_field_errors %}
+                    <font style="font-size: 6px">{{ error }}</font>
+            {% endfor %}
+    </span>
+    </div>
+    {% endif %}
+    <form action="{% url 'payroll:payroll_cycles_summary' %}" method="get">
+        {% csrf_token %}
+    <fieldset>
+        <legend><span>Payroll Search</span></legend>
+
+        <table width="100%">
+            <tr>
+                <td width="50%">
+                    <table width="100%">
+                        <tr>
+                            <td width="20%">{{ form.start_date.label}}</td>
+                            <td>
+                                {{ form.start_date }}&nbsp;&nbsp;{{ form.start_date.errors }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%">{{ form.end_date.label}}</td>
+                            <td>
+                                {{ form.end_date }}&nbsp;&nbsp;{{ form.end_date.errors }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%">{{ form.pay_period.label}}</td>
+                            <td>
+                                {{ form.pay_period }}&nbsp;&nbsp;{{ form.pay_period.errors }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%">Service Line</td>
+                            <td>
+                                {{ form.service_line }}&nbsp;&nbsp;{{ form.service_line.errors }}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table width="100%">
+                        <tr>
+                            <th colspan="2" align="center">{% trans 'Fields to Include' %}</th>
+                        </tr>
+                        <tr>
+                            <td>{{ form.number_of_staff }}&nbsp;&nbsp;{{ form.number_of_staff.label }}</td>
+                            <td>{{ form.total_contractual_pay }}&nbsp;&nbsp;{{ form.total_contractual_pay.label }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.total_allowances }}&nbsp;&nbsp;{{ form.total_allowances.label }}</td>
+                            <td>{{ form.total_deductions }}&nbsp;&nbsp;{{ form.total_deductions.label }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.total_paye }}&nbsp;&nbsp;{{ form.total_paye.label }}</td>
+                            <td>{{ form.total_nssf }}&nbsp;&nbsp;Total NSSF</td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.total_msu_nssf }}&nbsp;&nbsp;NSSF [Co. Conribution]</td>
+                            <td>{{ form.total_net_pay }}&nbsp;&nbsp;{{ form.total_net_pay.label }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.authorized_by }}&nbsp;&nbsp;{{ form.authorized_by.label }}</td>
+                            <td>{{ form.authorized_at }}&nbsp;&nbsp;{{ form.authorized_at.label }}</td>
+                        </tr>
+                        <tr>
+                            <td>{{ form.total_gross_pay }}&nbsp;&nbsp;{{ form.total_gross_pay.label}}</td>
+                            <td></td>
+                        </tr>
+
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="">
+                    <input type="submit" value="Submit" />&nbsp;&nbsp;
+                    <a href="{% url 'payroll:payroll_cycles_summary' %}">Reset</a>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+
+    </form>
+
+    {% if get|length %}
+    <div>
+        <a href="{% url 'payroll:payroll_pdf_report' %}" target="_blank"><button>{% trans 'Export to PDF' %}</button></a>&nbsp;&nbsp;
+        <a href="{% url 'payroll:payroll_excel_report' %}"><button>{% trans 'Export to Excel' %}</button></a>
+    </div>
+
+    <table id="table">
+        <thead>
+            <tr>
+                <th width="3%">#</th>
+                <th>{% trans "Period" %}</th>
+                {% if get.authorized_by %}
+                <th width="7%">{% trans "Auth. By" %}</th>
+                {% endif %}
+                {% if get.authorized_at %}
+                <th>{% trans "Auth. At" %}</th>
+                {% endif %}
+                {% if get.number_of_staff %}
+                <th width="7%">Staff</th>
+                {% endif %}
+                {% if get.total_contractual_pay %}
+                <th width="10%">Contract. Pay</th>
+                {% endif %}
+                {% if get.total_outreach_allowance %}
+                <th width="7%">O/R Allow.</th>
+                {% endif %}
+                {% if get.total_gross_pay %}
+                <th width="7%">Gross Pay</th>
+                {% endif %}
+                {% if get.total_allowances %}
+                <th width="7%">Allow.</th>
+                {% endif %}
+                {% if get.total_deductions %}
+                <th width="7%">Deduc.</th>
+                {% endif %}
+                {% if get.total_paye %}
+                <th width="7%">PAYE</th>
+                {% endif %}
+                {% if get.total_nssf %}
+                <th width="7%">NSSF</th>
+                {% endif %}
+                {% if get.total_msu_nssf %}
+                <th width="7%">Co. NSSF</th>
+                {% endif %}
+                {% if get.total_net_pay %}
+                <th width="10%">{% trans "Net Pay" %}</th>
+                {% endif %}
+            </tr>
+        </thead>
+    {% for payroll in payroll_list %}
+    <tr>
+        <td align="center">{{ forloop.counter }}.</td>
+        <td>{{ payroll.pay_period }}</td>
+        {% if get.authorized_by %}
+        <td>{{ payroll.authorized_by }}</td>
+        {% endif %}
+        {% if get.authorized_at %}
+        <td>{{ payroll.authorized_at }}</td>
+        {% endif %}
+        {% if get.number_of_staff %}
+        <td>{{ payroll.get_number_of_employees }}</td>
+        {% endif %}
+        {% if get.total_contractual_pay %}
+        <td align="right">{{ payroll.get_total_contractual_pay_t|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_outreach_allowance %}
+        <td align="right">{{ payroll.total_outreach_allowance|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_gross_pay %}
+        <td align="right">{{ payroll.total_gross_pay|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_allowances %}
+        <td align="right">{{ payroll.total_allowances|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_deductions %}
+        <td align="right">{{ payroll.total_deductions|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_paye %}
+        <td align="right">{{ payroll.total_paye|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_nssf %}
+        <td align="right">{{ payroll.total_employee_nssf|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_msu_nssf %}
+        <td align="right">{{ payroll.total_msu_nssf|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_net_pay %}
+        <td align="right">{{ payroll.total_net_pay|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+
+    <tr style="font-weight: bold">
+        <td></td>
+        <td>Totals</td>
+        {% if get.number_of_staff %}
+        <td></td>
+        {% endif %}
+        {% if get.total_contractual_pay %}
+        <td align="right">{{ totals.total_contractual_pay__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_gross_pay %}
+        <td align="right">{{ totals.total_gross_pay__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_allowances %}
+        <td align="right">{{ totals.total_allowances__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_deductions %}
+        <td align="right">{{ totals.total_deductions__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_paye %}
+        <td align="right">{{ totals.total_paye__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_nssf %}
+        <td align="right">{{ totals.total_employee_nssf__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_msu_nssf %}
+        <td align="right">{{ totals.total_msu_nssf__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_net_pay %}
+        <td align="right">{{ totals.total_net_pay__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+    </tr>
+    </table>
+
+</div>
+{% endif %}
+
+{% endblock main_content %}

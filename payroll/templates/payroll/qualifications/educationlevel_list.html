@@ -1,0 +1,55 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; Qualifications &rang; {% trans 'Education Levels' %}</h3>
+    
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    
+    <table id="table">
+        {% if educ_level_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="">{% trans 'Level' %}</th>
+            <th width="">{% trans 'Qualification' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        
+        {% for level in educ_level_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ level.get_level_display }}</td>
+            <td>{{ level.qualification }}</td>
+            <td>{{ level.description }}</td>
+            <td align="center">
+                <a href="{% url 'payroll:educ_level_edit' pk=level.id %}">{% trans 'edit' %}</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="{% url 'payroll:educ_level_delete' pk=level.id %}">{% trans 'delete' %}</a>
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning"><span class="ico_error">{% trans "There are no levels setup. Click the ADD LEVEL button below to create one, e.g. Degree" %}</span></div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'payroll:educ_level_list' as educ_url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=educ_url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <div><a href="{% url 'payroll:educ_add' %}"><button>{% trans 'Add Level' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="educ_level_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% load notification_tags %}
+{% block main_content %}
+{% include_notify_js_variables %}
+<div id="main_panel_container" class="left">
+    <div id="dashboard">
+            <h4 class="ico_mug">Your Notifications</h4>
+            <div style="overflow-y: scroll; height: 300px">
+            <!--<div class="clearfix">-->
+                <!--<div class="notifications">-->
+                    <ul class='notifications notification-box-list'>
+                        {% render_notifications using request.user.notifications.active %}
+                    </ul>
+                <!--</div>--> 
+            <!--</div>-->
+            
+            </div>
+    <button class="mark-all-notifications" data-mark-action="read">{% trans "Mark all as read" %}</button>
+    <button class="mark-all-notifications" data-mark-action="unread">{% trans "Mark all as unread" %}</button>
+    </div><!-- end #dashboard -->
+</div>
+{% block sidebar %}
+    {% include 'sidebar_home.html' %}
+{% endblock sidebar %}
+
+
+{% endblock main_content %}

@@ -1,0 +1,66 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Recruitment' %} &rang; {% trans 'Vacancies' %}</h3>
+    
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    
+    <table id="table">
+        {% if vacancy_list %}
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Job Title' %}</th>
+            <th width="">{% trans 'Reports To' %}</th>
+            <th width="">{% trans 'No. Positions' %}</th>
+            <th width="">{% trans 'No. Applied' %}</th>
+            <th width="">{% trans 'Due Date' %}</th>
+            <th width="30%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for vacancy in vacancy_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ vacancy.job_title }}</td>
+            <td>{{ vacancy.reports_to }}</td>
+            <td>{{ vacancy.number_of_positions }}</td>
+            <td>{{ vacancy.applications.count }}</td>
+            <td>{{ vacancy.due_date }}</td>
+            <td align="center">
+                <a href="{% url 'recruitment:vacancy_detail' pk=vacancy.id %}">details</a>&nbsp;
+                <a href="{% url 'recruitment:application_list' page=1 vac_id=vacancy.id %}">applications</a>&nbsp;
+                {% if perms.recruitment.change_vacancy %}
+                <a href="{% url 'recruitment:vacancy_edit' pk=vacancy.id %}">edit</a>&nbsp;
+                <a href="{% url 'recruitment:vacancy_delete' pk=vacancy.id %}">delete</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "There are no openings at the moment." %}
+                {% if perms.recruitment.change_vacancy %}Click the CREATE VACANCY button below to create one.{% endif %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% include "recruitment/pagination_digg.html" with paginator=paginator url='/recruitment/vac/' %}
+    {% endif %}
+    
+    <div class="blankline"></div>
+    {% if perms.payroll.hrp_manage_recruitment %}
+    <div><a href="{% url 'recruitment:vacancy_add' %}"><button>{% trans 'Create Vacancy' %}</button></a></div>
+    {% endif %}
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="holiday_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

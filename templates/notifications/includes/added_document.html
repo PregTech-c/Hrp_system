@@ -1,0 +1,17 @@
+{% load static %}
+<li data-nf-id="{{ notification.id }}" class="notification list-group-item {{ notification.read|yesno:'read,unread' }}">
+    <div class="row">
+        <div class="col-md-1">
+            <img src="{% static notification.recipient.profile.photo.url|cut:'payroll/static/' %}" width="60px" alt="user">
+        </div>
+        <div class="col-md-8">
+            <p>
+                {{ notification.verb }} <a href="{{ notification.actor_url }}">view</a> 
+                <br/><span class="timesince">{{ notification.created|timesince }} ago</span>
+            </p>
+        </div>
+        <div class="col-md-3">
+            {% include 'notifications/includes/mark_unmark.html' %}
+        </div>
+    </div>
+</li>

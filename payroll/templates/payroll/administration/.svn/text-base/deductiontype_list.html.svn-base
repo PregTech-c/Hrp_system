@@ -1,0 +1,48 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h2 class="ico_mug">Deduction Types</h2>
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+    </div><br/>
+    {% endif %}
+
+    <table id="table">
+
+        <tr>
+            <th width="10%">#</th>
+            <th width="20%">Name</th>
+            <th width="50%">Description</th>
+            <th>Action</th>
+        </tr>
+
+        {% for deductiontype in deductiontype_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ deductiontype.name }}</td>
+            <td>{{ deductiontype.description }}</td>
+            <td>
+            <a href="/deductiontype/edit/{{ deductiontype.id }}/"><img src="{{ STATIC_URL }}img/edit.jpg" alt="delete" title="Edit"/></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/deductiontype/delete/{{ deductiontype.id }}/">
+                <img src="{{ STATIC_URL }}img/cancel.jpg" alt="delete" title="Delete" /></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+       </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% include "payroll/pagination.html" with page=page_obj url="/deduction" %}
+    {% endif %}
+
+    <br/>
+
+    <div><a href="/deductiontype/new"><button>Add Deduction Type</button></a></div>
+</div>
+{% endblock %}

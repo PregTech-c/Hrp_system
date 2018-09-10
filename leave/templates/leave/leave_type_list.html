@@ -1,0 +1,82 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h4 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Leave' %} &rang; {% trans 'Types' %}</h4>
+    
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    
+    <table id="table">
+        {% if leave_type_list %}
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="">{% trans 'Days' %}</th>
+            <th width="">{% trans 'Carry Forward' %}</th>
+            <th width="">{% trans 'Active' %}</th>
+            <th width="">{% trans 'S. Line' %}</th>
+            <th width="">{% trans 'Positions' %}</th>
+            <th width="">{% trans 'Gender' %}</th>
+            <th width="">{% trans 'Desc.' %}</th>
+            <th width="10%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        
+        {% for type in leave_type_list %}
+            <tr>
+                <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+                <td>{{ type.name }}</td>
+                <td>{{ type.no_of_days }}</td>
+                <td>{{ type.days_carried_forward }}</td>
+                <td>{{ type.active }}</td>
+                <td>
+                    {% if type.service_lines.count == service_line_count %}
+                        {% trans 'All' %}
+                    {% else %}
+                        {% for line in type.service_lines.all %}
+                            {{ line }}<br/>
+                        {% endfor %}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if type.positions.count == position_count %}
+                        {% trans 'All' %}
+                    {% else %}
+                        {% for pos in type.positions.all %}
+                            {{ pos }}<br/>
+                        {% endfor %}
+                    {% endif %}
+                </td>
+                <td>{{ type.get_gender_display }}</td>
+                <td>{{ type.description }}</td>
+                <td align="center" width='15%'>
+                    <a href="{% url 'leave:leave_type_edit' pk=type.id %}">Edit</a>
+                    &nbsp;&nbsp;
+                    <a href="{% url 'leave:leave_type_delete' pk=type.id %}">Delete</a>
+                </td>
+            </tr>
+        {% empty %}
+            <div id="warning">
+                <span class="ico_error">
+                {% trans "There are no leave types defined. Click the ADD LEAVE TYPE button below to create one, e.g. Maternity" %}
+                </span>
+            </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'leave:leave_type_list' as url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <div><a href="{% url 'leave:leave_type_create' %}"><button>{% trans 'Add Leave Type' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="leave_type_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

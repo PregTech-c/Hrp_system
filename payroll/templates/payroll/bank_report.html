@@ -1,0 +1,71 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load humanize %}
+
+{% block main_content %}
+<div id="main_panel_container" class="section">
+    <h3 class="ico_mug">Salary Report for Pay-period: {{ payroll }} {{ bank }}</h3>
+
+    <table id="table">
+        <thead>
+            <tr>
+                <th width="3%">#</th>
+                <th width="10%">{% trans "SNo." %}</th>
+                <th width="20%">{% trans "Employee Name" %}</th>
+                <th width="15%">{% trans "Bank" %}</th>
+                <th width="10%">{% trans "Sort Code" %}</th>
+                <th width="20%">{% trans "Account No." %}</th>
+                <th width="">{% trans "Net Pay" %}</th>
+            </tr>
+        </thead>
+
+    {% if categorize %}
+    {% for dept in departments %}
+        <tr>
+            <td colspan="7" align="center" "style="border-top: 1px solid"><strong>{{ dept.name|upper }}</strong></td></tr>
+            {% for payslip in dept.payslips %}
+        <tr>
+            <td align="center">{{ forloop.counter }}.</td>
+            <td>{{ payslip.employee.profile.employee_number }}</td>
+            <td>{{ payslip.employee.profile.get_fullname }}</td>
+            <td>{{ payslip.employee.profile.bank }}</td>
+            <td>{{ payslip.employee.profile.bank.sort_code }}</td>
+            <td>{{ payslip.employee.profile.bank_account_number }}</td>
+            <td align="right">{{ payslip.get_net_pay|floatformat:"2"|intcomma }}</td>
+        </tr>
+        {% endfor %}
+        <tr><td colspan="2"><strong>Sub Total</strong></td><td colspan="4">&nbsp;</td>
+            <td align="right"><strong>{{ dept.total|floatformat:"2"|intcomma|default:"0.00" }}</strong></td></tr>
+    {% endfor %}
+
+
+    {% else %}
+        {% for payslip in payslips %}
+            <tr>
+                <td align="center">{{ forloop.counter }}.</td>
+                <td>{{ payslip.employee.profile.employee_number }}</td>
+                <td>{{ payslip.employee.profile.get_fullname }}</td>
+                <td>{{ payslip.employee.profile.bank }}</td>
+                <td>{{ payslip.employee.profile.bank.sort_code }}</td>
+                <td>{{ payslip.employee.profile.bank_account_number }}</td>
+                <td align="right">{{ payslip.get_net_pay|floatformat:"2"|intcomma }}</td>
+            </tr>
+        {% endfor %}
+
+    {% endif %}
+    <tr style="border-top: 1px solid">
+        <td colspan="2"><strong>Total Pay</strong></td>
+        <td colspan="4">&nbsp;</td>
+        <td align="right"><strong>{{ total_pay|floatformat:"2"|intcomma }}</strong></td>
+    </tr>
+    </table>
+
+    <div>
+        <a href="{% url 'payroll:bank_report' %}"><button>{% trans 'Back to Search' %}</button></a>
+        <a href="{% url 'payroll:bank_pdf_report' pk=payroll.id %}" target="_blank"><button>{% trans 'Export to PDF' %}</button></a>&nbsp;&nbsp;
+        <a href="{% url 'payroll:bank_excel_report' pk=payroll.id %}"><button>{% trans 'Export to Excel' %}</button></a>
+    </div>
+
+
+</div>
+{% endblock main_content %}

@@ -1,0 +1,42 @@
+{% load i18n %}
+<div id="titleModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button">x</button>
+                    <h3>Add Title</h3>                            
+            </div>
+
+                        <form action="{% url 'payroll:employeetitle_add' %}" method="POST" class="form-horizontal" id="employee_title_form">
+            <div class="modal-body">
+                <div class="widget-box">
+                    <div class="widget-content nopadding">
+                            {% for hidden in employee_title_form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                            {% csrf_token %}
+                            <input type='hidden' name='ajax' value='1'/>
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="col-sm-3 col-md-3 col-lg-2 control-label" for="id_name">Name</label>
+                                    <div class="col-sm-6 col-md-6 col-lg-5">
+                                            <input id="id_name" maxlength="8" name="name" size="20" type="text" required="">
+                                    </div>
+                                    {% if employee_title_form.name.errors %}
+                                     <div class="col-sm-3 col-md-3 col-lg-5"><span class="ico_cancel">{{ employee_title_form.name.errors }}</span></div>
+                                     {% endif %}
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-sm" value="add">{% trans "Add" %}</button>
+                </div>
+            </div>
+                        </form>
+        </div>
+        
+    </div>
+</div>

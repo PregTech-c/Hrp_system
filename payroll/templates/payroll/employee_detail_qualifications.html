@@ -1,0 +1,46 @@
+{% load i18n %}
+<table  id="table" width="80%">
+    <thead>
+    <tr>
+        <th colspan="2" style="text-align: left">{% trans 'Qualifications' %}</th>
+    </tr>
+    </thead>
+    <tr>
+        <td>{% trans 'Education Level' %}</td>
+        <td>{{ profile.education_level }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Skills' %}</td>
+        <td>
+            {% for s in profile.skills.all %}
+                {{ s }}{% if not forloop.last %},{% endif %} 
+            {% empty %}
+                {% trans 'None' %}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <td>{% trans 'Memberships' %}</td>
+        <td>
+            {% for m in profile.memberships.all %}
+                {{ m }}<br/>
+            {% empty %}
+                {% trans 'None' %}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <td>{% trans 'Certifications' %}</td>
+        <td>
+            {% for c in profile.certifications.all %}
+                {{ c }}{% if not forloop.last %},{% endif %}
+            {% empty %}
+                {% trans 'None' %}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <td>{% trans 'Remarks' %}</td>
+        <td>{{ profile.education_level_remarks }}</td>
+    </tr>
+</table>

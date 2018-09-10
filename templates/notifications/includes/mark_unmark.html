@@ -1,0 +1,9 @@
+
+<a href="#" data-id="{{ notification.id }}" class="mark-notification"
+    data-mark-action="{{ notification.read|yesno:'unread,read' }}"
+    data-toggle-text="Mark as {{ notification.read|yesno:_('read,unread') }}">
+
+    Mark as {{ notification.read|yesno:'unread,read' }}
+
+</a>&nbsp;&nbsp;
+<a href="#" class="delete-notification" data-id="{{ notification.id }}">Delete</a>

@@ -1,0 +1,86 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">
+        {% trans 'Recruitment' %} &rang; <a href="{% url 'recruitment:vacancy_list' page=1 %}">{% trans 'Vacancies' %}</a> &rang; Evaluation Stages
+    </h3>
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    <p class="info">
+        Evaluation stages for the position of <strong>{{ vacancy }}</strong>.
+    </p>
+    {% include "payroll/form_error_display.html" %}
+    <div class="blankline"></div>
+    <table id="table">
+        {% if stages %}
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+            <th width="">{% trans 'Status' %}</th>
+            <th width="30%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for stage in stages %}
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ stage.name }}</td>
+            <td>{{ stage.description }}</td>
+            <td>{{ stage.status }}</td>
+            <td>
+                <a href="{% url 'recruitment:eval_delete' pk=stage.id %}">delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% if is_paginated %}
+        {% include "recruitment/pagination_digg.html" with paginator=paginator url=pg_url %}
+    {% endif %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Add Evaluation Stage' %}</span></legend>
+            <table width="100%">
+                <tr>
+                    <td>Name</td>
+                    <td>
+                        <div class="left">{{ form.name }}</div>
+                        {% if form.name.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.name.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td>
+                        <div class="left">{{ form.description }}</div>
+                        {% if form.description.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.description.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Add Stage"/></td>
+                </tr>
+            </table>
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        </fieldset>
+    </form>
+    <a href="{% url 'recruitment:vacancy_detail' pk=vacancy.id %}"><button>Back to Vacancy</button></a>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="vacancy_list" menu="setup" %}
+{% endblock sidebar %}
+        
+{% endblock %}

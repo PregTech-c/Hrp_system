@@ -1,0 +1,113 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load humanize %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h3 class="ico_mug">Payroll &rang; Payslip</h3>
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+
+    <table id="table">
+        <tr>
+            <th>Name</th>
+            <th>Pay Period</th>
+            <th>Bank</th>
+            <th>Acct. No.</th>
+        </tr>
+        <tr>
+            <td>{{ payslip.employee.profile.get_fullname }}</td>
+            <td>{{ payslip.payroll.pay_period }}</td>
+            <td>{{ payslip.employee.profile.bank }}</td>
+            <td>{{ payslip.employee.profile.bank_account_number }}</td>
+        </tr>
+    </table>
+    <p/>
+    <table width="100%">
+        <tr>
+            <td width="50%">
+                <table id="table" width="100%">
+                    <tr>
+                        <th>Description</th>
+                        <th>Days</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                    </tr>
+                    <tr>
+                        <td colspan="3">Contractual Pay</td>
+                        <td align="right">{{ payslip.contractual_pay_amount|floatformat:"0"|intcomma }}</td>
+                    </tr>
+                    <tr>
+                        <td>Basic Pay</td>
+                        <td align="right">{{ payslip.total_days_worked|floatformat:"0" }}</td>
+                        <td></td>
+                        <td align="right">{{ payslip.basic_pay|floatformat:"0"|intcomma }}</td>
+                    </tr>
+
+                    {% for allowance in allowances %}
+                    <tr>
+                        <td colspan="3">
+                            {{ allowance.allowance_type.name }}
+                            {% if allowance.comment %}
+                                ({{ allowance.comment }})
+                            {% endif %}
+                        </td>
+                        <td align="right">{{ allowance.amount|floatformat:"0"|intcomma }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="3">Co. NSSF Contribution</td>
+                        <td align="right">{{ payslip.msu_nssf|floatformat:"0"|intcomma }}</td>
+                    </tr>
+                </table>
+            </td>
+            <td>&nbsp;&nbsp;</td>
+            <td width="50%">
+                <table id="table">
+                    <tr>
+                        <th>Deductions</th>
+                        <th>Amount</th>
+                    </tr>
+                    <tr>
+                        <td>NSSF</td>
+                        <td align="right">{{ payslip.nssf|floatformat:"0"|intcomma }}</td>
+                    </tr>
+                    <tr>
+                        <td>PAYE</td>
+                        <td align="right">{{ payslip.paye|floatformat:"0"|intcomma }}</td>
+                    </tr>
+                    {% for deduction in deductions %}
+                    <tr>
+                        <td>
+                            {{ deduction.deduction_type.name }}
+                            {% if deduction.comment %}
+                            ({{ deduction.comment }})
+                            {% endif %}
+                        </td>
+                        <td align="right">{{ deduction.amount|floatformat:"0"|intcomma }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+    </tr>
+    </table>
+    <p/>
+    <table id="table">
+        <tr>
+            <th>Date</th>
+            <th>Gross Pay</th>
+            <th>Net Pay</th>
+        </tr>
+        <tr>
+            <td>{{ payslip.payroll.date }}</td>
+            <td align="right">{{ payslip.gross_pay|floatformat:"0"|intcomma }}</td>
+            <td align="right">{{ payslip.net_pay|floatformat:"0"|intcomma }}</td>
+        </tr>
+    </table>
+    <div><p/>
+    <a href="{% url 'payroll:payroll_list' payperiod_id=payslip.payroll.pay_period.id %}"><button>{% trans 'Back to payroll' %}</button></a>&nbsp;&nbsp;
+    <a href="{% url 'payroll:payslip_pdf_detail' payslip.id %}" target="_blank"><button>{% trans 'View PDF' %}</button></a>&nbsp;&nbsp;
+    <a href="{% url 'payroll:payslip_send' payslip_id=payslip.id %}"><button>{% trans 'Foward by Email' %}</button></a>
+    </div>
+</div>
+{% endblock %}

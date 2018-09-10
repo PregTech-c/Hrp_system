@@ -1,0 +1,95 @@
+{% extends "easy_pdf/base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+{% load humanize %}
+
+{% block extra_style %}
+<style lang="text/css">
+    table {border-collapse: collapse;}
+    td {padding: 1px;}
+    h3 {border-bottom 1px solid black; font-weight: bold; padding-top: 5px}
+    th {border-bottom: 1px solid black; text-align: left; padding-top: 15px}
+    .tlabel {width:  500px}
+    .toprow {padding-top: 5px}
+</style>
+{% endblock %}
+
+{% block page_header %}
+{% include 'pdf_report_header.html' with title="Leave Detail Report" %}
+{% endblock %}
+
+{% block content %}
+<hr/>
+<div class='blankline'></div>
+
+<table id="table" width='100%'>
+    <tr>
+        <th colspan='2'>{% trans 'Employee' %}</th>
+    </tr>
+    <tr>
+        <td class='tlabel toprow'>Name:</td>
+        <td class='toprow'>{{ leaverequest.profile.get_fullname }}</td>
+    </tr>
+    <tr>
+        <td class='label'>Position:</td>
+        <td>{{ leaverequest.profile.position }}</td>
+    </tr>
+    <tr>
+        <td class='label'>Service Line:</td>
+        <td>{{ leaverequest.profile.service_line }}</td>
+    </tr>
+</table>
+<div class='blankline'></div>
+<table id="table">
+    <tr>
+        <th colspan='2'>{% trans 'Leave Particulars' %}</th>
+    </tr>
+    <tr>
+        <td class='toprow label'>Leave Type:</td>
+        <td class='toprow'>{{ leaverequest.leave_type }}</td>
+    </tr>
+    <tr>
+        <td>Financial Year:</td>
+        <td>{{ leaverequest.leave_period }}</td>
+    </tr>
+    <tr>
+        <td>Start Date:</td>
+        <td>{{ leaverequest.start_date|date:"SHORT_DATE_FORMAT" }}</td>
+    </tr>
+    <tr>
+        <td>End Date:</td>
+        <td>{{ leaverequest.end_date|date:"SHORT_DATE_FORMAT" }}</td>
+    </tr>
+    <tr>
+        <td>No. Of Days:</td>
+        <td>{{ leaverequest.get_no_of_days }}</td>
+    </tr>
+    <tr>
+        <td>Requested On:</td>
+        <td>{{ leaverequest.created_at|date:"SHORT_DATE_FORMAT" }}</td>
+    </tr>
+    <tr>
+        <td>Employee Comment:</td>
+        <td>{{ leaverequest.comment|default:"N/A" }}</td>
+    </tr>
+</table>
+
+<table width='100%'>
+    <tr>
+        <th colspan='2'>Approval</th>
+    </tr>
+    <tr>
+        <td class="toprow">Approved By:</td>
+        <td class="toprow">{{ leaverequest.get_approved_by.get_fullname }}</td>
+    </tr>
+    <tr>
+        <td class="tlabel">Approved On:</td>
+        <td>{{ leaverequest.get_approved_at }}</td>
+    </tr>
+    <tr>
+        <td>Approver Comment:</td>
+        <td>{{ leaverequest.get_approver_comment|default:"N/A" }}</td>
+    </tr>
+</table>
+{% endblock %}
+

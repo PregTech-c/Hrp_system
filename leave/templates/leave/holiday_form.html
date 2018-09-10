@@ -1,0 +1,78 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd', 
+//                   changeMonth: true, 
+//                   changeYear: true,
+//                   minDate: "-100Y", maxDate: "+0D"
+               });
+            });
+        </script>
+{% endblock %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Add" as action %}{% endif %}     
+    <h4 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Leave' %} &rang; {% blocktrans %}{{ action }} Holiday{% endblocktrans %}</h4>
+
+    {% include "payroll/form_error_display.html" %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Holiday' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_name">{% trans 'Name' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.name }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.name.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.name.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_date">{% trans 'Date' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.date }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.date.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.date.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_name">{% trans 'Recurring' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.recurring }} &nbsp;&nbsp;<br/>{{ form.recurring.help_text }}
+                   </div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" /></td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+    <a href="{% url 'leave:holiday_list' %}"><button>{% trans 'Back' %}</button></a>
+
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="educ_level_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock main_content %}

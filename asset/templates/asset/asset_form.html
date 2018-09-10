@@ -1,0 +1,105 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block extra_scripts %}
+    <script type="text/javascript">
+        jQuery(function() {
+           jQuery("#id_date_of_manufacture").datepicker({ 
+               dateFormat: 'yy-mm-dd',
+               changeYear: true,
+                changeMonth: true, 
+               maxDate: "+0D",
+               yearRange: "-50:+0"
+           });
+        });
+    </script>
+{% endblock %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Add" as action %}{% endif %}     
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Asset' %} &rang; {% blocktrans %}{{ action }} Asset{% endblocktrans %}</h3>
+
+    {% include "payroll/form_error_display.html" %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Asset' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_date">{% trans 'Category' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.category }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.category.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.category.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_serial_no">{% trans 'ID Type' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.id_type }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.id_type.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.id_type.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_serial_no">{% trans 'ID Number' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.id_number }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.id_number.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.id_number.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_description">{% trans 'Description' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.description }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.description.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.description.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_date_of_manufacture">{% trans 'Date Of Manufacture' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.date_of_manufacture }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.date_of_manufacture.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.date_of_manufacture.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" /></td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+    <a href="{% url 'asset:asset_list_p' page=1 %}"><button>{% trans 'Back' %}</button></a>
+
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="educ_level_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock main_content %}

@@ -1,0 +1,113 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% load humanize %}
+
+{% block extra_scripts %}
+    <script type="text/javascript">
+        jQuery(function() {
+           jQuery("#id_start_date").datepicker({ 
+               dateFormat: 'yy-mm-dd',
+               minDate: "-0D", maxDate: "+365D"
+           });
+           jQuery("#id_end_date").datepicker({ 
+               dateFormat: 'yy-mm-dd',
+               minDate: "-0D", maxDate: "+365D"
+           });
+
+        });
+    </script>
+{% endblock %}
+{% block main_content %}
+
+<div id="dashboard" class="left">
+
+    {% trans "Leave" as mod %}
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "New" as action %}{% endif %} 
+    {% blocktrans asvar title %}{{ action }} Leave Request{% endblocktrans %}
+    <h4 class="ico_mug">{% trans 'Leave' %} &rang; My Requests &rang; {{ action }} Request</h4>
+    {% include "payroll/form_error_display.html" with module=mod title=title %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        <fieldset>
+            <legend><span>{% trans 'Leave Request' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_leave_period">{% trans 'Leave Period' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.leave_period }} &nbsp;&nbsp;
+                    </div>
+                    {% if form.leave_period.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.leave_period.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_leave_type">{% trans 'Leave Type' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.leave_type }} &nbsp;&nbsp;
+                    </div>
+                    {% if form.leave_type.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.leave_type.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_start_date">{% trans 'Start Date' %}</label></td>
+               <td>
+                    <div class="left">
+                       {{ form.start_date }} &nbsp;&nbsp;
+                    </div>
+                    {% if form.start_date.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.start_date.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_end_date">{% trans 'End Date' %}</label></td>
+               <td>
+                    <div class="left">
+                       {{ form.end_date }} &nbsp;&nbsp;
+                    </div>
+                    {% if form.end_date.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.end_date.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_comment">{% trans 'Comment' %}</label></td>
+               <td>
+                    <div class="left">
+                       {{ form.comment }} &nbsp;&nbsp;
+                    </div>
+                    {% if form.comment.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.comment.errors|striptags }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Save" />&nbsp;&nbsp;
+                    <a href="{% url 'leave:leave_request_list' %}">Back to List</a>
+                </td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="leave_request_list" menu="requests" %}
+{% endblock sidebar %}
+
+{% endblock %}

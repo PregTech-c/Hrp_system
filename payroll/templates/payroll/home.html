@@ -1,0 +1,58 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% load notification_tags %}
+{% block main_content %}
+{% include_notify_js_variables %}
+<div id="main_panel_container" class="left">
+    <div id="dashboard">
+            <h4 class="ico_mug">Dashboard</h4>
+            <div class="clearfix">
+                <div class="panel todo left">
+                    <h4>Core Notifications</h4>
+                    <ul>
+                        {% for notification in notifications %}
+                        <li class="{% cycle 'even' 'odd' %}">
+                                {{ forloop.counter }}. {% autoescape off %}{{ notification }}{% endautoescape %}
+                        </li>
+                        {% empty %}
+                        <li class="{% cycle 'even' 'odd' %}">
+                            <em>There are no notifications at the moment</em>
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                </div>  
+            <!--</div>-->
+            
+            </div>
+    </div><!-- end #dashboard -->
+        {% if perms.payroll.can_view_system_info %}
+
+    {% block shortcuts %}
+
+    <div id="shortcuts" class="clearfix">
+            <h2 class="ico_mug">{% trans "Panel shortcuts" %}</h2>
+            <ul>
+<!--					<li class="first_li"><a href="/"><img src="{{ STATIC_URL }}img/theme.jpg" alt="themes" /><span>Themes</span></a></li>-->
+                <li><a href="{% url 'payroll:payroll_cycles_summary' %}"><img src="{% static 'img/statistic.jpg' %}" alt="statistics" /><span>Statistics</span></a></li>
+<!--					<li><a href=""><img src="{{ STATIC_URL }}img/ftp.jpg" alt="FTP" /><span>FTP</span></a></li>-->
+                    <li><a href="{% url 'payroll:user_list' %}"><img src="{% static 'img/users.jpg' %}" alt="Users" /><span>Users</span></a></li>
+                    <li><a href="{% url 'payroll:activity_list' %}"><img src="{% static 'img/comments.jpg' %}" alt="Comments" /><span>Messages</span></a></li>
+<!--					<li><a href=""><img src="{{ STATIC_URL }}img/gallery.jpg" alt="Gallery" /><span>Gallery</span></a></li>-->
+<!--					<li><a href=""><img src="{{ STATIC_URL }}img/security.jpg" alt="Security" /><span>Security</span></a></li>-->
+
+            </ul>
+    </div><!-- end #shortcuts -->
+    {% endblock shortcuts %}
+    {% endif %}
+</div>
+
+
+{% block sidebar %}
+    {% include 'sidebar_home.html' %}
+{% endblock sidebar %}
+
+
+
+{% endblock main_content %}

@@ -1,0 +1,59 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+
+
+<div id="dashboard" class="left">
+    <h4 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Leave' %} &rang; {% trans 'Holidays' %}</h4>
+    
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    
+    <table id="table">
+
+        {% if holiday_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="">{% trans 'Date' %}</th>
+            <th width="">{% trans 'Recurring' %}</th>
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for holiday in holiday_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ holiday.name }}</td>
+            <td>{{ holiday.date }}</td>
+            <td>{{ holiday.recurring }}</td>
+            <td align="center">
+                <a href="{% url 'leave:holiday_edit' pk=holiday.id %}">edit</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="{% url 'leave:holiday_delete' pk=holiday.id %}">delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "There are no holidays defined. Click the ADD HOLIDAY button below to create one, e.g. Chrismas" %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'leave:holiday_list' as url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <div><a href="{% url 'leave:holiday_create' %}"><button>{% trans 'Add Holiday' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="holiday_list" menu="setup" %}
+{% endblock sidebar %}
+
+{% endblock %}

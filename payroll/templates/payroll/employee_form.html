@@ -1,0 +1,86 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block main_content %}
+{% include 'employee_change_title_modal.html' %}
+{% include 'employee_education_modal.html' %}
+{% include 'qualifications/employee_certification_modal.html' %}
+{% include 'qualifications/membership_modal.html' %}
+{% include 'qualifications/skill_modal.html' %}
+{% include 'administration/position_form_modal.html' %}
+
+{{ dform.errors }}
+<div class="section">
+
+    {% if pform.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Add" as action %}{% endif %}  
+    <h3 class="ico_mug"><a href="{% url 'payroll:user_list' %}">{% trans 'PIM' %}</a> &nbsp;&rang;&nbsp; {% blocktrans %}{{ action }} Staff Details{% endblocktrans %}</h3>
+
+    {% if uform.errors and not uform.non_field_errors or pform.errors and not pform.non_field_errors or sform.errors and not sform.non_field_errors or dform.errors and not dform.non_field_errors %}
+    <div id="warning" class="info_div">
+        <span class="ico_error">
+                {% trans 'Please correct the errors below' %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if uform.non_field_errors  or pform.non_field_errors or sform.non_field_errors or dform.non_field_errors %}
+    <div id="fail" class="info_div">
+        <span class="ico_cancel">
+            {% for error in dform.non_field_errors %}
+                    <font style="font-size: 6px">{{ error }}</font>
+            {% endfor %}
+    </span>
+    </div>
+    {% endif %}
+
+    <form action="{{ action_url }}" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    {{ uform.password }}
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">{% trans 'Bio-Data' %}</a></li>
+            <li><a href="#tabs-5">{% trans 'Qualification' %}</a></li>
+            <li><a href="#tabs-2">{% trans 'Job Particulars' %}</a></li>
+            <li><a href="#tabs-3">{% trans 'Salary Details' %}</a></li>
+            <!--<li><div id="tabs-4-title"><a href="#tabs-4">{% trans 'Authentication' %}</a></div></li>-->
+            <li><a href="#tabs-4">{% trans 'Authentication' %}</a></li>
+            
+        </ul>
+        
+        <div id="tabs-1">
+            {% include "employee_form_tab1.html" %}
+        </div>
+        <div id="tabs-5">
+            {% include "employee_form_tab5.html" %}
+        </div>
+        <div id="tabs-2">
+            {% include "employee_form_tab2.html" %}
+        </div>
+        <div id="tabs-3">
+            {% include "employee_form_tab3.html" %}
+        </div>
+        <div id="tabs-4">
+            {% include "employee_form_tab4.html" %}
+        </div>
+    <table width="100%">
+<tr>
+    <td width="20%"></td>
+    <td>
+        <input type="submit" value="{{ button_text }}" />&nbsp;&nbsp;
+        <a href="{% url 'payroll:user_list' %}">{% trans 'Back to Staff List' %}</a>
+    </td>
+    </table>
+    </div>
+
+    </form>
+</div>
+
+{% endblock main_content %}
+
+{% block extra_scripts %}
+ 
+    <script type="text/javascript" src="{% static 'js/hrp_employee.js' %}"></script>
+
+    {% endblock %}

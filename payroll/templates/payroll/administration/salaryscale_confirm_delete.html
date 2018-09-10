@@ -1,0 +1,24 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+<h3 class="ico_mug">{% trans 'Confirm Deletion' %}</h3>
+
+<form action="{% url 'payroll:salary_scale_delete' pk=object.id %}" method="post">
+    <div align="center" id="warning">
+        <span class="ico_error">
+        {% csrf_token %}
+        {% blocktrans %}Are you sure you want to delete scale "{{ object }}"?{% endblocktrans %}
+        </span>
+    </div>
+    <div align="center">
+    <input type="submit" value="Delete" />
+    &nbsp;&nbsp;<a href="{% url 'payroll:salary_scale_list' %}"><button>{% trans 'Cancel' %}</button></a>
+    </div>
+</form>
+
+
+</div>
+{% endblock main_content %}

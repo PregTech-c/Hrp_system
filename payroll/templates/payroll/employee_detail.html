@@ -1,0 +1,33 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+<h3 class="ico_mug">PIM &rang; Employee Details</h3>
+<table width="100%">
+    <tr>
+        <td width="">
+            {% include 'employee_detail_job_info.html' %}
+        </td>
+        <td>&nbsp;&nbsp;</td>
+        <td width="30%">
+            {% include 'employee_detail_qualifications.html' %}&nbsp;
+            {% include 'employee_detail_docs.html' %}
+        </td>
+        <td>&nbsp;&nbsp;</td>
+        <td width="30%">
+            {% include 'employee_detail_bio_data.html' %}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="5">
+            <div class="blankline"></div>
+            <a href="{% url 'payroll:user_edit' pk=profile.user.pk %}"><button>{% trans 'Edit' %}</button></a>
+            <a href="{% url 'payroll:user_list' %}"><button>{% trans 'Back to Employee List' %}</button></a>
+        </td>
+    </tr>
+</table>
+
+</div>
+{% endblock %}

@@ -1,0 +1,205 @@
+{% load i18n %}
+{% load humanize %}
+{% load notification_tags %}
+{% include_notify_js_variables %}
+
+<div id="top_menu" class="clearfix">
+    <ul class="sf-menu"> <!-- DROPDOWN MENU -->
+        <li class="current"><a href="{% url 'payroll:home' %}">{% trans "Dashboard" %}</a></li>
+        {% if perms.payroll.hrp_configure_company or perms.payroll.hrp_configure_pim or perms.payroll.hrp_configure_leave or perms.payroll.hrp_configure_payroll or perms.payroll.hrp_configure_appraisal %}
+        <li>
+            <a href="#">{% trans "Administration" %}</a>
+            <ul>
+                {% if perms.payroll.hrp_configure_company %}
+                <li>
+                    <a href="#">{% trans "Company Info" %}</a>
+                    <ul>
+                        <li><a href="{% url 'payroll:position_list' %}">{% trans "Positions" %}</a></li>
+                        <li><a href="{% url 'payroll:sl_list' %}">{% trans "Service Lines" %}</a></li>
+                        <li><a href="{% url 'payroll:sl_type_list' %}">{% trans "Service Line Types" %}</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+                {% if perms.payroll.hrp_configure_pim %}
+                <li>
+                    <a href="#">{% trans "Personnel Info" %}</a>
+                    <ul>
+                        <li>
+                            <a href="#">{% trans "Qualifications" %}</a>
+                            <ul>
+                                <li class="current"><a href="{% url 'payroll:educ_level_list' %}">{% trans "Education" %}</a></li>
+                                <li><a href="{% url 'payroll:cert_list' %}">{% trans "Certification" %}</a></li>
+                                <li><a href="{% url 'payroll:skill_list' %}">{% trans "Skills" %}</a></li>
+                                <li><a href="{% url 'payroll:membership_list' %}">{% trans "Membership" %}</a></li>
+                                <li><a href="{% url 'payroll:lang_list' %}">{% trans "Languages" %}</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="{% url 'payroll:nat_list' %}">{% trans "Nationalities" %}</a></li>
+                        <li><a href="{% url 'payroll:employeetitle_list' %}">{% trans "Employee Titles" %}</a></li>                        
+                    </ul>
+                </li>
+                {% endif %}
+                {% if perms.payroll.hrp_configure_leave %}
+                <li>
+                    <a href="#">{% trans "Leave Info" %}</a>
+                    <ul>
+                        <li><a href="{% url 'leave:holiday_list' %}">{% trans "Holidays" %}</a></li>
+                        <li><a href="{% url 'leave:leave_period_list' %}">{% trans "Leave Periods" %}</a></li>
+                        <li><a href="{% url 'leave:leave_type_list' %}">{% trans "Leave Types" %}</a></li>
+                        <li><a href="{% url 'leave:leave_approvers' %}">{% trans "Approvers" %}</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+                {% if perms.payroll.hrp_configure_payroll %}
+                <li>
+                    <a href="#">{% trans "Payroll Setup" %}</a>
+                    <ul>
+                        <li><a href="{% url 'payroll:bank_list' %}">{% trans "Banks" %}</a></li>
+                        <li><a href="{% url 'payroll:allowancetype_list' %}">{% trans "Allowances" %}</a></li>
+                        <li><a href="{% url 'payroll:deductiontype_list' %}">{% trans "Deductions" %}</a></li>
+                        <li><a href="{% url 'payroll:salary_scale_list' %}">{% trans "Salary Scales" %}</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+                {% if perms.asset.change_asset %}
+                <li>
+                    <a href="{% url 'asset:asset_list' %}">{% trans "Assets" %}</a>
+                </li>
+                {% endif %}
+                {% if perms.payroll.hrp_configure_appraisal %}
+                <li>
+                    <a href="#">{% trans "Appraisal Setup" %}</a>
+                    <ul>
+                        <li><a href="{% url 'appraisal:appraisal_parameter_list' %}">{% trans "Parameters" %}</a></li>
+                        <li><a href="{% url 'appraisal:appraisal_measure_list' %}">{% trans "Measures" %}</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+                {% if perms.payroll.hrp_do_backup %}
+                <li><a href="#">{% trans 'Backup' %}</a></li>
+                {% endif %}
+            </ul>
+        </li>
+        {% endif %}
+        <li>
+            <a href="#">{% trans "PIM" %}</a>
+            <ul>
+                <li><a href="{% url 'payroll:user_list' %}">{% trans "List Staff" %}</a></li>
+                <li><a href="{% url 'payroll:user_add' %}">{% trans "Add Staff" %}</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">{% trans "Appraisal" %}</a>
+            <ul>
+                {% if perms.payroll.hrp_manage_appraisals %}
+                <li>
+                    <a href="{% url 'appraisal:appraisal_list' %}">{% trans "App. Period" %}</a>
+                    <ul>
+                        <li><a href="{% url 'appraisal:appraisal_create' %}">{% trans "New" %}</a></li>
+                        {% if user.profile %}
+                        <li><a href="{% url 'appraisal:appraisal_list' %}">{% trans 'List' %}</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+                {% if user.profile %}
+                <li>
+                    <a href="{% url 'appraisal:employee_appraisal_list' %}">{% trans 'Review' %}</a>
+                    <ul>
+                        <li><a href="{% url 'appraisal:employee_appraisal_list' %}">{% trans 'My Appraisals' %}</a></li>
+                        <li><a href="{% url 'appraisal:received_employee_appraisal_list' %}">{% trans 'Received Appraisals' %}</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
+        </li>
+        <li>
+            <a href="#">{% trans "Leave" %}</a>
+            <ul>
+                <li>
+                    <a href="#">{% trans "Applications" %}</a>
+                    <ul>
+                        {% if perms.payroll.hrp_handle_leave_requests %}
+                        <li><a href="{% url 'leave:leave_application_list' %}">{% trans "Received" %}</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'leave:leave_request_list' %}">{% trans "My Requests" %}</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">{% trans "Assets" %}</a>
+            <ul>
+                <li>
+                    <a href="{% url 'asset:asset_allocation_list' %}">{% trans "Allocations" %}</a>
+                </li>
+            </ul>
+        </li>
+            <li>
+                <a href="#">{% trans "Payroll" %}</a>
+                <ul>
+                    <li><a href="{% url 'payroll:payperiod_list' %}">{% trans "Pay Periods" %}</a></li>
+                    <li><a href="{% url 'payroll:emp_adj_list' %}">{% trans "Recurring Adjustments" %}</a></li>
+                </ul>
+            </li>
+            
+            <li>
+                <a href="#">{% trans "Recruitment" %}</a>
+                <ul>
+                    <li><a href="{% url 'recruitment:vacancy_list' page=1 %}">{% trans "Vacancies" %}</a></li>
+                </ul>
+            </li>
+            
+            <li>
+                <a href="#">{% trans "Reports" %}</a>
+                <ul>
+                    {% if perms.payroll.hrp_manage_payroll or perms.payroll.hrp_view_payroll_reports %}
+                    <li>
+                        <a href="#">{% trans 'Payroll' %} </a>
+                        <ul>
+                            <li><a href="{% url 'payroll:payroll_cycles_summary' %}">{% trans "Summary" %}</a></li>
+                            <li><a href="{% url 'payroll:bank_report' %}">{% trans "Bank" %}</a></li>
+                            <li><a href="{% url 'payroll:payroll_summary_report' %}">{% trans "Service Line" %}</a></li>
+                            <li><a href="{% url 'payroll:nssf_report' %}">{% trans "NSSF" %}</a></li>
+                            <li><a href="{% url 'payroll:paye_report' %}">{% trans "PAYE" %}</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="#">{% trans "Leave" %}</a>
+                        <ul>
+                            <li><a href="{% url 'leave:leave_report_on_leave' search='off' show_form='off' %}">{% trans "On Leave" %}</a></li>
+                            <li><a href="{% url 'leave:leave_report_days' search='off' show_form='off' %}">{% trans "Leave Days" %}</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">{% trans "Personnel" %}</a>
+                        <ul>
+                            <li><a href="{% url 'payroll:user_report' %}">{% trans "Emp. Details" %}</a></li>
+                            <li><a href="{% url 'payroll:salary_progression_report' %}">{% trans "Salary History" %}</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#">{% trans "Appraisal" %}</a>
+                        <ul>
+                            <li><a href="{% url 'appraisal:performance_summary' %}">{% trans "Summary Rpt" %}</a></li>
+                        </ul>
+                    </li>
+                    {% if perms.payroll.can_view_system_reports %}
+                    <li>
+                        <a href="">{% trans 'System' %}</a>
+                        <ul>
+                            <li><a href="{% url 'payroll:activity_list' %}">{% trans 'User Activity' %}</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+            </li>
+            <li>
+                <a href="#">{% trans "Help" %}</a>
+            </li>
+    </ul>
+        <a href="{% url 'payroll:notification_list' %}" id="visit" class="right">
+            <em><span id="notifUnreadCount">{{ request.user.notifications.unread.count }}</span> {% trans "Notifications" %}</em></a>
+
+</div>

@@ -1,0 +1,61 @@
+{% load i18n %}
+{% load humanize %}
+<table  id="table" width="80%">
+    <thead>
+    <tr>
+        <th colspan="2" style="text-align: left">{% trans 'Job Info' %}</th>
+    </tr>
+    </thead>
+    <tr>
+        <td>{% trans 'Name' %}</td>
+        <td>{{ profile.get_fullname }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Position' %}</td>
+        <td>{{ profile.position }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Employee Number' %}</td>
+        <td>{{ profile.employee_number }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Reports To' %}</td>
+        <td>{{ profile.reports_to.get_fullname|default:"No one" }} ({{ profile.reports_to.position }})</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Employed On' %}</td>
+        <td>{{ profile.employed_on|date:"SHORT_DATE_FORMAT" }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Status' %}</td>
+        <td>{{ profile.get_status_display }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Contractual Pay' %}</td>
+        <td>{{ profile.get_contractual_pay.amount|intcomma }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'NSSF No.' %}</td>
+        <td>{{ profile.nssf_number }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'TIN' %}</td>
+        <td>{{ profile.tin_number }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Phone Number' %}</td>
+        <td>{{ profile.phone_number }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Email' %}</td>
+        <td>{{ profile.user.email }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Bank' %}</td>
+        <td>{{ profile.bank }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Bank Account No.' %}</td>
+        <td>{{ profile.bank_account_number }}</td>
+    </tr>
+</table>

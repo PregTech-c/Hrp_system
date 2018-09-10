@@ -1,0 +1,77 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="dashboard" class="left">
+    {% if form.instance.id %}{% trans "Edit" as action %}{% else %}{% trans "Add" as action %}{% endif %}     
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Payroll' %} &rang; {% blocktrans %}{{ action }} Allowance Type{% endblocktrans %}</h3>
+
+    <form action="{{ action_url }}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Allowance Type Info' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_name">{% trans 'Name' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.name }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.name.errors %}
+                    <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.long_name.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_description">{% trans 'Description' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ form.description }} &nbsp;&nbsp;
+                   </div>
+                   {% if form.description.errors %}
+                    <div id="fail" class="quickview left">
+                        <span class="ico_cancel">{{ form.description.errors }}</span></div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%">
+                   <label for="id_is_asset_allowance">{% trans 'Asset Allowance' %}</label>
+               </td>
+               <td>
+                   <div class="left">
+                       {{ form.is_asset_allowance }} &nbsp;&nbsp;
+                       ({% trans 'If checked, this allowance will not affect the gross pay.' %})
+                   </div>
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%">
+                   <label for="id_is_asset_allowance">{% trans 'Taxable' %}</label>
+               </td>
+               <td>
+                   <div class="left">
+                       {{ form.is_taxed }} &nbsp;&nbsp;
+                       ({% trans 'If unchecked, this allowance will not be taxed.' %})
+                   </div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>    <input type="submit" value="Save" /></td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+    <a href="{% url 'payroll:allowancetype_list' %}"><button>{% trans 'Back to Allowance Type List' %}</button></a>
+
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="allowance_list" menu="payroll" %}
+{% endblock sidebar %}
+
+{% endblock main_content %}

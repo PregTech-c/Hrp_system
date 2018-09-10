@@ -1,0 +1,47 @@
+{% load i18n %}
+{% if show_search_form == 'on' %}
+<div>
+    <form action="{% url 'payroll:emp_adj_list' %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Search' %}</span></legend>
+        <table width="100%">
+
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_date">{% trans 'Name' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ search_form.name }} &nbsp;&nbsp;
+                   </div>
+                </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top" width="20%"><label for="id_adjustment_type">{% trans 'Adjustment' %}</label></td>
+               <td>
+                   <div class="left">
+                       {{ search_form.adjustment_type }} &nbsp;&nbsp;
+                   </div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Search" />&nbsp;&nbsp;
+                    {% if search_form.is_bound %}
+                    <a href="{% url 'payroll:emp_adj_list_s' page=1 show_adj_search_form='on' search_data='off' %}">Reset</a>
+                    {% endif %}
+                </td>
+            </tr>
+
+        </table>
+        </fieldset>
+    </form>
+</div>
+<div>
+    <a href="{% url 'payroll:emp_adj_list_s' page=1 show_adj_search_form='off' search_data='off' %}"><button>Hide Search Form</button></a>
+</div>
+{% else %}
+<div>
+    <a href="{% url 'payroll:emp_adj_list_s' page=1 show_adj_search_form='on' search_data='off' %}"><button>Show Search Form</button></a>
+</div>
+{% endif %}

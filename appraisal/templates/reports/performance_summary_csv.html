@@ -1,0 +1,26 @@
+            <table id="table" width="100%">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Service Line</th>
+                    <th>Position</th>
+                    <th>Branch</th>
+                    <th>Score</th>
+                    <th>Supervisor</th>
+                    <th>Remarks</th>
+                </tr>
+                {% for app in emp_appraisals %}
+                {% with profile=app.employee_profile %}
+                <tr>
+                    <td>{{ forloop.counter }}.</td>
+                    <td>{{ profile.get_fullname }}</td>
+                    <td>{{ profile.position }}</td>
+                    <td>{{ profile.service_line }}</td>
+                    <td>{{ profile.branch }}</td>
+                    <td align="right">{{ app.get_average_rating }}%</td>
+                    <td>{{ profile.reports_to.get_fullname }}</td>
+                    <td>{{ app.on_close_remarks }}</td>
+                </tr>
+                {% endwith %}
+                {% endfor %}
+            </table>

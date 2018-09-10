@@ -1,0 +1,36 @@
+{% extends 'payroll_base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% block body %}
+<div  id="header">
+    <div id="profile_info">
+        <img src="{% static 'img/avatar.jpg' %}" id="avatar" alt="avatar" />
+        <p>{% trans "Welcome " %} <strong>{{ user }}</strong>. </p>
+        <p>
+            <a href="{% url 'payroll:change_password' %}">{% trans "Change Password" %}</a>&nbsp;&nbsp;
+            <a href="{% url 'payroll:logout' %}">Log out</a>
+        </p>
+        <p class="last_login">{% trans "Last login" %}: {{ user.last_login|date:"d/M/Y H:i" }}</p>
+    </div>
+    <div id="logo"><h1><a href="{% url 'payroll:home' %}">Payroll</a></h1></div>
+</div><!-- end header -->
+
+<div id="content" >
+{% block menu %}
+{% include 'top_menu.html' %}
+{% endblock menu %}
+
+<div id="content_main" class="clearfix">
+
+{% block main_content %}{% endblock main_content %}
+</div><!-- end #content_main -->
+
+{% block footer %}
+<div  id="footer" class="clearfix">
+    <p class="left">Human Resource and Payroll</p>
+    <p class="right">&copy;&nbsp;{% now "Y" %}</p>
+</div><!-- end #footer -->
+{% endblock footer %}
+</div>
+
+{% endblock body %}

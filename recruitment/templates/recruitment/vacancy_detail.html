@@ -1,0 +1,69 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+
+{% block main_content %}
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">
+        {% trans 'Recruitment' %} &rang;
+        <a href="{% url 'recruitment:vacancy_list' page=1 %}">Vacancies</a> 
+        &nbsp;&rang;&nbsp; {% blocktrans %}Vacancy Details{% endblocktrans %}
+    </h3>
+
+    <table id="table" width="100%">
+        <tr><th colspan="2">Application Details</th></tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Vacancy Type</td>
+            <td>{{ vacancy.vacancy_type }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Job Title</td>
+            <td>{{ vacancy.job_title }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Number of Positions</td>
+            <td>{{ vacancy.number_of_positions }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Service Line</td>
+            <td>{{ vacancy.service_line }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Reports To</td>
+            <td>{{ vacancy.reports_to }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Minimum Education</td>
+            <td>{{ vacancy.minimum_education }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Skills</td>
+            <td>{{ vacancy.skills }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Required Gender</td>
+            <td>{{ vacancy.get_required_gender_display }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Fields of Education</td>
+            <td>{{ vacancy.fields_of_education }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Job Description</td>
+            <td>{{ vacancy.job_description }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top" width="30%">Due Date</td>
+            <td>{{ vacancy.due_date }}</td>
+        </tr>
+    </table>
+<p>
+    <a href="{% url 'recruitment:vacancy_list' page=1 %}"><button>Back to Vacancy List</button></a>&nbsp;
+    <a href="{% url 'recruitment:application_add' vac_id=vacancy.id %}"><button>Apply</button></a>&nbsp;
+    <a href="{% url 'recruitment:eval_list' vac_id=vacancy.id page=1 %}"><button>Evaluation Stages</button></a>
+</p>
+</div>
+{% block sidebar %}
+{% include 'leave/sidebar.html' with url="vacancy_list" menu="setup" %}
+{% endblock sidebar %}
+        
+{% endblock %}

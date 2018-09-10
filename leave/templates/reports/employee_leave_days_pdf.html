@@ -1,0 +1,64 @@
+{% extends "easy_pdf/base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+{% load humanize %}
+
+{% block extra_style %}
+<style lang="text/css">
+    table {border-collapse: collapse;}
+    td {padding: 1px;}
+    h4 {border-bottom 1px solid black; font-weight: bold; padding-top: 5px}
+    th {border-bottom: 1px solid black; text-align: left; padding-top: 15px}
+    .tlabel {width:  500px}
+    .toprow {padding-top: 5px}
+    .bottomrow {padding-bottom: 5px}
+</style>
+{% endblock %}
+
+{% block page_header %}
+{% include 'pdf_report_header.html' with title="Employee Leave Days" %}
+{% endblock %}
+
+{% block content %}
+<!--<hr/>-->
+
+<div id="main_content" class="section">
+    
+    <h4>{{ employee_profile.get_fullname }}</h4>
+    <table id="table">
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Leave Type' %}</th>
+            <th width="">{% trans 'Leave Days' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+            <th width="">{% trans 'Days Taken' %}</th>
+            <th width="">{% trans 'Days C/f' %}</th>
+            <th width="">{% trans 'Days Left' %}</th>
+        </tr>
+        <tr><td colspan="7"></td></tr>
+        {% for type in type_list %}
+        <tr>
+            <td align="right">{{ forloop.counter }}.</td>
+            <td>{{ type.name }}</td>
+            <td>{{ type.description }}</td>
+            <td>{{ type.no_of_days|floatformat:"0" }}</td>
+            <td>{{ type.days_taken|floatformat:"0" }}</td>
+            <td>{{ type.days_carried_forward|floatformat:"0" }}</td>
+            <td>{{ type.days_left|floatformat:"0" }}</td>
+        </tr>
+        {% if forloop.last %}
+        <tr style="font-weight: bold; padding-top: 5px; border-top: 1px solid black;">
+            <td></td>
+            <td colspan="2">Totals</td>
+            <td style="font-weight: bold; padding-top: 5px; border-top: 1px solid black;">{{ totals.no_of_days|floatformat:"0" }}</td>
+            <td>{{ totals.days_taken|floatformat:"0" }}</td>
+            <td>{{ totals.days_carried_forward|floatformat:"0" }}</td>
+            <td>{{ totals.days_left|floatformat:"0" }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+
+    </table>
+</div>
+
+{% endblock %}

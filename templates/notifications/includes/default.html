@@ -1,0 +1,25 @@
+{% load i18n %}
+<li data-nf-id="{{ notification.id }}" id="nf-{{ notification.id }}" class="notification list-group-item {{ notification.read|yesno:'read,unread' }}">
+    <div class="row">
+        <div class="col-md-8">
+{% block notification %}
+
+    {% if notification.target %}
+        {% blocktrans with actor_url=notification.actor_url actor=notification.actor verb=notification.verb target=notification.target target_url=notification.target_url%}
+            <a href="{{ actor_url }}">{{ actor }}</a> {{ verb }} on <a href="{{ target_url }}">{{ target }}</a>
+        {% endblocktrans %}
+    {% else %}
+        {% blocktrans with actor_url=notification.actor_url actor=notification.actor verb=notification.verb name=notification.actor.profile.getfullname %}
+            <!--<a href="{{ actor_url }}">{{ name }}</a>--> 
+            {{ verb }}
+        {% endblocktrans %}
+    {% endif %}
+    <span class="timesince"><br/>{% blocktrans with created=notification.created|timesince %}{{created}} ago{% endblocktrans %}</span>
+{% endblock notification %}
+        </div>
+        <div class="col-md-4">
+            {% include 'notifications/includes/mark_unmark.html' %}
+        </div>
+    </div>
+
+</li>

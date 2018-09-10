@@ -1,0 +1,168 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    
+    <h3 class="ico_mug">
+        {% trans 'Appraisal' %} &rang; <a href="{% url 'appraisal:employee_appraisal_list' %}">
+        {% if supervisor_view %}{% trans 'Received Appraisals' %}{% else %}{% trans 'My Appraisals' %}{% endif %}</a> &rang; 
+        Review Appraisal
+    </h3>
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    <table width="100%">
+        <tr>
+            <td width="50%">
+                <table id="table">
+                    <tr>
+                    <th colspan="2">Appraisal Info</th>
+                    </tr>
+                    {% if user.profile != emp_appraisal.employee_profile %}
+                    <tr>
+                        <td width='20%' class="label">Name</td>
+                        <td>{{ emp_appraisal.employee_profile.get_fullname }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td width='30%' class="label">Appraisal </td>
+                        <td>{{ emp_appraisal.appraisal }}</td>
+                    </tr>
+                    <tr>
+                        <td width='30%' class="label">Status</td>
+                        <td>{{ emp_appraisal.get_status_display }} with {{ emp_appraisal.get_has_appraisal.get_fullname }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Due Date</td>
+                        <td>{{ emp_appraisal.appraisal.due_date }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Answered</td>
+                        <td>{{ total_measures_reviewed }} of {{ total_measures }}</td>
+                    </tr>
+                    {% if user.profile != emp_appraisal.employee_profile %}
+                    <tr>
+                        <td class="label">Score (Self Appraisal)</td>
+                        <td>{{ emp_appraisal.get_average_rating }}%</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </td>
+            <td>&nbsp;</td>
+            <td>
+                <table id="table" width="90%">
+                    <tr>
+                        <th colspan="3">Remarks</th>
+                    </tr>
+                    <tr>
+                        <td>{{ remarks.open.initiator.get_fullname }}</td>
+                        <td>{{ remarks.open.date|date }}</td>
+                        <td>{{ remarks.open.comment }}</td>
+                    </tr>
+                    {% for f in comments %}
+                    <tr>
+                        <td style="label">{{ f.from_reviewer.get_fullname }}</td>
+                        <td>{{ f.created_at|date }}</td>
+                        <td width="50%">{{ f.comment }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if is_closed %}
+                    <tr>
+                        <td>{{ remarks.close.closed_by.get_fullname }}</td>
+                        <td>{{ remarks.close.date|date }}</td>
+                        <td>{{ remarks.close.comment }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </td>
+        <tr>
+    </table>
+    <div class="blankline"></div>
+    <p class="info">
+        Follow the update link to score each of the KPIs listed below. 
+    </p>
+    <table id="table">
+        <p></p>
+
+        {% if employee_appraisal_measure_list %}
+        <tr>
+            <th width="5%">#</th>
+            <th width="5%">{% trans 'Param.' %}</th>
+            <th width="25%">{% trans 'Definition' %}</th>
+            <th width="5%">{% trans 'Self Rating' %}</th>
+            <th width="">{% trans 'My Comment' %}</th>
+            <th width="">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for emp_measure in employee_appraisal_measure_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ emp_measure.measure.parameter }}</td>
+            <td>{{ emp_measure.measure.definition }}</td>
+            <td>{{ emp_measure.rating|default:"-"}}{% if emp_measure.rating %}/{{ emp_measure.measure.max_rating }}{% endif %}</td>
+            <td>{{ emp_measure.comment }}</td>
+            <td align="center">
+                {% if emp_appraisal.get_has_appraisal == user.profile %}
+                <a href="{% url 'appraisal:employee_appraisal_measure_update' pk=emp_measure.id %}">{% trans 'update' %}</a>
+                
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning">
+            <span class="ico_error">
+            {% trans "This appraisal was created without any measurable parameters." %}
+            </span>
+        </div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'appraisal:employee_appraisal_measure_list' emp_app_id=emp_appraisal.id as url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=url %}
+    {% endif %}
+    <div class="blankline"></div>
+    {% if show_submit %}
+    <p class="info">
+        You may now submit the appraisal details to {{ user.profile.reports_to.get_fullname }}. Add an optional comment below.
+    </p>
+    <form action="{% url 'appraisal:employee_appraisal_submit' pk=emp_appraisal.id %}" method="post">
+
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %} 
+           
+        <fieldset>
+            <legend><span>{% trans 'Submit' %}</span></legend>
+            <table width="100%">
+                <tr>
+                    <td style="vertical-align: top" width="20%">Comment </td>
+                    <td>
+                        <div class="left">{{ form.comment }}</div>
+                        {% if form.comment.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.comment.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Sumbit Appraisal" class="blue"/></td>
+                </tr>
+            </table>
+            
+        </fieldset>
+    </form>
+    {% endif %}
+
+    {% if emp_appraisal.is_complete %}
+    <div class='blankline'></div>
+    <a href="{% url 'appraisal:employee_appraisal_measure_pdf' emp_app_id=emp_appraisal.id %}" target="_blank">
+        <button>Download Report</button>
+    </a>
+    {% endif %}
+</div>
+
+{% endblock %}

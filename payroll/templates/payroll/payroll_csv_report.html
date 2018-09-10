@@ -1,0 +1,128 @@
+{% load humanize %}
+{% load i18n %}
+<table id="table" width="100%">
+        <thead>
+            <tr>
+                <th colspan="{{ num_columns }}">PAYROLLS CYCLES REPORT</th>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <th width="3%">#</th>
+                <th width="20%">{% trans "PAY PERIOD" %}</th>
+                {% if get.authorized_by %}
+                <th>{% trans "AUTH. BY" %}</th>
+                {% endif %}
+                {% if get.authorized_at %}
+                <th>{% trans "AUTH. AT" %}</th>
+                {% endif %}
+                {% if get.number_of_staff %}
+                <th>NO. EMPL.</th>
+                {% endif %}
+                {% if get.total_contractual_pay %}
+                <th >CONTR. PAY</th>
+                {% endif %}
+                {% if get.total_gross_pay %}
+                <th >GROSS PAY</th>
+                {% endif %}
+                {% if get.total_outreach_allowance %}
+                <th>O/R ALLOW.</th>
+                {% endif %}
+                {% if get.total_allowances %}
+                <th>ALLOW.</th>
+                {% endif %}
+                {% if get.total_deductions %}
+                <th>DEDUC.</th>
+                {% endif %}
+                {% if get.total_paye %}
+                <th>PAYE</th>
+                {% endif %}
+                {% if get.total_nssf %}
+                <th>NSSF</th>
+                {% endif %}
+                {% if get.total_msu_nssf %}
+                <th>Co. NSSF</th>
+                {% endif %}
+                {% if get.total_net_pay %}
+                <th>{% trans "NET PAY" %}</th>
+                {% endif %}
+            </tr>
+        </thead>
+            <tr>
+        <td colspan="{{ num_columns }}" style="border-top: 1px solid black"></td>
+    </tr>
+    {% for payroll in payroll_list %}
+    <tr>
+        <td align="center">{{ forloop.counter }}.</td>
+        <td>{{ payroll.pay_period }}</td>
+        {% if get.authorized_by %}
+        <td>{{ payroll.authorized_by }}</td>
+        {% endif %}
+        {% if get.authorized_at %}
+        <td>{{ payroll.authorized_at }}</td>
+        {% endif %}
+        {% if get.number_of_staff %}
+        <td>{{ payroll.get_number_of_employees }}</td>
+        {% endif %}
+        {% if get.total_contractual_pay %}
+        <td align="right">{{ payroll.get_total_contractual_pay_t|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_gross_pay %}
+        <td align="right">{{ payroll.total_gross_pay|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_outreach_allowance %}
+        <td align="right">{{ payroll.total_outreach_allowance|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_allowances %}
+        <td align="right">{{ payroll.total_allowances|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_deductions %}
+        <td align="right">{{ payroll.total_deductions|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_paye %}
+        <td align="right">{{ payroll.total_paye|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_nssf %}
+        <td align="right">{{ payroll.total_employee_nssf|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_msu_nssf %}
+        <td align="right">{{ payroll.total_msu_nssf|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_net_pay %}
+        <td align="right">{{ payroll.total_net_pay|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+    </tr>
+
+    {% endfor %}
+
+            <tr style="font-weight: bold">
+        <td></td>
+        <td>Totals</td>
+        <td></td>
+        {% if get.total_contractual_pay %}
+        <td align="right">{{ totals.total_contractual_pay__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_gross_pay %}
+        <td align="right">{{ totals.total_gross_pay__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_allowances %}
+        <td align="right">{{ totals.total_allowances__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_deductions %}
+        <td align="right">{{ totals.total_deductions__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_paye %}
+        <td align="right">{{ totals.total_paye__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_nssf %}
+        <td align="right">{{ totals.total_employee_nssf__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_msu_nssf %}
+        <td align="right">{{ totals.total_msu_nssf__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+        {% if get.total_net_pay %}
+        <td align="right">{{ totals.total_net_pay__sum|floatformat:"2"|intcomma }}</td>
+        {% endif %}
+    </tr>
+    </table>

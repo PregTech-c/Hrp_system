@@ -1,0 +1,52 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block main_content %}
+
+
+
+<div id="dashboard" class="left">
+    <h3 class="ico_mug">{% trans 'Administration' %} &rang; {% trans 'Qualifications' %} &rang; {% trans 'Membership' %}</h3>
+    
+    {% include 'payroll/databox_notifications.html' with messages=messages%}
+    
+    <table id="table">
+        {% if membership_list %}
+        <tr>
+            <th width="10%">#</th>
+            <th width="">{% trans 'Name' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+            <th width="20%">{% trans 'Action' %}</th>
+        </tr>
+        {% endif %}
+        {% for membership in membership_list %}
+
+        <tr>
+            <td>{{  page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td>{{ membership.name }}</td>
+            <td>{{ membership.description }}</td>
+            <td>
+                <a href="{% url 'payroll:membership_edit' pk=membership.id %}">{% trans 'edit' %}</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="{% url 'payroll:membership_delete' pk=membership.id %}">{% trans 'delete' %}</a>
+            </td>
+        </tr>
+        {% empty %}
+        <div id="warning"><span class="ico_error">{% trans "There are no memberships setup. Click the ADD MEMBERSHIP button below to create one, e.g. Rotary" %}</span></div>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+        {% url 'payroll:membership_list' as membership_url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=membership_url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <div><a href="{% url 'payroll:membership_add' %}"><button>{% trans 'Add Membership' %}</button></a></div>
+</div>
+
+{% block sidebar %}
+{% include 'payroll/sidebar_setup.html' with url="membership_list" menu="personnel" %}
+{% endblock sidebar %}
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% load humanize %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h4 class="ico_mug">Reports &rang; {% trans 'Leave' %} &rang; Leave Days</h4>
+
+    {% if show_form %}
+    {% include 'reports/employee_leave_days_form.html' with form=form %}
+    <a href="{% url 'leave:leave_report_days' search='on' show_form='off' %}"><button>Hide Search Form</button></a>
+    {% else %}
+    <a href="{% url 'leave:leave_report_days' search='on' show_form='on' %}"><button>Show Search Form</button></a>&nbsp;&nbsp;
+
+    {% endif %}
+    {% if request.session.user_id %}
+        <a href="{% url 'leave:leave_report_days' search='off' show_form='on' %}"><button>{% trans 'Clear Filter' %}</button></a>
+    {% endif %}
+    <!--{% include 'payroll/databox_notifications.html' with messages=messages%}-->
+
+    {% if type_list %}
+    <p class='info'>Leave days breakdown for <strong>{{ employee_profile.get_fullname }}</strong>.</p>
+    <div class='blankline'></div>
+
+    <table id="table">
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Leave Type' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+            <th width="">{% trans 'Leave Days' %}</th>
+            <th width="">{% trans 'Days Taken' %}</th>
+            <th width="">{% trans 'Days C/f' %}</th>
+            <th width="">{% trans 'Days Left' %}</th>
+        </tr>
+
+        {% for type in type_list %}
+        <tr>
+            <td align="right">{{ forloop.counter }}.</td>
+            <td>{{ type.name }}</td>
+            <td>{{ type.description }}</td>
+            <td>{{ type.no_of_days|floatformat:"0" }}</td>
+            <td>{{ type.days_taken|floatformat:"0" }}</td>
+            <td>{{ type.days_carried_forward|floatformat:"0" }}</td>
+            <td>{{ type.days_left|floatformat:"0" }}</td>
+        </tr>
+        {% if forloop.last %}
+        <tr style="font-weight: bold">
+            <td></td>
+            <td colspan="2">Totals</td>
+            <td>{{ totals.no_of_days|floatformat:"0" }}</td>
+            <td>{{ totals.days_taken|floatformat:"0" }}</td>
+            <td>{{ totals.days_carried_forward|floatformat:"0" }}</td>
+            <td>{{ totals.days_left|floatformat:"0" }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+    {% else %}
+        <div id="warning">
+            <span class="ico_error">
+            {% if request.session.user_id %}
+                {% trans 'No leaves found for specified search criteria' %}
+            {% else %}
+                {% trans 'Use the form above submit a search criteria.' %}
+            {% endif %}
+            </span>
+        </div>        
+    {% endif %}
+
+    <div class="blankline"></div>
+    {% if type_list %}
+    <a href="{% url 'leave:leave_days_pdf' %}" target='_blank'><button>Download PDF</button></a>
+    {% endif %}
+</div>
+
+{% endblock %}

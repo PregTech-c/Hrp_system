@@ -1,0 +1,110 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block extra_scripts %}
+        <script type="text/javascript">
+            jQuery(function() {
+               jQuery("#id_start_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd'
+               });
+               jQuery("#id_end_date").datepicker({ 
+                   dateFormat: 'yy-mm-dd'
+               });
+               
+            });
+        </script>
+{% endblock %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h3 class="ico_mug">Activity</h3>
+
+    {% if form.errors and not form.non_field_errors %}
+    <div id="warning" class="info_div">
+        <span class="ico_error">
+                {% trans 'Please correct the errors below' %}
+        </span>
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div id="fail" class="info_div">
+        <span class="ico_cancel">
+            {% for error in form.non_field_errors %}
+                    {{ error }}
+            {% endfor %}
+    </span>
+    </div>
+    {% endif %}
+
+
+    <form action="{% url 'payroll:activity_search' %}" method="post">
+        <fieldset>
+            <legend><span>Filter</span></legend>
+        <table width="100%">
+        <tr>
+            <td width="20%">User&nbsp;&nbsp;</td>
+            <td>{{ form.user }}</td>
+        </tr>
+        <tr>
+            <td>From&nbsp;&nbsp;</td>
+            <td>{{ form.start_date }}</td>
+        </tr>
+        <tr>
+            <td>To&nbsp;&nbsp;</td>
+            <td>{{ form.end_date }}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Filter" />&nbsp;&nbsp;
+                <a href="{% url 'payroll:activity_search' %}">Reset</a>
+            </td>
+        </tr>
+    </table>
+        </fieldset>
+        {% csrf_token %}
+    </form>
+    <br/>
+    {% if page_message %}
+    <div id="success" class="info_div">
+        <span class="ico_success">{{ page_message }}</span>
+    </div>
+    {% endif %}
+
+   
+    
+    {% if log_list %}
+    <a target="_blank" href="{% url 'payroll:activity_pdf_list' user_id|default:0 start_date|default:0 end_date|default:0 %}">
+        <button>Export to PDF</button></a>
+    {% endif %}
+
+    <table id="table">
+        <thead>
+            <tr>
+                <th width="3%">#</th>
+                <th width="20%">{% trans "Time" %}</th>
+                <th width="20%">{% trans "User" %}</th>
+                <th width="">{% trans "Action" %}</th>
+            </tr>
+        </thead>
+    {% for log in log_list %}
+    <tr>
+        <td align="center">{{ page_obj.start_index|add:forloop.counter0 }}.</td>
+        <td>{{ log.time_stamp }}</td>
+        <td>{{ log.user }}</td>
+        <td>{{ log.action }}</td>
+    </tr>
+    {% endfor %}
+
+    </table>
+   
+    {% if is_paginated %}
+        {% url 'payroll:activity_list' as activity_url %}
+        {% include "payroll/pagination_digg.html" with paginator=paginator url=activity_url %}
+    {% endif %}
+
+    <br/>
+</div>
+{% endblock %}

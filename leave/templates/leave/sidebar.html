@@ -1,0 +1,47 @@
+{% load i18n %}
+
+<div id="sidebar" class="right">
+    <h4 class="ico_mug">{% trans 'Leave' %}</h4>
+    <ul id="menu">
+        <li>
+            <a href="#" class="ico_posts">{% trans 'Setup' %}</a>
+            <ul class="{% if menu == "setup" %}current{% endif %}">
+                {% if url != "holiday_list" %}
+                <li><a href="{% url 'leave:holiday_list' %}">{% trans "Holidays" %}</a></li>
+                {% endif %}
+                {% if url != "leave_period_list" %}
+                <li><a href="{% url 'leave:leave_period_list' %}">{% trans "Leave Periods" %}</a></li>
+                {% endif %}
+                {% if url != "leave_type_list" %}
+                <li><a href="{% url 'leave:leave_type_list' %}">{% trans "Leave Types" %}</a></li>
+                {% endif %}
+                {% if url != "approver_list" %}
+                <li><a href="{% url 'leave:leave_approvers' %}">{% trans "Approvers" %}</a></li>
+                {% endif %}
+            </ul>
+
+            <a href="#" class="ico_posts">{% trans 'Applications' %}</a>
+            <ul class="{% if menu == "requests" %}current{% endif %}">
+                {% if url != "leave_request_list" %}
+                <li><a href="{% url 'leave:leave_request_list' %}">{% trans "My Applications" %}</a></li>
+                {% endif %}
+                {% if url != "leave_application_list" %}
+                <li><a href="{% url 'leave:leave_application_list' %}">{% trans "Received Applications" %}</a></li>
+                {% endif %}
+            </ul>
+            
+            <a href="#" class="ico_posts">{% trans 'Leave Reports' %}</a>
+            <ul class="{% if menu == "requests" %}current{% endif %}">
+                {% if url != "leave_report_on_leave" %}
+                <li><a href="{% url 'leave:leave_report_on_leave' search='off' show_form='off' %}">{% trans "On Leave" %}</a></li>
+                {% endif %}
+                {% if url != "leave_application_list" %}
+                <li><a href="{% url 'leave:leave_application_list' %}">{% trans "Leave Summary" %}</a></li>
+                {% endif %}
+            </ul>
+        </li>
+
+
+</ul>
+
+</div><!-- end #sidebar -->

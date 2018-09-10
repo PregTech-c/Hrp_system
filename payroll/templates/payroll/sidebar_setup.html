@@ -1,0 +1,60 @@
+{% load i18n %}
+
+<div id="sidebar" class="right">
+    <h3 class="ico_mug">{% trans 'Setup' %}</h3>
+    <ul id="menu">
+        <li>
+            <a href="#" class="ico_posts">{% trans 'Payroll Info' %}</a>
+            <ul class="{% if menu == "payroll" %}current{% endif %}">
+                {% if url != "bank_list" %}
+                <li><a href="{% url 'payroll:bank_list' %}">{% trans "Banks" %}</a></li>
+                {% endif %}
+                
+                {% if url != "allowancetype_list" %}
+                <li><a href="{% url 'payroll:allowancetype_list' %}">{% trans "Allowance Types" %}</a></li>
+                {% endif %}
+                
+                {% if url != "deductiontype_list" %}
+                <li><a href="{% url 'payroll:deductiontype_list' %}">{% trans "Deduction Types" %}</a></li>
+                {% endif %}
+            </ul>
+
+            <a href="#" class="ico_posts">{% trans 'Company Info' %}</a>
+            <ul class="{% if menu == "company" %}current{% endif %}">
+                {% if url != "position_list" %}
+                <li><a href="{% url 'payroll:position_list' %}">{% trans "Positions" %}</a></li>
+                {% endif %}
+                {% if url != "sl_list" %}
+                <li class="current"><a href="{% url 'payroll:sl_list' %}">{% trans "Service Lines" %}</a></li>
+                {% endif %}
+            </ul>
+            <a href="#" class="ico_posts">{% trans 'Personnel' %}</a>
+            <ul class="{% if menu == "personnel" %}current{% endif %}">
+                {% if url != "educ_level_list" %}
+                <li><a href="{% url 'payroll:educ_level_list' %}">{% trans "Education Levels" %}</a></li>
+                {% endif %}
+                {% if url != "cert_list" %}
+                <li><a href="{% url 'payroll:cert_list' %}">{% trans "Certifications" %}</a></li>
+                {% endif %}
+                {% if url != "skill_list" %}
+                <li><a href="{% url 'payroll:skill_list' %}">{% trans "Skills" %}</a></li>
+                {% endif %}
+                {% if url != "membership_list" %}
+                <li><a href="{% url 'payroll:membership_list' %}">{% trans "Memberships" %}</a></li>
+                {% endif %}
+                {% if url != "lang_list" %}
+                <li><a href="{% url 'payroll:lang_list' %}">{% trans "Languages" %}</a></li>
+                {% endif %}
+                {% if url != "nat_list" %}
+                <li><a href="{% url 'payroll:nat_list' %}">{% trans "Nationalities" %}</a></li>
+                {% endif %}
+                {% if url != "employeetitle_list" %}
+                <li><a href="{% url 'payroll:employeetitle_list' %}">{% trans "Employee Titles" %}</a></li>                 
+                {% endif %}
+             </ul>
+        </li>
+
+
+</ul>
+
+</div><!-- end #sidebar -->

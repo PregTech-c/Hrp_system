@@ -1,0 +1,84 @@
+{% extends "payroll_base_site.html" %}
+{% load i18n %}
+
+{% block main_content %}
+
+<div id="main_panel_container" class="section">
+    <h4 class="ico_mug">{% trans 'Reports' %} &rang; {% trans 'Appraisal' %} &rang; {% blocktrans %}Performance Summary{% endblocktrans %}</h4>
+
+    <div class="row">
+        <div class="col-md-8">
+    <form action="" method="post">
+
+        {% csrf_token %}
+        <fieldset>
+            <legend><span>{% trans 'Search' %}</span></legend>
+            <table width="100%" class="padded">
+                <tr>
+                    <td style="vertical-align: top;" width="30%">Appraisal Period </td>
+                    <td>
+                        <div class="left">{{ form.appraisal }}</div>
+                        {% if form.appraisal.errors %}
+                        <div id="fail" class="quickview left"><span class="ico_cancel">{{ form.appraisal.errors|striptags }}</span></div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input class="button" type="submit" value="Submit" />&nbsp;&nbsp;
+                        <a  href="{% url 'appraisal:performance_summary' %}"><button type="button">Reset</button></a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+    </div>
+    </div>
+
+    {%  if emp_appraisals %}
+    
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{% url 'appraisal:performance_summary_pdf' appraisal_id=appraisal_id %}" target="_blank"> 
+                <button type="button">Export to PDF</button>
+            </a>&nbsp;&nbsp;
+            <a href="{% url 'appraisal:performance_summary_csv' appraisal_id=appraisal_id %}" > 
+                <button type="button">Export to Excel</button>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="table" width="100%">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Service Line</th>
+                    <th>Position</th>
+                    <th>Branch</th>
+                    <th>Score</th>
+                    <th>Supervisor</th>
+                    <th>Remarks</th>
+                </tr>
+                {% for app in emp_appraisals %}
+                {% with profile=app.employee_profile %}
+                <tr>
+                    <td>{{ forloop.counter }}.</td>
+                    <td>{{ profile.get_fullname }}</td>
+                    <td>{{ profile.position }}</td>
+                    <td>{{ profile.service_line }}</td>
+                    <td>{{ profile.branch }}</td>
+                    <td align="right">{{ app.get_average_rating }}%</td>
+                    <td>{{ profile.reports_to.get_fullname }}</td>
+                    <td>{{ app.on_close_remarks }}</td>
+                </tr>
+                {% endwith %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

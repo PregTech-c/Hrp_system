@@ -1,0 +1,46 @@
+{% load i18n %}
+{% load staticfiles %}
+<table  id="table" width="80%">
+    <thead>
+    <tr>
+        <th colspan="2" style="text-align: left">{% trans 'Bio Data' %}</th>
+    </tr>
+    </thead>
+    <tr>
+    {% if perms.payroll.hrp_manage_employee_info %}
+    <tr>
+        <td colspan="2">
+            {% if profile.photo %}
+            <img src="{% static profile.photo.url|cut:'payroll/static/' %}" width="220" height="200"/>
+            {% endif %}
+            <form action="{% url 'payroll:emp_upload_photo' pk=profile.user.pk %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input id="id_photo" name="photo" type="file" />
+                <input id="id_employee_profile_id" name="employee_profile_id" type="hidden" value="{{ profile.pk }}"/>
+                
+                <input type="Submit" value="Update Photo"/>
+            </form>
+        </td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td>{% trans 'D. O. B.' %}</td>
+        <td>{{ profile.date_of_birth|date:"SHORT_DATE_FORMAT" }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Gender' %}</td>
+        <td>{{ profile.get_gender_display }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Marital Status' %}</td>
+        <td>{{ profile.get_marital_status_display }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Nationality' %}</td>
+        <td>{{ profile.nationality }}</td>
+    </tr>
+    <tr>
+        <td>{% trans 'Next Of Kin' %}</td>
+        <td>{{ profile.next_of_kin }}</td>
+    </tr>
+</table>

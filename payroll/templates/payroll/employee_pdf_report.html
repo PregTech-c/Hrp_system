@@ -1,0 +1,114 @@
+{% extends "easy_pdf/base.html" %}
+{% load staticfiles %}
+{% load pdf_filters %}
+{% load i18n %}
+{% load humanize %}
+
+{% block extra_style %}
+<style lang="text/css">
+    table {border-collapse: collapse; padding: 1px}
+    td {padding: 1px;}
+    h3 {border-bottom 1px solid black; font-weight: bold; padding-top: 5px}
+    .heading {font-weight: bold }
+</style>
+{% endblock %}
+
+{% block page_header %}
+    <table width="100%">
+        <tr>
+            <td width="20%"><img src="{{ img_path|add:'static/img/hrp-logo-4pdf.png'|get64 }}" alt="Logo" /></td>
+            <td style="text-align: bottom; padding-left: 5px;">
+                <div class="heading">EMPLOYEE LIST</div>
+                {% now "d/m/Y" %}
+            </td>
+        </tr>
+    </table>
+{% endblock %}
+
+{% block content %}
+<table width='100%' style="border: 0px solid black">
+
+        <tr style="border-bottom: 1px solid black; padding-top: 15px">
+            <th width="3%">#</th>
+            <th width="15%">Name</th>
+            {% if get.service_line_field %}
+            <th width="10%">Service Line</th>
+            {% endif %}
+            {% if get.position_field %}
+            <th width="10%">Position</th>
+            {% endif %}
+            {% if get.tin_field %}
+            <th>TIN</th>
+            {% endif %}
+            {% if get.nssf_number_field %}
+            <th>NSSF No.</th>
+            {% endif %}
+            {% if get.bank_field %}
+            <th>Bank</th>
+            {% endif %}
+            {% if get.acct_no_field %}
+            <th>Acct. No.</th>
+            {% endif %}
+            {% if get.status_field %}
+            <th>Status</th>
+            {% endif %}
+            {% if get.employee_number_field %}
+            <th>Empl. No.</th>
+            {% endif %}
+            {% if get.email_field %}
+            <th>Email</th>
+            {% endif %}
+            {% if get.phone_number_field %}
+            <th>Phone</th>
+            {% endif %}
+            {% if get.sort_code_field %}
+            <th>Sort Code</th>
+            {% endif %}
+            {% if get.salary_field %}
+            <th>Salary</th>
+            {% endif %}
+        </tr>
+        {% for profile in profile_list %}
+        <tr>
+            <td>{{ forloop.counter }}.</td>
+            <td>{{ profile.get_fullname }}</td>
+            {% if get.service_line_field %}
+            <td>{{ profile.service_line }}</td>
+            {% endif %}
+            {% if get.position_field %}
+            <td>{{ profile.position }}</td>
+            {% endif %}
+            {% if get.tin_field %}
+            <td>{{ profile.tin_number }}</td>
+            {% endif %}
+            {% if get.nssf_number_field %}
+            <td>{{ profile.nssf_number }}</td>
+            {% endif %}
+            {% if get.bank_field %}
+            <td>{{ profile.bank }}</td>
+            {% endif %}
+            {% if get.acct_no_field %}
+            <td>{{ profile.bank_account_number }}</td>
+            {% endif %}
+            {% if get.status_field %}
+            <td>{{ profile.get_status_display }}</td>
+            {% endif %}
+            {% if get.employee_number_field %}
+            <td>{{ profile.employee_number|default:"N/A" }}</td>
+            {% endif %}
+            {% if get.email_field %}
+            <td>{{ profile.user.email }}</td>
+            {% endif %}
+            {% if get.phone_number_field %}
+            <td align="center">{{ profile.phone_number|default:"N/A" }}</td>
+            {% endif %}
+            {% if get.sort_code_field %}
+            <td>{{ profile.bank.sort_code }}</td>
+            {% endif %}
+             {% if get.salary_field %}
+            <td align="right">{{ profile.get_contractual_pay.amount|floatformat:"0"|intcomma }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock content %}

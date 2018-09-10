@@ -1,0 +1,63 @@
+{% extends 'payroll_base_site.html' %}
+{% load i18n %}
+{% load humanize %}
+{% block main_content %}
+<div id="main_panel_container" class="section">
+    
+    <h3 class="ico_mug">{% trans 'Payroll' %} &rang; {% trans 'Recurring Payslip Adjustment' %}</h3>
+    {% if appraisal_list %}
+    <p class="info">List of allocated company assets.</p>
+    <div class="blankline"></div>
+    {% endif %}
+    {% include 'payroll/databox_notifications.html' with messages=messages %}
+
+    {% if employeerecurringadjustment_list %}
+    {% include 'payroll/recurring_adjustment_search_form.html' %}
+    {% endif %}
+    <table id="table">
+
+        {% if employeerecurringadjustment_list %}
+        <tr>
+            <th width="5%">#</th>
+            <th width="">{% trans 'Employee' %}</th>
+            <th width="">{% trans 'type' %}</th>
+            <th width="">{% trans 'Description' %}</th>
+            <th width="">{% trans 'Amount' %}</th>
+            <th width="">{% trans 'Expires' %}</th>
+            <th width="">{% trans 'Comment' %}</th>
+            {% if perms.payroll.change_employeerecurringadjustment %}
+            <th width="20%">{% trans 'Action' %}</th>
+            {% endif %}
+        </tr>
+        {% endif %}
+        {% for adj in employeerecurringadjustment_list %}
+        <tr>
+            <td width="5%">{{ page_obj.start_index|add:forloop.counter0 }}.</td>
+            <td width="">{{ adj.employee.get_fullname }}</td>
+            <td width="">{% if adj.adjustment_type == "1" %}Allowance{% else %}Deduction{% endif %}</td>
+            <td width="">{{ adj.allowance|default:adj.deduction }}</td>
+            <td align="right">{{ adj.amount|floatformat:"0"|intcomma}}</td>
+            <td align="right">{{ adj.expired_at|date }}</td>
+            <td width="">{{ adj.comment}}</td>
+            {% if perms.payroll.change_employeerecurringadjustment %}
+            <td width="">
+                <a href="{% url 'payroll:emp_adj_update' pk=adj.id %}">edit</a>&nbsp;
+                <a href="{% url 'payroll:emp_adj_delete' pk=adj.id %}">delete</a>&nbsp;                
+            </td>   
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+    
+    {% if is_paginated %}
+        {% include "recruitment/pagination_digg.html" with paginator=paginator url=pg_url %}
+    {% endif %}
+    <div class="blankline"></div>
+    <div>
+        {% if perms.payroll.change_employeerecurringadjustment %}
+        <a href="{% url 'payroll:emp_adj_add' type=1 %}"><button>{% trans 'Add Allowance' %}</button></a>&nbsp;&nbsp;
+        <a href="{% url 'payroll:emp_adj_add' type=2 %}"><button>{% trans 'Add Deduction' %}</button></a>        
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
